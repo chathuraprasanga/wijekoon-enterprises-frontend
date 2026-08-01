@@ -1,0 +1,9 @@
+/* Tailwind's preflight is intentionally skipped: it resets base element
+   styles (buttons, inputs, headings) which conflicts with Mantine's own
+   component styling. Only theme tokens + utility classes are loaded. */
+@import 'tailwindcss/theme.css';
+@import 'tailwindcss/utilities.css';
+
+body {
+  margin: 0;
+}
