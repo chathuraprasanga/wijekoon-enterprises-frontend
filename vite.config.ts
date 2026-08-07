@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { logClientUp } from './utils/client-log.util.ts';
@@ -25,6 +26,11 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react(), printClientBanner(mode, env.BASE_URL)],
+    resolve: {
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
+      },
+    },
     define: {
       'import.meta.env.APP_BASE_URL': JSON.stringify(env.BASE_URL),
     },
