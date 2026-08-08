@@ -2,6 +2,7 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { logClientUp } from './utils/client-log.util.ts';
+import tailwindcss from '@tailwindcss/vite';
 
 // Prints the startup banner (project/version/env/API base) once the dev server is listening.
 function printClientBanner(mode: string, baseUrl: string): Plugin {
@@ -25,7 +26,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
-    plugins: [react(), printClientBanner(mode, env.BASE_URL)],
+    plugins: [react(), tailwindcss(), printClientBanner(mode, env.BASE_URL)],
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
