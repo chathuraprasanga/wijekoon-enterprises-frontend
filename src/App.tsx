@@ -1,5 +1,6 @@
-import { Center } from '@mantine/core';
+import { RouterProvider } from 'react-router-dom';
+import { router } from '@/routes';
 
 export const App = () => {
-  return <Center h="100vh">App</Center>;
+  return <RouterProvider router={router} />;
 };
