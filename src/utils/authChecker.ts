@@ -1,18 +1,34 @@
 import { redirect } from 'react-router-dom';
 import { store } from '@/store/store';
+import { getCurrentUser, logOut, tokenRefresh } from '@/store/authSlice/authSlice';
 
-export const AuthLoaderChecker = () => {
-  const { user } = store.getState().auth;
-  if (!user) {
-    return redirect('/login');
+const tryRehydrateSession = async () => {
+  const { refreshToken } = store.getState().auth;
+  if (!refreshToken) {
+    return false;
   }
-  return null;
+  try {
+    await store.dispatch(tokenRefresh()).unwrap();
+    await store.dispatch(getCurrentUser()).unwrap();
+    return true;
+  } catch {
+    store.dispatch(logOut());
+    return false;
+  }
 };
 
-export const redirectIfAuthenticated = () => {
+export const AuthLoaderChecker = async () => {
+  const { user } = store.getState().auth;
+  if (user) {
+    return null;
+  }
+  return (await tryRehydrateSession()) ? null : redirect('/login');
+};
+
+export const redirectIfAuthenticated = async () => {
   const { user } = store.getState().auth;
   if (user) {
     return redirect('/app/dashboard');
   }
-  return null;
+  return (await tryRehydrateSession()) ? redirect('/app/dashboard') : null;
 };

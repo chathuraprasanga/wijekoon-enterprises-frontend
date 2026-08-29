@@ -1,0 +1,54 @@
+{
+  "nodes": [
+    {
+      "id": "claude_commands_new_page_command",
+      "label": "/new-page slash command",
+      "file_type": "document",
+      "source_file": ".claude/commands/new-page.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "claude_commands_new_page_command",
+      "target": "claude_commands_new_slice_command",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/commands/new-page.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_commands_new_page_command",
+      "target": "claude_commands_new_route_command",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/commands/new-page.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "scaffolding_commands_workflow",
+      "label": "Feature-scaffolding slash command workflow",
+      "nodes": [
+        "claude_commands_new_component_command",
+        "claude_commands_new_hook_command",
+        "claude_commands_new_page_command",
+        "claude_commands_new_route_command",
+        "claude_commands_new_slice_command"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/commands/new-page.md"
+    }
+  ]
+}

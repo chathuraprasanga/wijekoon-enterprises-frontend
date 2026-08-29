@@ -1,26 +1,33 @@
-import { createTheme } from '@mantine/core';
+import { createTheme, Modal } from '@mantine/core';
 
 const theme = createTheme({
   colors: {
-    // Cinema gold — IMDb-inspired primary accent
-    cinema: [
-      '#fff8e1', // cinema.0
-      '#ffecb3', // cinema.1
-      '#ffe082', // cinema.2
-      '#ffd54f', // cinema.3
-      '#ffca28', // cinema.4
-      '#f5c518', // cinema.5  ← main accent
-      '#e0a800', // cinema.6
-      '#c79100', // cinema.7
-      '#a67a00', // cinema.8
-      '#7a5900', // cinema.9
+    // Neutral gray sampled from the company logo (assets/company-logo.png,
+    // dominant fill ≈ rgb(108,108,108)) — brand.5 matches it directly.
+    brand: [
+      '#f7f7f7', // brand.0
+      '#ededed', // brand.1
+      '#d9d9d9', // brand.2
+      '#bdbdbd', // brand.3
+      '#999999', // brand.4
+      '#6c6c6c', // brand.5  ← logo's dominant gray
+      '#5c5c5c', // brand.6
+      '#4a4a4a', // brand.7
+      '#383838', // brand.8
+      '#242424', // brand.9
     ],
   },
   fontFamily: 'Ubuntu, sans-serif',
-  primaryColor: 'gray',
+  primaryColor: 'brand',
   primaryShade: { light: 5, dark: 5 },
   defaultRadius: 'md',
-  components: {},
+  components: {
+    Modal: Modal.extend({
+      styles: {
+        title: { fontSize: 'var(--mantine-font-size-xl)', fontWeight: 700 },
+      },
+    }),
+  },
 });
 
 export default theme;

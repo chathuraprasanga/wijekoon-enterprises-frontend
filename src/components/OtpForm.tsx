@@ -1,5 +1,6 @@
-import { Button, Center, PinInput, Stack, Text, Title } from '@mantine/core';
+import { Anchor, Button, Center, Group, PinInput, Stack, Text, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { Link } from 'react-router-dom';
 
 export type OtpFormValues = {
   code: string;
@@ -9,9 +10,19 @@ export type OtpFormProps = {
   identifier: string;
   onSubmit: (values: OtpFormValues) => void;
   loading: boolean;
+  onResend: () => void;
+  resending: boolean;
+  resendCooldown: number;
 };
 
-export const OtpForm = ({ identifier, onSubmit, loading }: OtpFormProps) => {
+export const OtpForm = ({
+  identifier,
+  onSubmit,
+  loading,
+  onResend,
+  resending,
+  resendCooldown,
+}: OtpFormProps) => {
   const form = useForm<OtpFormValues>({
     mode: 'controlled',
     initialValues: { code: '' },
@@ -30,7 +41,7 @@ export const OtpForm = ({ identifier, onSubmit, loading }: OtpFormProps) => {
       </Stack>
       <Stack gap="md">
         <Center>
-          <PinInput length={6} {...form.getInputProps('code')} />
+          <PinInput size="lg" gap="md" length={6} {...form.getInputProps('code')} />
         </Center>
         {form.errors.code && (
           <Text size="sm" c="red" ta="center">
@@ -40,6 +51,20 @@ export const OtpForm = ({ identifier, onSubmit, loading }: OtpFormProps) => {
         <Button type="submit" loading={loading} fullWidth mt="xs">
           Verify
         </Button>
+        <Group justify="center" gap={4}>
+          <Anchor
+            component="button"
+            type="button"
+            size="sm"
+            disabled={resending || resendCooldown > 0}
+            onClick={onResend}
+          >
+            {resendCooldown > 0 ? `Resend code (${resendCooldown}s)` : 'Resend code'}
+          </Anchor>
+        </Group>
+        <Anchor component={Link} to="/login" size="sm" ta="center">
+          Back to sign in
+        </Anchor>
       </Stack>
     </form>
   );

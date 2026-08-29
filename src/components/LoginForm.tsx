@@ -1,4 +1,14 @@
-import { Anchor, Button, Group, PasswordInput, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  Anchor,
+  Button,
+  Checkbox,
+  Group,
+  PasswordInput,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconLock, IconMail } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
@@ -6,6 +16,7 @@ import { Link } from 'react-router-dom';
 export type LoginFormValues = {
   identifier: string;
   password: string;
+  rememberMe: boolean;
 };
 
 export type LoginFormProps = {
@@ -15,7 +26,7 @@ export type LoginFormProps = {
 
 export const LoginForm = ({ onSubmit, loading }: LoginFormProps) => {
   const form = useForm<LoginFormValues>({
-    initialValues: { identifier: '', password: '' },
+    initialValues: { identifier: '', password: '', rememberMe: false },
     validate: {
       identifier: (value) => (value.trim() ? null : 'Email or phone is required'),
       password: (value) => (value ? null : 'Password is required'),
@@ -43,7 +54,11 @@ export const LoginForm = ({ onSubmit, loading }: LoginFormProps) => {
           leftSection={<IconLock size={16} />}
           {...form.getInputProps('password')}
         />
-        <Group justify="flex-end">
+        <Group justify="space-between">
+          <Checkbox
+            label="Remember me for 30 days"
+            {...form.getInputProps('rememberMe', { type: 'checkbox' })}
+          />
           <Anchor component={Link} to="/forgot-password" size="sm">
             Forgot password?
           </Anchor>

@@ -1,0 +1,514 @@
+{
+  "nodes": [
+    {
+      "id": "claude_authloaderchecker",
+      "label": "One-auth-loader-on-parent-route pattern",
+      "file_type": "rationale",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Only the parent /app route carries an auth loader (AuthLoaderChecker), not every child route, to avoid redundant auth checks per the reference pattern."
+    },
+    {
+      "id": "claude_two_zone_architecture",
+      "label": "Two-zone routing architecture (logged-out vs protected)",
+      "file_type": "rationale",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "App splits into logged-out (/login, /forgot-password) and protected (/app/*) zones; a hard reload on /app/* currently drops the session because there is no 'me' endpoint to re-hydrate state.auth.user from the refresh token alone."
+    },
+    {
+      "id": "claude_api_layer_two_tiers",
+      "label": "Two-tier API layer (axiosInstance vs raw axios)",
+      "file_type": "rationale",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Bearer-protected endpoints use axiosInstance (auto-attaches Authorization, retries once on 401/403 via tokenRefresh, force logout on failure); unauthenticated endpoints (login/refresh/forgot-password) use raw axios directly to avoid recursing into refresh logic."
+    },
+    {
+      "id": "claude_access_token_memory_only",
+      "label": "Access token kept in Redux memory only, never localStorage",
+      "file_type": "rationale",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Deliberate backend constraint: the Auth API doesn't set an httpOnly refresh cookie, so only REFRESH_TOKEN falls back to localStorage; the access token is never persisted and is re-fetched via tokenRefresh after a reload."
+    },
+    {
+      "id": "claude_notifications_convention",
+      "label": "toNotify-only notification convention",
+      "file_type": "rationale",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Always call toNotify, never notifications.show directly, so styling/icons/auto-close per type stay centralized in one place."
+    },
+    {
+      "id": "claude_forms_convention",
+      "label": "Presentational form components convention",
+      "file_type": "rationale",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Pages own submission (dispatch thunk, try/catch + .unwrap(), local loading state); form components stay presentational, only validating and calling onSubmit, to keep them reusable/testable in isolation."
+    },
+    {
+      "id": "claude_theming_convention",
+      "label": "Centralized Mantine-only theming convention",
+      "file_type": "rationale",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Rely on Mantine's own color-scheme handling instead of per-file dark/light token objects; centralize any new tokens in theme.ts."
+    },
+    {
+      "id": "claude_folder_conventions",
+      "label": "Folder conventions table",
+      "file_type": "concept",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "claude_pininput_gotcha",
+      "label": "PinInput uncontrolled-incompatibility gotcha",
+      "file_type": "rationale",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Mantine's PinInput isn't @mantine/form uncontrolled-compatible and its error prop is boolean not a message string, so use mode: 'controlled' and render validation text separately."
+    },
+    {
+      "id": "claude_identifier_gotcha",
+      "label": "identifier field accepts email or phone gotcha",
+      "file_type": "rationale",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "The Auth API's identifier field accepts email or phone, so it must not be validated as strict email format."
+    },
+    {
+      "id": "claude_resettoken_gotcha",
+      "label": "resetToken short-lived, page-state-only gotcha",
+      "file_type": "rationale",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "resetToken from /auth/verify-otp is short-lived and single-purpose; keep it in page-level React state only, never localStorage/sessionStorage or a URL param."
+    },
+    {
+      "id": "src_utils_authchecker_authloaderchecker",
+      "label": "AuthLoaderChecker",
+      "file_type": "code",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "src_utils_authchecker_redirectifauthenticated",
+      "label": "redirectIfAuthenticated",
+      "file_type": "code",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "src_store_hooks_useappdispatch",
+      "label": "useAppDispatch",
+      "file_type": "code",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "src_store_hooks_useappselector",
+      "label": "useAppSelector",
+      "file_type": "code",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "src_interceptors_axiosinterceptor_axiosinstance",
+      "label": "axiosInstance",
+      "file_type": "code",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "src_store_authslice_authslice_tokenrefresh",
+      "label": "tokenRefresh thunk",
+      "file_type": "code",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "src_store_authslice_authslice_logout",
+      "label": "logOut action",
+      "file_type": "code",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "src_utils_geterrormessage_geterrormessage",
+      "label": "getErrorMessage",
+      "file_type": "code",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "src_hooks_tonotify_tonotify",
+      "label": "toNotify",
+      "file_type": "code",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "src_theme_theme",
+      "label": "theme.ts (Mantine theme config)",
+      "file_type": "code",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "src_main_main",
+      "label": "main.tsx entry (defaultColorScheme=\"auto\")",
+      "file_type": "code",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "src_routes_router",
+      "label": "router (createBrowserRouter in routes.tsx)",
+      "file_type": "code",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "src_components_appshell_appshell",
+      "label": "AppShell component",
+      "file_type": "code",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "src_layouts_applayout_applayout",
+      "label": "AppLayout (thin wrapper over AppShell)",
+      "file_type": "code",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "src_layouts_authlayout_authlayout",
+      "label": "AuthLayout (tried and removed)",
+      "file_type": "code",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "src_utils_apibaseurl_api_base_url",
+      "label": "API_BASE_URL",
+      "file_type": "code",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "claude_authloaderchecker",
+      "target": "src_utils_authchecker_authloaderchecker",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_authloaderchecker",
+      "target": "src_utils_authchecker_redirectifauthenticated",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_access_token_memory_only",
+      "target": "claude_two_zone_architecture",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_api_layer_two_tiers",
+      "target": "src_interceptors_axiosinterceptor_axiosinstance",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_api_layer_two_tiers",
+      "target": "src_store_authslice_authslice_tokenrefresh",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_api_layer_two_tiers",
+      "target": "src_store_authslice_authslice_logout",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_access_token_memory_only",
+      "target": "claude_api_layer_two_tiers",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_notifications_convention",
+      "target": "src_hooks_tonotify_tonotify",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_forms_convention",
+      "target": "claude_commands_new_component_command",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_theming_convention",
+      "target": "src_theme_theme",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_theming_convention",
+      "target": "src_main_main",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_folder_conventions",
+      "target": "src_layouts_applayout_applayout",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_folder_conventions",
+      "target": "src_layouts_authlayout_authlayout",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_folder_conventions",
+      "target": "src_components_appshell_appshell",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "src_layouts_applayout_applayout",
+      "target": "src_components_appshell_appshell",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_pininput_gotcha",
+      "target": "src_components_otpform_otpform",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_forms_convention",
+      "target": "claude_commands_new_component_command",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 0.85
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "auth_session_bootstrap_flow",
+      "label": "Auth session bootstrap / loader flow",
+      "nodes": [
+        "claude_authloaderchecker",
+        "src_utils_authchecker_authloaderchecker",
+        "src_utils_authchecker_redirectifauthenticated",
+        "claude_access_token_memory_only",
+        "src_store_authslice_authslice_tokenrefresh"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "CLAUDE.md"
+    },
+    {
+      "id": "api_error_handling_flow",
+      "label": "API error handling and token-refresh retry flow",
+      "nodes": [
+        "src_interceptors_axiosinterceptor_axiosinstance",
+        "src_store_authslice_authslice_tokenrefresh",
+        "src_store_authslice_authslice_logout",
+        "src_utils_geterrormessage_geterrormessage"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "CLAUDE.md"
+    }
+  ]
+}

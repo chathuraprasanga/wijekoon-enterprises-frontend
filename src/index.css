@@ -2,6 +2,7 @@
    styles (buttons, inputs, headings) which conflicts with Mantine's own
    component styling. Only theme tokens + utility classes are loaded. */
 @import 'tailwindcss';
+@layer mantine, mantine-datatable;
 
 body {
   margin: 0;

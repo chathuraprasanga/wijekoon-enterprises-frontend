@@ -1,0 +1,132 @@
+{
+  "nodes": [
+    {
+      "id": "claude_commands_new_slice_command",
+      "label": "/new-slice slash command",
+      "file_type": "document",
+      "source_file": ".claude/commands/new-slice.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "src_store_authslice_authslice_authslice",
+      "label": "authSlice",
+      "file_type": "code",
+      "source_file": ".claude/commands/new-slice.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "src_pages_loginpage_loginpage",
+      "label": "LoginPage",
+      "file_type": "code",
+      "source_file": ".claude/commands/new-slice.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "src_pages_forgotpasswordpage_forgotpasswordpage",
+      "label": "ForgotPasswordPage",
+      "file_type": "code",
+      "source_file": ".claude/commands/new-slice.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "src_store_store_store",
+      "label": "store.ts (configureStore setup)",
+      "file_type": "code",
+      "source_file": ".claude/commands/new-slice.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "claude_commands_new_slice_command",
+      "target": "src_interceptors_axiosinterceptor_axiosinstance",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/commands/new-slice.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_commands_new_slice_command",
+      "target": "src_utils_geterrormessage_geterrormessage",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/commands/new-slice.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_commands_new_slice_command",
+      "target": "src_store_authslice_authslice_authslice",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/commands/new-slice.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_commands_new_slice_command",
+      "target": "src_pages_loginpage_loginpage",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/commands/new-slice.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_commands_new_slice_command",
+      "target": "src_pages_forgotpasswordpage_forgotpasswordpage",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/commands/new-slice.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_commands_new_slice_command",
+      "target": "src_store_store_store",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/commands/new-slice.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_commands_new_slice_command",
+      "target": "claude_forms_convention",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/commands/new-slice.md",
+      "source_location": null,
+      "weight": 0.85
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,215 @@
+{
+  "nodes": [
+    {
+      "id": "public_icons_svg",
+      "label": "icons.svg (Icon Sprite Sheet)",
+      "file_type": "image",
+      "source_file": "public/icons.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "public_icons_svg_bluesky_icon",
+      "label": "Bluesky Icon (social brand mark)",
+      "file_type": "concept",
+      "source_file": "public/icons.svg",
+      "source_location": "symbol#bluesky-icon",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "public_icons_svg_discord_icon",
+      "label": "Discord Icon (social brand mark)",
+      "file_type": "concept",
+      "source_file": "public/icons.svg",
+      "source_location": "symbol#discord-icon",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "public_icons_svg_documentation_icon",
+      "label": "Documentation Icon (open-book/doc outline glyph)",
+      "file_type": "concept",
+      "source_file": "public/icons.svg",
+      "source_location": "symbol#documentation-icon",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "public_icons_svg_github_icon",
+      "label": "GitHub Icon (social brand mark)",
+      "file_type": "concept",
+      "source_file": "public/icons.svg",
+      "source_location": "symbol#github-icon",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "public_icons_svg_social_icon",
+      "label": "Social/Share Icon (person + share glyph)",
+      "file_type": "concept",
+      "source_file": "public/icons.svg",
+      "source_location": "symbol#social-icon",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "public_icons_svg_x_icon",
+      "label": "X (Twitter) Icon (social brand mark)",
+      "file_type": "concept",
+      "source_file": "public/icons.svg",
+      "source_location": "symbol#x-icon",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "public_icons_svg",
+      "target": "public_icons_svg_bluesky_icon",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/icons.svg",
+      "source_location": "symbol#bluesky-icon",
+      "weight": 1.0
+    },
+    {
+      "source": "public_icons_svg",
+      "target": "public_icons_svg_discord_icon",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/icons.svg",
+      "source_location": "symbol#discord-icon",
+      "weight": 1.0
+    },
+    {
+      "source": "public_icons_svg",
+      "target": "public_icons_svg_documentation_icon",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/icons.svg",
+      "source_location": "symbol#documentation-icon",
+      "weight": 1.0
+    },
+    {
+      "source": "public_icons_svg",
+      "target": "public_icons_svg_github_icon",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/icons.svg",
+      "source_location": "symbol#github-icon",
+      "weight": 1.0
+    },
+    {
+      "source": "public_icons_svg",
+      "target": "public_icons_svg_social_icon",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/icons.svg",
+      "source_location": "symbol#social-icon",
+      "weight": 1.0
+    },
+    {
+      "source": "public_icons_svg",
+      "target": "public_icons_svg_x_icon",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/icons.svg",
+      "source_location": "symbol#x-icon",
+      "weight": 1.0
+    },
+    {
+      "source": "public_icons_svg_bluesky_icon",
+      "target": "public_icons_svg_discord_icon",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "public/icons.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "public_icons_svg_github_icon",
+      "target": "public_icons_svg_x_icon",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "public/icons.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "public_icons_svg_documentation_icon",
+      "target": "public_icons_svg_social_icon",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "public/icons.svg",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "public_icons_svg_brand_logo_icons",
+      "label": "Solid-fill brand/social platform logo icons (bluesky, discord, github, x)",
+      "nodes": [
+        "public_icons_svg_bluesky_icon",
+        "public_icons_svg_discord_icon",
+        "public_icons_svg_github_icon",
+        "public_icons_svg_x_icon"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "public/icons.svg"
+    },
+    {
+      "id": "public_icons_svg_outline_action_icons",
+      "label": "Purple-stroke outline UI action icons (documentation, social/share)",
+      "nodes": ["public_icons_svg_documentation_icon", "public_icons_svg_social_icon"],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "public/icons.svg"
+    },
+    {
+      "id": "public_icons_svg_sprite_members",
+      "label": "All icon symbols defined within the icons.svg sprite sheet",
+      "nodes": [
+        "public_icons_svg",
+        "public_icons_svg_bluesky_icon",
+        "public_icons_svg_discord_icon",
+        "public_icons_svg_documentation_icon",
+        "public_icons_svg_github_icon",
+        "public_icons_svg_social_icon",
+        "public_icons_svg_x_icon"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/icons.svg"
+    }
+  ]
+}

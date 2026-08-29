@@ -1,0 +1,391 @@
+{
+  ".claude/commands/new-component.md": {
+    "size": 1354,
+    "mtime_ns": 1786212946482129542,
+    "indexed_at_ns": 1788015493009784000,
+    "word_count": 192,
+    "hashes": {
+      ".claude/commands/new-component.md": "10a9b2f709aa4ad7f0b69084aa423a17f4ebc33d7d93a18d99452df79ade6702"
+    }
+  },
+  ".claude/commands/new-hook.md": {
+    "size": 872,
+    "mtime_ns": 1786212946482528249,
+    "indexed_at_ns": 1788015493010565000,
+    "word_count": 126,
+    "hashes": {
+      ".claude/commands/new-hook.md": "1eb70c122ce6e0de0db50ceee5cab58c16cbda6d834ced79e0960a37c99e9acd"
+    }
+  },
+  ".claude/commands/new-page.md": {
+    "size": 2485,
+    "mtime_ns": 1786212946482997415,
+    "indexed_at_ns": 1788015493011121000,
+    "word_count": 309,
+    "hashes": {
+      ".claude/commands/new-page.md": "86572e8d35314ba22e64781a4515d342f05c094bd6e4d05e0d5cb3810b86b801"
+    }
+  },
+  ".claude/commands/new-route.md": {
+    "size": 1184,
+    "mtime_ns": 1786212946483261290,
+    "indexed_at_ns": 1788015493011680000,
+    "word_count": 175,
+    "hashes": {
+      ".claude/commands/new-route.md": "c9b0d0f85d947f9be1c284c345dcb4634fac617842a3b98462739ba75282d894"
+    }
+  },
+  ".claude/commands/new-slice.md": {
+    "size": 4098,
+    "mtime_ns": 1786212946484183830,
+    "indexed_at_ns": 1788015493011955000,
+    "word_count": 461,
+    "hashes": {
+      ".claude/commands/new-slice.md": "406613e90dfb75f1b5926b8ecde7d6fcb6104fec74d44ed3b0b173cd0d7b69ea"
+    }
+  },
+  ".prettierrc.json": {
+    "size": 106,
+    "mtime_ns": 1785595950095613506,
+    "indexed_at_ns": 1788015483881356000,
+    "word_count": 12,
+    "hashes": {
+      ".prettierrc.json": "973c02ab8456c38c6c40a9bfa970771faf5f56669e706614f439902bcf7efaf4"
+    }
+  },
+  "CLAUDE.md": {
+    "size": 7465,
+    "mtime_ns": 1786212946484646121,
+    "indexed_at_ns": 1788015493012295000,
+    "word_count": 872,
+    "hashes": { "claude.md": "bcad94776fe76819caf8538dfcc526786d9202fbf27e7d14bbcdb4322e450388" }
+  },
+  "README.md": {
+    "size": 2429,
+    "mtime_ns": 1785596024048823160,
+    "indexed_at_ns": 1788015493012647000,
+    "word_count": 212,
+    "hashes": { "readme.md": "a1cd5cf3cadcbbb63ced0e1f3e96edd54f44bc5e3241a23cc1c4c98e673f28fe" }
+  },
+  "assets/dev-logo.png": {
+    "size": 105800,
+    "mtime_ns": 1786120501855561210,
+    "indexed_at_ns": 1788015493013705000,
+    "word_count": 3553,
+    "hashes": {
+      "assets/dev-logo.png": "ff498d5681e72ea0921d5b2ca15eb3cba636c98f0f624726a3121f4d4e2e0e98"
+    }
+  },
+  "config.ts": {
+    "size": 68,
+    "mtime_ns": 1785595618383107279,
+    "indexed_at_ns": 1788015463209708000,
+    "word_count": 8
+  },
+  "deploy.sh": {
+    "size": 914,
+    "mtime_ns": 1785604120497900594,
+    "indexed_at_ns": 1788015483881844000,
+    "word_count": 103,
+    "hashes": { "deploy.sh": "dec6b7683a2567d162eb5f34cb0f0a84bdeb1136d3794eff28a488f380d686e6" }
+  },
+  "deploy/bootstrap.sh": {
+    "size": 1778,
+    "mtime_ns": 1785604120498328391,
+    "indexed_at_ns": 1788015483882127000,
+    "word_count": 208,
+    "hashes": {
+      "deploy/bootstrap.sh": "fde605b05397faf73452c425a52a2fc7782bfc89d3029c3768851ffea7dfb907"
+    }
+  },
+  "docker-compose.prod.yml": {
+    "size": 215,
+    "mtime_ns": 1785604120498685978,
+    "indexed_at_ns": 1788015493013009000,
+    "word_count": 16,
+    "hashes": {
+      "docker-compose.prod.yml": "22aa5ca20793ca4fb4c2c246794e165b614f8178952059ee9143365f996f499e"
+    }
+  },
+  "eslint.config.js": {
+    "size": 685,
+    "mtime_ns": 1785596023984044218,
+    "indexed_at_ns": 1788015463211249000,
+    "word_count": 53
+  },
+  "index.html": {
+    "size": 667,
+    "mtime_ns": 1786120501865837120,
+    "indexed_at_ns": 1788015493013359000,
+    "word_count": 43,
+    "hashes": { "index.html": "d181cbdf5031021cf4fa673f71c54399485ae3b310fb9931f3a8538c8c35f837" }
+  },
+  "package.json": {
+    "size": 1800,
+    "mtime_ns": 1786212946486198077,
+    "indexed_at_ns": 1788015483882395000,
+    "word_count": 143,
+    "hashes": { "package.json": "871492b7ca3976622a99ba986d7a262d3ab35e7ef041afdf0b88602f487a1547" }
+  },
+  "postcss.config.cjs": {
+    "size": 375,
+    "mtime_ns": 1785595512157498131,
+    "indexed_at_ns": 1788015463212200000,
+    "word_count": 27
+  },
+  "public/favicon.svg": {
+    "size": 9522,
+    "mtime_ns": 1785595175644724472,
+    "indexed_at_ns": 1788015493014401000,
+    "word_count": 491,
+    "hashes": {
+      "public/favicon.svg": "892990fa5e09648dab3c25af3670bec40a7f09601c3c5096959840060ebeac14"
+    }
+  },
+  "public/icons.svg": {
+    "size": 5031,
+    "mtime_ns": 1785595175645093528,
+    "indexed_at_ns": 1788015493014893000,
+    "word_count": 382,
+    "hashes": {
+      "public/icons.svg": "b387c02c6b89e00e196358fb912991ac7b576fc46ba7808f4d330de9659c8f91"
+    }
+  },
+  "src/App.tsx": {
+    "size": 162,
+    "mtime_ns": 1787405565129595340,
+    "indexed_at_ns": 1788015463213210000,
+    "word_count": 24
+  },
+  "src/components/AppShell.tsx": {
+    "size": 4352,
+    "mtime_ns": 1787405527840732013,
+    "indexed_at_ns": 1788015463213425000,
+    "word_count": 225
+  },
+  "src/components/ForgotPasswordForm.tsx": {
+    "size": 1463,
+    "mtime_ns": 1786989959633873889,
+    "indexed_at_ns": 1788015463213654000,
+    "word_count": 154
+  },
+  "src/components/Loader.tsx": {
+    "size": 389,
+    "mtime_ns": 1786989959634126890,
+    "indexed_at_ns": 1788015463213871000,
+    "word_count": 48
+  },
+  "src/components/LoginForm.tsx": {
+    "size": 1974,
+    "mtime_ns": 1787324970938092075,
+    "indexed_at_ns": 1788015463214088000,
+    "word_count": 190
+  },
+  "src/components/OtpForm.tsx": {
+    "size": 1894,
+    "mtime_ns": 1787328125650221473,
+    "indexed_at_ns": 1788015463214311000,
+    "word_count": 188
+  },
+  "src/components/ResetPasswordForm.tsx": {
+    "size": 1667,
+    "mtime_ns": 1786989959634919352,
+    "indexed_at_ns": 1788015463214535000,
+    "word_count": 161
+  },
+  "src/components/ThemeToggle.tsx": {
+    "size": 1082,
+    "mtime_ns": 1787323099894234636,
+    "indexed_at_ns": 1788015463214759000,
+    "word_count": 100
+  },
+  "src/components/UserForm.tsx": {
+    "size": 2991,
+    "mtime_ns": 1787405489426432495,
+    "indexed_at_ns": 1788015463214981000,
+    "word_count": 301
+  },
+  "src/hooks/notifyConfig.tsx": {
+    "size": 688,
+    "mtime_ns": 1787327185320701356,
+    "indexed_at_ns": 1788015463215212000,
+    "word_count": 92
+  },
+  "src/hooks/toNotify.tsx": {
+    "size": 422,
+    "mtime_ns": 1787327211318025533,
+    "indexed_at_ns": 1788015463215449000,
+    "word_count": 51
+  },
+  "src/interceptors/axiosInterceptor.ts": {
+    "size": 1418,
+    "mtime_ns": 1786989959635521230,
+    "indexed_at_ns": 1788015463215797000,
+    "word_count": 136
+  },
+  "src/layouts/AppLayout.tsx": {
+    "size": 110,
+    "mtime_ns": 1786989959635857356,
+    "indexed_at_ns": 1788015463216014000,
+    "word_count": 17
+  },
+  "src/layouts/AuthSplitLayout.tsx": {
+    "size": 1128,
+    "mtime_ns": 1787323134375904835,
+    "indexed_at_ns": 1788015463216224000,
+    "word_count": 100
+  },
+  "src/main.tsx": {
+    "size": 1576,
+    "mtime_ns": 1787409057907178857,
+    "indexed_at_ns": 1788015463216410000,
+    "word_count": 185
+  },
+  "src/pages/DashboardPage.tsx": {
+    "size": 405,
+    "mtime_ns": 1786989959636981736,
+    "indexed_at_ns": 1788015463216632000,
+    "word_count": 46
+  },
+  "src/pages/ForgotPasswordPage.tsx": {
+    "size": 1048,
+    "mtime_ns": 1786989959637385780,
+    "indexed_at_ns": 1788015463216845000,
+    "word_count": 110
+  },
+  "src/pages/LoginPage.tsx": {
+    "size": 1047,
+    "mtime_ns": 1786989959637757698,
+    "indexed_at_ns": 1788015463217055000,
+    "word_count": 122
+  },
+  "src/pages/ResetPasswordPage.tsx": {
+    "size": 1485,
+    "mtime_ns": 1786989959637939032,
+    "indexed_at_ns": 1788015463217260000,
+    "word_count": 155
+  },
+  "src/pages/VerifyOtpPage.tsx": {
+    "size": 2196,
+    "mtime_ns": 1787328447990612856,
+    "indexed_at_ns": 1788015463217465000,
+    "word_count": 231
+  },
+  "src/pages/users/AddEditUser.tsx": {
+    "size": 2712,
+    "mtime_ns": 1787405507716338232,
+    "indexed_at_ns": 1788015463217708000,
+    "word_count": 272
+  },
+  "src/pages/users/index.tsx": {
+    "size": 5085,
+    "mtime_ns": 1787410689393977635,
+    "indexed_at_ns": 1788015463217957000,
+    "word_count": 426
+  },
+  "src/routes.tsx": {
+    "size": 1618,
+    "mtime_ns": 1787410753611902941,
+    "indexed_at_ns": 1788015463218322000,
+    "word_count": 168
+  },
+  "src/store/authSlice/authSlice.ts": {
+    "size": 5222,
+    "mtime_ns": 1787410447318446913,
+    "indexed_at_ns": 1788015463218576000,
+    "word_count": 565
+  },
+  "src/store/hooks.ts": {
+    "size": 252,
+    "mtime_ns": 1786989959638790703,
+    "indexed_at_ns": 1788015463218810000,
+    "word_count": 25
+  },
+  "src/store/store.ts": {
+    "size": 377,
+    "mtime_ns": 1787405387364496648,
+    "indexed_at_ns": 1788015463219024000,
+    "word_count": 39
+  },
+  "src/store/userSlice/userSlice.ts": {
+    "size": 3922,
+    "mtime_ns": 1787410429362309778,
+    "indexed_at_ns": 1788015463219275000,
+    "word_count": 461
+  },
+  "src/theme.ts": {
+    "size": 638,
+    "mtime_ns": 1786212946488031365,
+    "indexed_at_ns": 1788015463219485000,
+    "word_count": 76
+  },
+  "src/utils/apiBaseUrl.ts": {
+    "size": 70,
+    "mtime_ns": 1786989959639189746,
+    "indexed_at_ns": 1788015463219698000,
+    "word_count": 5
+  },
+  "src/utils/authChecker.ts": {
+    "size": 930,
+    "mtime_ns": 1787381148155150561,
+    "indexed_at_ns": 1788015463219908000,
+    "word_count": 111
+  },
+  "src/utils/authStorage.ts": {
+    "size": 1182,
+    "mtime_ns": 1787324911087834300,
+    "indexed_at_ns": 1788015463220126000,
+    "word_count": 105
+  },
+  "src/utils/getErrorMessage.ts": {
+    "size": 359,
+    "mtime_ns": 1786989959639496372,
+    "indexed_at_ns": 1788015463220347000,
+    "word_count": 48
+  },
+  "src/vite-env.d.ts": {
+    "size": 157,
+    "mtime_ns": 1785596024098969670,
+    "indexed_at_ns": 1788015463220538000,
+    "word_count": 18
+  },
+  "tsconfig.app.json": {
+    "size": 726,
+    "mtime_ns": 1786120501878716643,
+    "indexed_at_ns": 1788015483882562000,
+    "word_count": 58,
+    "hashes": {
+      "tsconfig.app.json": "b30c55f03a42d474f8ab7e85191c3acd942801c076f5e234abb4d5e857f6f227"
+    }
+  },
+  "tsconfig.json": {
+    "size": 107,
+    "mtime_ns": 1785596024102548194,
+    "indexed_at_ns": 1788015483882688000,
+    "word_count": 13,
+    "hashes": {
+      "tsconfig.json": "1df8de670dd1febedc2554ced3c9a2b5215fc68cad16d4b8dc2b7b64943a7f17"
+    }
+  },
+  "tsconfig.node.json": {
+    "size": 558,
+    "mtime_ns": 1785595175649240356,
+    "indexed_at_ns": 1788015483882812000,
+    "word_count": 42,
+    "hashes": {
+      "tsconfig.node.json": "5c4a87b32fbd925b900618d7cbc102f79687f34227dcea507fc8adf1019b5239"
+    }
+  },
+  "utils/client-log.util.ts": {
+    "size": 576,
+    "mtime_ns": 1785596471246137552,
+    "indexed_at_ns": 1788015463221329000,
+    "word_count": 52
+  },
+  "vite.config.ts": {
+    "size": 1274,
+    "mtime_ns": 1786212946488646948,
+    "indexed_at_ns": 1788015463221613000,
+    "word_count": 141
+  }
+}
