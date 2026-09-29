@@ -55,8 +55,8 @@
   },
   "CLAUDE.md": {
     "size": 7482,
-    "mtime_ns": 1790701185877403256,
-    "indexed_at_ns": 1790704268599800000,
+    "mtime_ns": 1790704296313217314,
+    "indexed_at_ns": 1790706434913083000,
     "word_count": 863
   },
   "README.md": {
@@ -120,10 +120,9 @@
   },
   "package.json": {
     "size": 1857,
-    "mtime_ns": 1790703167224980856,
-    "indexed_at_ns": 1790704268683359000,
-    "word_count": 147,
-    "hashes": { "package.json": "567752e9441f8dd9465bcdfe9ba624b20da3a5f2e7cbc879de9d773a2a9cbbc1" }
+    "mtime_ns": 1790704296314708337,
+    "indexed_at_ns": 1790706434916160000,
+    "word_count": 147
   },
   "postcss.config.cjs": {
     "size": 375,
@@ -141,15 +140,15 @@
     }
   },
   "src/App.tsx": {
-    "size": 162,
-    "mtime_ns": 1790700698381796782,
-    "indexed_at_ns": 1790704268626561000,
-    "word_count": 24
+    "size": 283,
+    "mtime_ns": 1790705945370528296,
+    "indexed_at_ns": 1790706434916859000,
+    "word_count": 34
   },
   "src/components/AppShell.tsx": {
     "size": 4002,
-    "mtime_ns": 1790702892537356436,
-    "indexed_at_ns": 1790704268626899000,
+    "mtime_ns": 1790704296315410139,
+    "indexed_at_ns": 1790706434917096000,
     "word_count": 318
   },
   "src/components/ForgotPasswordForm.tsx": {
@@ -214,20 +213,20 @@
   },
   "src/layouts/AuthSplitLayout.tsx": {
     "size": 1029,
-    "mtime_ns": 1790700810683618339,
-    "indexed_at_ns": 1790704268630671000,
+    "mtime_ns": 1790704296316640242,
+    "indexed_at_ns": 1790706434920418000,
     "word_count": 91
   },
   "src/main.tsx": {
     "size": 1612,
-    "mtime_ns": 1790703180891651507,
-    "indexed_at_ns": 1790704268630970000,
+    "mtime_ns": 1790704296316990497,
+    "indexed_at_ns": 1790706434920635000,
     "word_count": 187
   },
   "src/pages/DashboardPage.tsx": {
     "size": 373,
-    "mtime_ns": 1790702677509782536,
-    "indexed_at_ns": 1790704268631264000,
+    "mtime_ns": 1790704296317482796,
+    "indexed_at_ns": 1790706434920887000,
     "word_count": 41
   },
   "src/pages/ForgotPasswordPage.tsx": {
@@ -256,14 +255,14 @@
   },
   "src/routes.tsx": {
     "size": 1829,
-    "mtime_ns": 1790704195233381657,
-    "indexed_at_ns": 1790704268634295000,
+    "mtime_ns": 1790704296319627996,
+    "indexed_at_ns": 1790706434923241000,
     "word_count": 194
   },
   "src/store/authSlice/authSlice.ts": {
     "size": 5678,
-    "mtime_ns": 1790704267949143638,
-    "indexed_at_ns": 1790704268634626000,
+    "mtime_ns": 1790704296320019502,
+    "indexed_at_ns": 1790706434923513000,
     "word_count": 612
   },
   "src/store/hooks.ts": {
@@ -274,14 +273,14 @@
   },
   "src/store/store.ts": {
     "size": 299,
-    "mtime_ns": 1790700689259797467,
-    "indexed_at_ns": 1790704268635153000,
+    "mtime_ns": 1790704296320388550,
+    "indexed_at_ns": 1790706434923977000,
     "word_count": 33
   },
   "src/theme.ts": {
     "size": 719,
-    "mtime_ns": 1790704267954280051,
-    "indexed_at_ns": 1790704268635392000,
+    "mtime_ns": 1790704296320760305,
+    "indexed_at_ns": 1790706434924184000,
     "word_count": 87
   },
   "src/utils/apiBaseUrl.ts": {
@@ -292,8 +291,8 @@
   },
   "src/utils/authChecker.ts": {
     "size": 932,
-    "mtime_ns": 1790701179527038526,
-    "indexed_at_ns": 1790704268635890000,
+    "mtime_ns": 1790704296321098602,
+    "indexed_at_ns": 1790706434924636000,
     "word_count": 111
   },
   "src/utils/authStorage.ts": {
@@ -355,21 +354,15 @@
   },
   ".husky/post-checkout": {
     "size": 10981,
-    "mtime_ns": 1790692379182109555,
-    "indexed_at_ns": 1790704268682852000,
-    "word_count": 1319,
-    "hashes": {
-      ".husky/post-checkout": "4cdfda20b5cf8f0610b7b4db262149a67c5fd4746c327dfe556ace3aa642541f"
-    }
+    "mtime_ns": 1790704296312381634,
+    "indexed_at_ns": 1790706434911243000,
+    "word_count": 1319
   },
   ".husky/post-commit": {
     "size": 11184,
-    "mtime_ns": 1790692379181885889,
-    "indexed_at_ns": 1790704268683208000,
-    "word_count": 1335,
-    "hashes": {
-      ".husky/post-commit": "85b67340f58e911395973f80bd7b8cba0d710de127b4a1cc77d6f331cdf2d6c1"
-    }
+    "mtime_ns": 1790704296312775640,
+    "indexed_at_ns": 1790706434911598000,
+    "word_count": 1335
   },
   "assets/company-logo.jpg": {
     "size": 472530,
@@ -391,44 +384,50 @@
   },
   "src/components/FilterBar.tsx": {
     "size": 8721,
-    "mtime_ns": 1790704267894399742,
-    "indexed_at_ns": 1790704268627199000,
+    "mtime_ns": 1790704296316047732,
+    "indexed_at_ns": 1790706434917711000,
     "word_count": 760
   },
   "src/components/PageHeader.tsx": {
     "size": 504,
-    "mtime_ns": 1790702769592843648,
-    "indexed_at_ns": 1790704268628620000,
+    "mtime_ns": 1790704296316320862,
+    "indexed_at_ns": 1790706434918776000,
     "word_count": 59
   },
   "src/pages/customers/index.tsx": {
     "size": 1160,
-    "mtime_ns": 1790704003678460415,
-    "indexed_at_ns": 1790704268632630000,
+    "mtime_ns": 1790704296317885511,
+    "indexed_at_ns": 1790706434921961000,
     "word_count": 149
   },
   "src/pages/orders/index.tsx": {
     "size": 763,
-    "mtime_ns": 1790704153568577240,
-    "indexed_at_ns": 1790704268632930000,
+    "mtime_ns": 1790704296318302309,
+    "indexed_at_ns": 1790706434922236000,
     "word_count": 91
   },
   "src/pages/products/index.tsx": {
     "size": 717,
-    "mtime_ns": 1790704149904925969,
-    "indexed_at_ns": 1790704268633234000,
+    "mtime_ns": 1790704296318769316,
+    "indexed_at_ns": 1790706434922504000,
     "word_count": 85
   },
   "src/pages/sales/index.tsx": {
     "size": 747,
-    "mtime_ns": 1790704157165808776,
-    "indexed_at_ns": 1790704268633531000,
+    "mtime_ns": 1790704296319049446,
+    "indexed_at_ns": 1790706434922769000,
     "word_count": 91
   },
   "src/pages/suppliers/index.tsx": {
     "size": 721,
-    "mtime_ns": 1790704146224332852,
-    "indexed_at_ns": 1790704268633932000,
+    "mtime_ns": 1790704296319307908,
+    "indexed_at_ns": 1790706434923033000,
     "word_count": 85
+  },
+  "src/components/DesktopOnlyGate.tsx": {
+    "size": 1211,
+    "mtime_ns": 1790706005870278771,
+    "indexed_at_ns": 1790706434917467000,
+    "word_count": 137
   }
 }

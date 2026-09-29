@@ -2,18 +2,18 @@
 
 ## Corpus Check
 
-- 57 files · ~62,778 words
+- 58 files · ~62,925 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
 
-- 329 nodes · 303 edges · 47 communities (26 shown, 21 thin omitted)
+- 332 nodes · 305 edges · 48 communities (26 shown, 22 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 7 edges (avg confidence: 0.79)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
 
-- Built from commit: `d06afaa0`
+- Built from commit: `d14c7cc2`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -59,6 +59,7 @@
 - products/index.tsx
 - sales/index.tsx
 - suppliers/index.tsx
+- DesktopOnlyGate.tsx
 
 ## God Nodes (most connected - your core abstractions)
 
@@ -69,22 +70,22 @@
 5. `icons.svg (Icon Sprite Sheet)` - 6 edges
 6. `FilterBar()` - 4 edges
 7. `Two-tier API layer (axiosInstance vs raw axios)` - 4 edges
-8. `lint-staged` - 3 edges
-9. `*.{ts,tsx}` - 3 edges
-10. `AppShell()` - 3 edges
+8. `App()` - 3 edges
+9. `logClientUp()` - 3 edges
+10. `AuthLoaderChecker()` - 3 edges
 
 ## Surprising Connections (you probably didn't know these)
 
 - `/new-slice slash command` --semantically_similar_to--> `Presentational form components convention` [INFERRED] [semantically similar]
   .claude/commands/new-slice.md → CLAUDE.md
-- `/new-slice slash command` --references--> `authSlice` [EXTRACTED]
-  .claude/commands/new-slice.md → src/store/authSlice/authSlice.ts
-- `/new-slice slash command` --references--> `store` [EXTRACTED]
-  .claude/commands/new-slice.md → src/store/store.ts
 - `/new-slice slash command` --references--> `ForgotPasswordPage()` [EXTRACTED]
   .claude/commands/new-slice.md → src/pages/ForgotPasswordPage.tsx
 - `/new-slice slash command` --references--> `LoginPage()` [EXTRACTED]
   .claude/commands/new-slice.md → src/pages/LoginPage.tsx
+- `/new-slice slash command` --references--> `getErrorMessage()` [EXTRACTED]
+  .claude/commands/new-slice.md → src/utils/getErrorMessage.ts
+- `/new-slice slash command` --references--> `authSlice` [EXTRACTED]
+  .claude/commands/new-slice.md → src/store/authSlice/authSlice.ts
 
 ## Import Cycles
 
@@ -99,7 +100,7 @@
 - **Solid-fill brand/social platform logo icons (bluesky, discord, github, x)** — public_icons_svg_bluesky_icon, public_icons_svg_discord_icon, public_icons_svg_github_icon, public_icons_svg_x_icon [INFERRED 0.85]
 - **Feature-scaffolding slash command workflow** — claude_commands_new_component_command, claude_commands_new_hook_command, claude_commands_new_page_command, claude_commands_new_route_command, claude_commands_new_slice_command [INFERRED 0.85]
 
-## Communities (47 total, 21 thin omitted)
+## Communities (48 total, 22 thin omitted)
 
 ### Community 0 - "devDependencies"
 
@@ -198,22 +199,22 @@ Nodes (3): post-checkout script, GRAPHIFY_REBUILD_LOG, PYTHONHASHSEED
 
 ## Knowledge Gaps
 
-- **151 isolated node(s):** `name`, `private`, `version`, `type`, `node` (+146 more)
+- **152 isolated node(s):** `Props`, `RetryableRequestConfig`, `Admin`, `AuthState`, `AppDispatch` (+147 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **21 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **22 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `devDependencies` connect `devDependencies` to `package.json`?**
-  _High betweenness centrality (0.064) - this node is a cross-community bridge._
+  _High betweenness centrality (0.063) - this node is a cross-community bridge._
 - **Why does `dependencies` connect `dependencies` to `package.json`?**
-  _High betweenness centrality (0.049) - this node is a cross-community bridge._
+  _High betweenness centrality (0.048) - this node is a cross-community bridge._
 - **Why does `/new-slice slash command` connect `authSlice.ts` to `/new-component slash command`?**
   _High betweenness centrality (0.014) - this node is a cross-community bridge._
-- **What connects `name`, `private`, `version` to the rest of the system?**
-  _151 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **What connects `Props`, `RetryableRequestConfig`, `Admin` to the rest of the system?**
+  _152 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `devDependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.0425531914893617 - nodes in this community are weakly interconnected._
 - **Should `authSlice.ts` be split into smaller, more focused modules?**
