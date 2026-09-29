@@ -21,7 +21,7 @@ Node **>=22** is required (see `engines` in package.json) — the installed Vite
 
 Single admin app with a two-zone split: logged-out (`/login`, `/forgot-password`) and protected (`/app/*`, currently just `/app/dashboard`). Following the reference pattern, there is **one auth-loader on the parent route only** — `AuthLoaderChecker` (`src/utils/authChecker.ts`) on `/app`, checking `store.getState().auth.user` — not on every child route. `/login` has the inverse loader (`redirectIfAuthenticated`) that bounces an already-signed-in user to `/app/dashboard`.
 
-Known limitation: the access token is memory-only (see below), and there's no "current user" endpoint in the Auth API to re-hydrate `state.auth.user` from just the refresh token. So a hard page reload on `/app/*` currently drops the session and redirects to `/login`, even though a valid refresh token still sits in `localStorage`. Revisit this once a session/"me" endpoint exists.
+The access token is memory-only (see below). On a hard page reload / fresh tab, `AuthLoaderChecker`/`redirectIfAuthenticated` (`src/utils/authChecker.ts`) restore the session from the stored refresh token by calling `tokenRefresh()` then `getCurrentAdmin()` (`GET /auth/admin/me`) to re-hydrate `state.auth.user`. If either call fails, the session is dropped and the user is redirected to `/login`.
 
 ### Routing (`src/routes.tsx`)
 

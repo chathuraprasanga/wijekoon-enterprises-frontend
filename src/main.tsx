@@ -9,6 +9,7 @@ import { Notifications } from '@mantine/notifications';
 // ties against Mantine's component styles by source order.
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
+import '@mantine/dates/styles.css';
 import './index.css';
 // mantine-datatable's CSS lives in the `mantine-datatable` cascade layer, whose
 // priority is fixed by that layer name's first appearance in the whole document —

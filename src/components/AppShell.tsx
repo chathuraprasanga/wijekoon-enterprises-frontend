@@ -11,16 +11,29 @@ import {
   Text,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconChevronRight, IconLayoutDashboard, IconLogout, IconUsers } from '@tabler/icons-react';
+import {
+  IconChevronRight,
+  IconLayoutDashboard,
+  IconLogout,
+  IconUsers,
+  IconTruckDelivery,
+  IconBox,
+  IconShoppingCart,
+  IconChartBar,
+} from '@tabler/icons-react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { logOut } from '@/store/authSlice/authSlice';
+import { logOut, logoutAdmin } from '@/store/authSlice/authSlice';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import companyLogo from '../../assets/company-logo.png';
 
 const NAV_ITEMS = [
   { label: 'Dashboard', path: '/app/dashboard', icon: IconLayoutDashboard },
-  { label: 'Users', path: '/app/users', icon: IconUsers },
+  { label: 'Customers', path: '/app/customers', icon: IconUsers },
+  { label: 'Sales', path: '/app/sales', icon: IconChartBar },
+  { label: 'Suppliers', path: '/app/suppliers', icon: IconTruckDelivery },
+  { label: 'Products', path: '/app/products', icon: IconBox },
+  { label: 'Orders', path: '/app/orders', icon: IconShoppingCart },
 ];
 
 export const AppShell = () => {
@@ -30,9 +43,13 @@ export const AppShell = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
 
-  const handleLogout = () => {
-    dispatch(logOut());
-    navigate('/login', { replace: true });
+  const handleLogout = async () => {
+    try {
+      await dispatch(logoutAdmin()).unwrap();
+    } finally {
+      dispatch(logOut());
+      navigate('/login', { replace: true });
+    }
   };
 
   return (
@@ -85,7 +102,7 @@ export const AppShell = () => {
           </Group>
         </Group>
       </MantineAppShell.Header>
-      <MantineAppShell.Navbar p="md">
+      <MantineAppShell.Navbar p="sm">
         <Stack gap={4} style={{ flex: 1 }}>
           {NAV_ITEMS.map((item) => (
             <NavLink

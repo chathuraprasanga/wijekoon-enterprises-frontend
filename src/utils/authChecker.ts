@@ -1,6 +1,6 @@
 import { redirect } from 'react-router-dom';
 import { store } from '@/store/store';
-import { getCurrentUser, logOut, tokenRefresh } from '@/store/authSlice/authSlice';
+import { getCurrentAdmin, logOut, tokenRefresh } from '@/store/authSlice/authSlice';
 
 const tryRehydrateSession = async () => {
   const { refreshToken } = store.getState().auth;
@@ -9,7 +9,7 @@ const tryRehydrateSession = async () => {
   }
   try {
     await store.dispatch(tokenRefresh()).unwrap();
-    await store.dispatch(getCurrentUser()).unwrap();
+    await store.dispatch(getCurrentAdmin()).unwrap();
     return true;
   } catch {
     store.dispatch(logOut());

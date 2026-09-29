@@ -7,7 +7,11 @@ import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
 import VerifyOtpPage from '@/pages/VerifyOtpPage';
 import ResetPasswordPage from '@/pages/ResetPasswordPage';
 import DashboardPage from '@/pages/DashboardPage';
-import UsersPage from '@/pages/users';
+import CustomersPage from '@/pages/customers';
+import SuppliersPage from '@/pages/suppliers';
+import ProductsPage from '@/pages/products';
+import OrdersPage from '@/pages/orders';
+import SalesPage from '@/pages/sales';
 import { Loader } from '@/components/Loader';
 
 export const router = createBrowserRouter([
@@ -30,7 +34,11 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="dashboard" replace /> },
       { path: 'dashboard', element: <DashboardPage /> },
-      { path: 'users', element: <UsersPage /> },
+      { path: 'customers', element: <CustomersPage /> },
+      { path: 'suppliers', element: <SuppliersPage /> },
+      { path: 'products', element: <ProductsPage /> },
+      { path: 'orders', element: <OrdersPage /> },
+      { path: 'sales', element: <SalesPage /> },
     ],
   },
   { path: '*', element: <Navigate to="/login" replace /> },

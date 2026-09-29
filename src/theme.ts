@@ -1,4 +1,4 @@
-import { createTheme, Modal } from '@mantine/core';
+import { createTheme } from '@mantine/core';
 
 const theme = createTheme({
   colors: {
@@ -21,13 +21,6 @@ const theme = createTheme({
   primaryColor: 'brand',
   primaryShade: { light: 5, dark: 5 },
   defaultRadius: 'md',
-  components: {
-    Modal: Modal.extend({
-      styles: {
-        title: { fontSize: 'var(--mantine-font-size-xl)', fontWeight: 700 },
-      },
-    }),
-  },
 });
 
 export default theme;
