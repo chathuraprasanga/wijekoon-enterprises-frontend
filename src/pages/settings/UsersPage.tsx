@@ -18,19 +18,15 @@ import { IconEdit, IconEye, IconPlus, IconTrash } from '@tabler/icons-react';
 import { PageHeader } from '@/components/PageHeader';
 import { Loader } from '@/components/Loader';
 import { FilterBar, type FilterFieldConfig } from '@/components/FilterBar';
-import { AddEditCustomerModal } from '@/pages/customers/AddEditCustomerModal';
+import { AddEditUserModal } from '@/pages/settings/AddEditUserModal';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import {
-  type Customer,
-  deleteCustomer,
-  fetchCustomers,
-  updateCustomer,
-} from '@/store/customerSlice/customerSlice';
+import { type User, deleteUser, fetchUsers, updateUser } from '@/store/userSlice/userSlice';
+import { fetchRoles } from '@/store/roleSlice/roleSlice';
 import { toNotify } from '@/hooks/toNotify';
 import { datePreview } from '@/utils/datePreview';
 
-const FILTER_FIELDS: FilterFieldConfig[] = [
-  { type: 'search', key: 'q', placeholder: 'Search customers' },
+const STATIC_FILTER_FIELDS: FilterFieldConfig[] = [
+  { type: 'search', key: 'q', placeholder: 'Search users' },
   {
     type: 'select',
     key: 'status',
@@ -43,30 +39,46 @@ const FILTER_FIELDS: FilterFieldConfig[] = [
   },
 ];
 
-const CustomersPage = () => {
+const UsersPage = () => {
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
-  const { items, limit, total } = useAppSelector((state) => state.customer);
+  const { items, limit, total } = useAppSelector((state) => state.user);
+  const roles = useAppSelector((state) => state.role.items);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [toDelete, setToDelete] = useState<Customer | null>(null);
+  const [toDelete, setToDelete] = useState<User | null>(null);
   const [deleting, setDeleting] = useState(false);
-  const [formTarget, setFormTarget] = useState<Customer | null>();
+  const [formTarget, setFormTarget] = useState<User | null>();
   const [formOpen, setFormOpen] = useState(false);
-  const [viewTarget, setViewTarget] = useState<Customer | null>(null);
+  const [viewTarget, setViewTarget] = useState<User | null>(null);
   const [togglingId, setTogglingId] = useState<string | null>(null);
-  const [sortStatus, setSortStatus] = useState<DataTableSortStatus<Customer>>({
+  const [sortStatus, setSortStatus] = useState<DataTableSortStatus<User>>({
     columnAccessor: 'name',
     direction: 'asc',
   });
 
   const searchText = searchParams.get('q') ?? undefined;
   const status = searchParams.get('status') ?? undefined;
+  const role = searchParams.get('role') ?? undefined;
   const sortBy =
     sortStatus.columnAccessor === 'name' ? 'firstName' : (sortStatus.columnAccessor as string);
   const sortType = sortStatus.direction;
 
-  const filterKey = `${searchText ?? ''}|${status ?? ''}|${sortBy}|${sortType}`;
+  const filterFields: FilterFieldConfig[] = [
+    ...STATIC_FILTER_FIELDS,
+    {
+      type: 'multiSelect',
+      key: 'role',
+      label: 'Role',
+      placeholder: 'Any role',
+      options: roles.map((r) => ({ value: r._id, label: r.name })),
+    },
+  ];
+
+  // Reset to page 1 whenever filters or sort change. Adjusted during render
+  // (React's recommended pattern for state derived from props) rather than
+  // in an effect, which would otherwise cause a cascading extra render.
+  const filterKey = `${searchText ?? ''}|${status ?? ''}|${role ?? ''}|${sortBy}|${sortType}`;
   const [appliedFilterKey, setAppliedFilterKey] = useState(filterKey);
   if (filterKey !== appliedFilterKey) {
     setAppliedFilterKey(filterKey);
@@ -78,41 +90,48 @@ const CustomersPage = () => {
       setLoading(true);
       try {
         await dispatch(
-          fetchCustomers({ page, limit, searchText, status, sortBy, sortType }),
+          fetchUsers({ page, limit, searchText, status, role, sortBy, sortType }),
         ).unwrap();
       } catch (error) {
-        toNotify('Failed to load customers', error as string, 'ERROR');
+        toNotify('Failed to load users', error as string, 'ERROR');
       } finally {
         setLoading(false);
       }
     };
     load();
-  }, [dispatch, page, limit, searchText, status, sortBy, sortType]);
+  }, [dispatch, page, limit, searchText, status, role, sortBy, sortType]);
 
-  const handleToggleActive = async (customer: Customer) => {
-    setTogglingId(customer._id);
+  useEffect(() => {
+    dispatch(fetchRoles({ page: 1, limit: 100 }));
+  }, [dispatch]);
+
+  const roleName = (roleId: string) => roles.find((role) => role._id === roleId)?.name ?? roleId;
+
+  const handleToggleActive = async (user: User) => {
+    setTogglingId(user._id);
     try {
       const updated = await dispatch(
-        updateCustomer({
-          _id: customer._id,
-          firstName: customer.firstName,
-          lastName: customer.lastName,
-          email: customer.email,
-          phone: customer.phone,
-          address: customer.address,
-          isActive: !customer.isActive,
+        updateUser({
+          _id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          phone: user.phone,
+          address: user.address,
+          roles: user.roles,
+          isActive: !user.isActive,
         }),
       ).unwrap();
       toNotify(
         'Updated',
-        `Customer ${customer.isActive ? 'deactivated' : 'activated'} successfully`,
+        `User ${user.isActive ? 'deactivated' : 'activated'} successfully`,
         'SUCCESS',
       );
       setViewTarget((prev) =>
-        prev && prev._id === customer._id ? { ...prev, isActive: updated.isActive } : prev,
+        prev && prev._id === user._id ? { ...prev, isActive: updated.isActive } : prev,
       );
     } catch (error) {
-      toNotify('Failed to update customer', error as string, 'ERROR');
+      toNotify('Failed to update user', error as string, 'ERROR');
     } finally {
       setTogglingId(null);
     }
@@ -122,11 +141,11 @@ const CustomersPage = () => {
     if (!toDelete) return;
     setDeleting(true);
     try {
-      await dispatch(deleteCustomer(toDelete._id)).unwrap();
-      toNotify('Deleted', 'Customer deleted successfully', 'SUCCESS');
+      await dispatch(deleteUser(toDelete._id)).unwrap();
+      toNotify('Deleted', 'User deleted successfully', 'SUCCESS');
       setToDelete(null);
     } catch (error) {
-      toNotify('Failed to delete customer', error as string, 'ERROR');
+      toNotify('Failed to delete user', error as string, 'ERROR');
     } finally {
       setDeleting(false);
     }
@@ -137,23 +156,23 @@ const CustomersPage = () => {
     setFormOpen(true);
   };
 
-  const openEdit = (customer: Customer) => {
-    setFormTarget(customer);
+  const openEdit = (user: User) => {
+    setFormTarget(user);
     setFormOpen(true);
   };
 
   return (
     <Stack gap="md">
       <PageHeader
-        title="Customers"
-        description="Manage your customer records."
+        title="Users"
+        description="Manage your team members."
         action={
           <Button leftSection={<IconPlus size={16} />} onClick={openAdd}>
-            Add customer
+            Add user
           </Button>
         }
       />
-      <FilterBar fields={FILTER_FIELDS} />
+      <FilterBar fields={filterFields} />
       <DataTable
         withTableBorder
         borderRadius="md"
@@ -161,7 +180,7 @@ const CustomersPage = () => {
         records={items}
         fetching={loading}
         customLoader={<Loader h="100%" />}
-        noRecordsText="No customers found"
+        noRecordsText="No users found"
         page={page}
         onPageChange={setPage}
         totalRecords={total}
@@ -174,27 +193,31 @@ const CustomersPage = () => {
             accessor: 'name',
             title: 'Name',
             sortable: true,
-            render: (customer) => `${customer.firstName} ${customer.lastName ?? ''}`.trim(),
+            width: 180,
+            render: (user) => `${user.firstName} ${user.lastName ?? ''}`.trim(),
           },
-          { accessor: 'phone', title: 'Phone' },
+          { accessor: 'phone', title: 'Phone', width: 130 },
           {
             accessor: 'email',
             title: 'Email',
             sortable: true,
-            render: (customer) => customer.email ?? '-',
+            width: 200,
+            render: (user) => user.email ?? '-',
           },
           {
             accessor: 'address',
             title: 'Address',
             sortable: true,
-            render: (customer) => customer.address ?? '-',
+            width: 200,
+            render: (user) => user.address ?? '-',
           },
           {
             accessor: 'isActive',
             title: 'Status',
-            render: (customer) => (
-              <Badge color={customer.isActive ? 'green' : 'gray'} variant="light">
-                {customer.isActive ? 'Active' : 'Inactive'}
+            width: 110,
+            render: (user) => (
+              <Badge color={user.isActive ? 'green' : 'gray'} variant="light">
+                {user.isActive ? 'Active' : 'Inactive'}
               </Badge>
             ),
           },
@@ -202,20 +225,21 @@ const CustomersPage = () => {
             accessor: 'actions',
             title: 'Actions',
             textAlign: 'right',
-            render: (customer) => (
+            width: 130,
+            render: (user) => (
               <Group gap="xs" justify="flex-end" wrap="nowrap">
                 <Tooltip label="View">
-                  <ActionIcon variant="subtle" onClick={() => setViewTarget(customer)}>
+                  <ActionIcon variant="subtle" onClick={() => setViewTarget(user)}>
                     <IconEye size={16} />
                   </ActionIcon>
                 </Tooltip>
                 <Tooltip label="Edit">
-                  <ActionIcon variant="subtle" onClick={() => openEdit(customer)}>
+                  <ActionIcon variant="subtle" onClick={() => openEdit(user)}>
                     <IconEdit size={16} />
                   </ActionIcon>
                 </Tooltip>
                 <Tooltip label="Delete">
-                  <ActionIcon variant="subtle" color="red" onClick={() => setToDelete(customer)}>
+                  <ActionIcon variant="subtle" color="red" onClick={() => setToDelete(user)}>
                     <IconTrash size={16} />
                   </ActionIcon>
                 </Tooltip>
@@ -224,15 +248,15 @@ const CustomersPage = () => {
           },
         ]}
       />
-      <AddEditCustomerModal
+      <AddEditUserModal
         opened={formOpen}
-        customer={formTarget ?? null}
+        user={formTarget ?? null}
         onClose={() => setFormOpen(false)}
       />
       <Drawer
         opened={!!viewTarget}
         onClose={() => setViewTarget(null)}
-        title="Customer details"
+        title="User details"
         position="right"
       >
         {viewTarget && (
@@ -266,7 +290,7 @@ const CustomersPage = () => {
                 <Text size="sm" c="dimmed">
                   Email
                 </Text>
-                <Text size="sm">{viewTarget.email ?? '-'}</Text>
+                <Text size="sm">{viewTarget.email}</Text>
               </Group>
               <Group justify="space-between" wrap="nowrap">
                 <Text size="sm" c="dimmed">
@@ -282,6 +306,23 @@ const CustomersPage = () => {
                   {viewTarget.address ?? '-'}
                 </Text>
               </Group>
+            </Stack>
+            <Divider />
+            <Stack gap="xs">
+              <Text size="sm" c="dimmed">
+                Roles
+              </Text>
+              {viewTarget.roles.length ? (
+                <Group gap="xs">
+                  {viewTarget.roles.map((roleId) => (
+                    <Badge key={roleId} variant="light">
+                      {roleName(roleId)}
+                    </Badge>
+                  ))}
+                </Group>
+              ) : (
+                <Text size="sm">-</Text>
+              )}
             </Stack>
             <Divider />
             <Stack gap="xs">
@@ -301,7 +342,7 @@ const CustomersPage = () => {
           </Stack>
         )}
       </Drawer>
-      <Modal opened={!!toDelete} onClose={() => setToDelete(null)} title="Delete customer" centered>
+      <Modal opened={!!toDelete} onClose={() => setToDelete(null)} title="Delete user" centered>
         <Stack gap="md">
           <Text size="sm">
             Are you sure you want to delete{' '}
@@ -324,4 +365,4 @@ const CustomersPage = () => {
   );
 };
 
-export default CustomersPage;
+export default UsersPage;

@@ -20,6 +20,7 @@ import {
   IconBox,
   IconShoppingCart,
   IconChartBar,
+  IconSettings,
 } from '@tabler/icons-react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -35,6 +36,8 @@ const NAV_ITEMS = [
   { label: 'Products', path: '/app/products', icon: IconBox },
   { label: 'Orders', path: '/app/orders', icon: IconShoppingCart },
 ];
+
+const SETTINGS_ITEM = { label: 'Settings', path: '/app/settings', icon: IconSettings };
 
 export const AppShell = () => {
   const [opened, { toggle }] = useDisclosure();
@@ -63,7 +66,7 @@ export const AppShell = () => {
           <Group>
             <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
             <Image src={companyLogo} h={32} w={32} fit="contain" />
-            <Text fw={700}>Wijekoon Enterprises</Text>
+            <Text fw={550}>Wijekoon Enterprises</Text>
           </Group>
           <Group gap="xl">
             <ThemeToggle />
@@ -71,7 +74,7 @@ export const AppShell = () => {
               <Menu shadow="md" width={200} position="bottom-end">
                 <Menu.Target>
                   <Group gap="md" style={{ cursor: 'pointer' }}>
-                    <Avatar size="md" radius="xl" color="gray">
+                    <Avatar src={user.avatar} size="md" radius="xl" color="gray">
                       {`${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`.toUpperCase()}
                     </Avatar>
                     <Group>
@@ -115,6 +118,13 @@ export const AppShell = () => {
             />
           ))}
         </Stack>
+        <NavLink
+          component={Link}
+          to={SETTINGS_ITEM.path}
+          label={SETTINGS_ITEM.label}
+          leftSection={<SETTINGS_ITEM.icon size={18} />}
+          active={location.pathname.startsWith(SETTINGS_ITEM.path)}
+        />
       </MantineAppShell.Navbar>
       <MantineAppShell.Main>
         <Outlet />

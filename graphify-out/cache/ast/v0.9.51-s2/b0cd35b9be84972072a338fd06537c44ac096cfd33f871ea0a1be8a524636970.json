@@ -1,0 +1,136 @@
+{
+  "nodes": [
+    {
+      "id": "$graphify-root$_claude_skills_build_admin_panel_skill_md",
+      "label": "SKILL.md",
+      "file_type": "document",
+      "node_kind": "page",
+      "source_file": ".claude/skills/build-admin-panel/SKILL.md",
+      "source_location": "L1",
+      "frontmatter": { "name": "build-admin-panel", "description": "&gt;-" }
+    },
+    {
+      "id": "$graphify-root$_claude_skills_build_admin_panel_skill_phase_1_research_the_target_app_first",
+      "label": "Phase 1: Research the target app first",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": ".claude/skills/build-admin-panel/SKILL.md",
+      "source_location": "L25"
+    },
+    {
+      "id": "$graphify-root$_claude_skills_build_admin_panel_skill_phase_2_surface_scope_decisions_before_building",
+      "label": "Phase 2: Surface scope decisions before building",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": ".claude/skills/build-admin-panel/SKILL.md",
+      "source_location": "L53"
+    },
+    {
+      "id": "$graphify-root$_claude_skills_build_admin_panel_skill_phase_3_design_the_plan",
+      "label": "Phase 3: Design the plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": ".claude/skills/build-admin-panel/SKILL.md",
+      "source_location": "L80"
+    },
+    {
+      "id": "$graphify-root$_claude_skills_build_admin_panel_skill_phase_4_build_phase_by_phase",
+      "label": "Phase 4: Build phase by phase",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": ".claude/skills/build-admin-panel/SKILL.md",
+      "source_location": "L106"
+    },
+    {
+      "id": "$graphify-root$_claude_skills_build_admin_panel_skill_phase_5_verify_for_real_not_just_it_compiles",
+      "label": "Phase 5: Verify for real, not just \"it compiles\"",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": ".claude/skills/build-admin-panel/SKILL.md",
+      "source_location": "L116"
+    },
+    {
+      "id": "$graphify-root$_claude_skills_build_admin_panel_skill_phase_6_deploy_if_asked",
+      "label": "Phase 6: Deploy, if asked",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": ".claude/skills/build-admin-panel/SKILL.md",
+      "source_location": "L137"
+    },
+    {
+      "id": "$graphify-root$_claude_skills_build_admin_panel_skill_reference_files",
+      "label": "Reference files",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": ".claude/skills/build-admin-panel/SKILL.md",
+      "source_location": "L156"
+    }
+  ],
+  "edges": [
+    {
+      "source": "$graphify-root$_claude_skills_build_admin_panel_skill_md",
+      "target": "$graphify-root$_claude_skills_build_admin_panel_skill_phase_1_research_the_target_app_first",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/build-admin-panel/SKILL.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_claude_skills_build_admin_panel_skill_md",
+      "target": "$graphify-root$_claude_skills_build_admin_panel_skill_phase_2_surface_scope_decisions_before_building",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/build-admin-panel/SKILL.md",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_claude_skills_build_admin_panel_skill_md",
+      "target": "$graphify-root$_claude_skills_build_admin_panel_skill_phase_3_design_the_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/build-admin-panel/SKILL.md",
+      "source_location": "L80",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_claude_skills_build_admin_panel_skill_md",
+      "target": "$graphify-root$_claude_skills_build_admin_panel_skill_phase_4_build_phase_by_phase",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/build-admin-panel/SKILL.md",
+      "source_location": "L106",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_claude_skills_build_admin_panel_skill_md",
+      "target": "$graphify-root$_claude_skills_build_admin_panel_skill_phase_5_verify_for_real_not_just_it_compiles",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/build-admin-panel/SKILL.md",
+      "source_location": "L116",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_claude_skills_build_admin_panel_skill_md",
+      "target": "$graphify-root$_claude_skills_build_admin_panel_skill_phase_6_deploy_if_asked",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/build-admin-panel/SKILL.md",
+      "source_location": "L137",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_claude_skills_build_admin_panel_skill_md",
+      "target": "$graphify-root$_claude_skills_build_admin_panel_skill_reference_files",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/build-admin-panel/SKILL.md",
+      "source_location": "L156",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -7,3 +7,30 @@
 body {
   margin: 0;
 }
+
+.notify-bar {
+  position: relative;
+  overflow: hidden;
+}
+
+.notify-bar::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 100%;
+  background: var(--mantine-color-dimmed);
+  background: var(--notify-bar-color, currentColor);
+  animation: notify-bar-shrink var(--notify-bar-duration, 4000ms) linear forwards;
+  transform-origin: left;
+}
+
+@keyframes notify-bar-shrink {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}

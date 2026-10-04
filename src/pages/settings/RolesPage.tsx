@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Fragment, useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   ActionIcon,
   Badge,
@@ -16,21 +16,26 @@ import {
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
 import { IconEdit, IconEye, IconPlus, IconTrash } from '@tabler/icons-react';
 import { PageHeader } from '@/components/PageHeader';
-import { Loader } from '@/components/Loader';
 import { FilterBar, type FilterFieldConfig } from '@/components/FilterBar';
-import { AddEditCustomerModal } from '@/pages/customers/AddEditCustomerModal';
+import { Loader } from '@/components/Loader';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import {
-  type Customer,
-  deleteCustomer,
-  fetchCustomers,
-  updateCustomer,
-} from '@/store/customerSlice/customerSlice';
+import { type Role, deleteRole, fetchRoles, updateRole } from '@/store/roleSlice/roleSlice';
 import { toNotify } from '@/hooks/toNotify';
+import { PERMISSION_ACTION_LABELS, formatModuleLabel } from '@/utils/permissionLabels';
 import { datePreview } from '@/utils/datePreview';
 
+const groupPermissionsByModule = (rolePermissions: Role['permissions']) => {
+  const groups: Record<string, string[]> = {};
+  rolePermissions.forEach((permission) => {
+    const [module, action] = permission.key.split(':');
+    const label = (action && PERMISSION_ACTION_LABELS[action]) ?? action ?? permission.key;
+    (groups[module ?? ''] ??= []).push(label);
+  });
+  return groups;
+};
+
 const FILTER_FIELDS: FilterFieldConfig[] = [
-  { type: 'search', key: 'q', placeholder: 'Search customers' },
+  { type: 'search', key: 'q', placeholder: 'Search roles' },
   {
     type: 'select',
     key: 'status',
@@ -43,29 +48,30 @@ const FILTER_FIELDS: FilterFieldConfig[] = [
   },
 ];
 
-const CustomersPage = () => {
+const RolesPage = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { items, limit, total } = useAppSelector((state) => state.customer);
+  const { items, limit, total } = useAppSelector((state) => state.role);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [toDelete, setToDelete] = useState<Customer | null>(null);
-  const [deleting, setDeleting] = useState(false);
-  const [formTarget, setFormTarget] = useState<Customer | null>();
-  const [formOpen, setFormOpen] = useState(false);
-  const [viewTarget, setViewTarget] = useState<Customer | null>(null);
   const [togglingId, setTogglingId] = useState<string | null>(null);
-  const [sortStatus, setSortStatus] = useState<DataTableSortStatus<Customer>>({
+  const [toDelete, setToDelete] = useState<Role | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [viewTarget, setViewTarget] = useState<Role | null>(null);
+  const [sortStatus, setSortStatus] = useState<DataTableSortStatus<Role>>({
     columnAccessor: 'name',
     direction: 'asc',
   });
 
   const searchText = searchParams.get('q') ?? undefined;
   const status = searchParams.get('status') ?? undefined;
-  const sortBy =
-    sortStatus.columnAccessor === 'name' ? 'firstName' : (sortStatus.columnAccessor as string);
+  const sortBy = sortStatus.columnAccessor as string;
   const sortType = sortStatus.direction;
 
+  // Reset to page 1 whenever filters or sort change. Adjusted during render
+  // (React's recommended pattern for state derived from props) rather than
+  // in an effect, which would otherwise cause a cascading extra render.
   const filterKey = `${searchText ?? ''}|${status ?? ''}|${sortBy}|${sortType}`;
   const [appliedFilterKey, setAppliedFilterKey] = useState(filterKey);
   if (filterKey !== appliedFilterKey) {
@@ -77,11 +83,9 @@ const CustomersPage = () => {
     const load = async () => {
       setLoading(true);
       try {
-        await dispatch(
-          fetchCustomers({ page, limit, searchText, status, sortBy, sortType }),
-        ).unwrap();
+        await dispatch(fetchRoles({ page, limit, searchText, status, sortBy, sortType })).unwrap();
       } catch (error) {
-        toNotify('Failed to load customers', error as string, 'ERROR');
+        toNotify('Failed to load roles', error as string, 'ERROR');
       } finally {
         setLoading(false);
       }
@@ -89,30 +93,27 @@ const CustomersPage = () => {
     load();
   }, [dispatch, page, limit, searchText, status, sortBy, sortType]);
 
-  const handleToggleActive = async (customer: Customer) => {
-    setTogglingId(customer._id);
+  const handleToggleActive = async (role: Role) => {
+    setTogglingId(role._id);
     try {
       const updated = await dispatch(
-        updateCustomer({
-          _id: customer._id,
-          firstName: customer.firstName,
-          lastName: customer.lastName,
-          email: customer.email,
-          phone: customer.phone,
-          address: customer.address,
-          isActive: !customer.isActive,
+        updateRole({
+          _id: role._id,
+          name: role.name,
+          permissions: role.permissions.map((permission) => permission._id),
+          isActive: !role.isActive,
         }),
       ).unwrap();
       toNotify(
         'Updated',
-        `Customer ${customer.isActive ? 'deactivated' : 'activated'} successfully`,
+        `Role ${role.isActive ? 'deactivated' : 'activated'} successfully`,
         'SUCCESS',
       );
       setViewTarget((prev) =>
-        prev && prev._id === customer._id ? { ...prev, isActive: updated.isActive } : prev,
+        prev && prev._id === role._id ? { ...prev, isActive: updated.isActive } : prev,
       );
     } catch (error) {
-      toNotify('Failed to update customer', error as string, 'ERROR');
+      toNotify('Failed to update role', error as string, 'ERROR');
     } finally {
       setTogglingId(null);
     }
@@ -122,34 +123,27 @@ const CustomersPage = () => {
     if (!toDelete) return;
     setDeleting(true);
     try {
-      await dispatch(deleteCustomer(toDelete._id)).unwrap();
-      toNotify('Deleted', 'Customer deleted successfully', 'SUCCESS');
+      await dispatch(deleteRole(toDelete._id)).unwrap();
+      toNotify('Deleted', 'Role deleted successfully', 'SUCCESS');
       setToDelete(null);
     } catch (error) {
-      toNotify('Failed to delete customer', error as string, 'ERROR');
+      toNotify('Failed to delete role', error as string, 'ERROR');
     } finally {
       setDeleting(false);
     }
   };
 
-  const openAdd = () => {
-    setFormTarget(null);
-    setFormOpen(true);
-  };
-
-  const openEdit = (customer: Customer) => {
-    setFormTarget(customer);
-    setFormOpen(true);
-  };
-
   return (
     <Stack gap="md">
       <PageHeader
-        title="Customers"
-        description="Manage your customer records."
+        title="Roles"
+        description="Manage roles and their permissions."
         action={
-          <Button leftSection={<IconPlus size={16} />} onClick={openAdd}>
-            Add customer
+          <Button
+            leftSection={<IconPlus size={16} />}
+            onClick={() => navigate('/app/settings/roles/add-edit')}
+          >
+            Add role
           </Button>
         }
       />
@@ -161,7 +155,7 @@ const CustomersPage = () => {
         records={items}
         fetching={loading}
         customLoader={<Loader h="100%" />}
-        noRecordsText="No customers found"
+        noRecordsText="No roles found"
         page={page}
         onPageChange={setPage}
         totalRecords={total}
@@ -170,31 +164,27 @@ const CustomersPage = () => {
         sortStatus={sortStatus}
         onSortStatusChange={setSortStatus}
         columns={[
+          { accessor: 'name', title: 'Name', width: 220, sortable: true },
           {
-            accessor: 'name',
-            title: 'Name',
-            sortable: true,
-            render: (customer) => `${customer.firstName} ${customer.lastName ?? ''}`.trim(),
-          },
-          { accessor: 'phone', title: 'Phone' },
-          {
-            accessor: 'email',
-            title: 'Email',
-            sortable: true,
-            render: (customer) => customer.email ?? '-',
-          },
-          {
-            accessor: 'address',
-            title: 'Address',
-            sortable: true,
-            render: (customer) => customer.address ?? '-',
+            accessor: 'permissions',
+            title: 'Permissions',
+            width: 220,
+            render: (role) => {
+              const count = role.permissions.length;
+              return (
+                <Text size="sm" c={count ? undefined : 'dimmed'}>
+                  {count} Permission{count === 1 ? '' : 's'}
+                </Text>
+              );
+            },
           },
           {
             accessor: 'isActive',
             title: 'Status',
-            render: (customer) => (
-              <Badge color={customer.isActive ? 'green' : 'gray'} variant="light">
-                {customer.isActive ? 'Active' : 'Inactive'}
+            width: 110,
+            render: (role) => (
+              <Badge color={role.isActive ? 'green' : 'gray'} variant="light">
+                {role.isActive ? 'Active' : 'Inactive'}
               </Badge>
             ),
           },
@@ -202,20 +192,24 @@ const CustomersPage = () => {
             accessor: 'actions',
             title: 'Actions',
             textAlign: 'right',
-            render: (customer) => (
+            width: 130,
+            render: (role) => (
               <Group gap="xs" justify="flex-end" wrap="nowrap">
                 <Tooltip label="View">
-                  <ActionIcon variant="subtle" onClick={() => setViewTarget(customer)}>
+                  <ActionIcon variant="subtle" onClick={() => setViewTarget(role)}>
                     <IconEye size={16} />
                   </ActionIcon>
                 </Tooltip>
                 <Tooltip label="Edit">
-                  <ActionIcon variant="subtle" onClick={() => openEdit(customer)}>
+                  <ActionIcon
+                    variant="subtle"
+                    onClick={() => navigate(`/app/settings/roles/add-edit/${role._id}`)}
+                  >
                     <IconEdit size={16} />
                   </ActionIcon>
                 </Tooltip>
                 <Tooltip label="Delete">
-                  <ActionIcon variant="subtle" color="red" onClick={() => setToDelete(customer)}>
+                  <ActionIcon variant="subtle" color="red" onClick={() => setToDelete(role)}>
                     <IconTrash size={16} />
                   </ActionIcon>
                 </Tooltip>
@@ -224,21 +218,16 @@ const CustomersPage = () => {
           },
         ]}
       />
-      <AddEditCustomerModal
-        opened={formOpen}
-        customer={formTarget ?? null}
-        onClose={() => setFormOpen(false)}
-      />
       <Drawer
         opened={!!viewTarget}
         onClose={() => setViewTarget(null)}
-        title="Customer details"
+        title="Role details"
         position="right"
       >
         {viewTarget && (
           <Stack gap="md">
             <Text fw={600} size="lg">
-              {viewTarget.firstName} {viewTarget.lastName ?? ''}
+              {viewTarget.name}
             </Text>
             <Group justify="space-between" wrap="nowrap">
               <Text size="sm" c="dimmed">
@@ -262,26 +251,28 @@ const CustomersPage = () => {
             </Group>
             <Divider />
             <Stack gap="xs">
-              <Group justify="space-between" wrap="nowrap">
-                <Text size="sm" c="dimmed">
-                  Email
-                </Text>
-                <Text size="sm">{viewTarget.email ?? '-'}</Text>
-              </Group>
-              <Group justify="space-between" wrap="nowrap">
-                <Text size="sm" c="dimmed">
-                  Phone
-                </Text>
-                <Text size="sm">{viewTarget.phone}</Text>
-              </Group>
-              <Group justify="space-between" wrap="nowrap" align="flex-start">
-                <Text size="sm" c="dimmed">
-                  Address
-                </Text>
-                <Text size="sm" ta="right">
-                  {viewTarget.address ?? '-'}
-                </Text>
-              </Group>
+              <Text size="sm" c="dimmed">
+                Permissions
+              </Text>
+              {viewTarget.permissions.length ? (
+                Object.entries(groupPermissionsByModule(viewTarget.permissions)).map(
+                  ([module, actions], index) => (
+                    <Fragment key={module}>
+                      {index > 0 && <Divider />}
+                      <Group justify="space-between" wrap="nowrap" align="flex-start">
+                        <Text size="sm" fw={600}>
+                          {formatModuleLabel(module)}
+                        </Text>
+                        <Text size="sm" c="dimmed" ta="right">
+                          {actions.join(', ')}
+                        </Text>
+                      </Group>
+                    </Fragment>
+                  ),
+                )
+              ) : (
+                <Text size="sm">-</Text>
+              )}
             </Stack>
             <Divider />
             <Stack gap="xs">
@@ -301,14 +292,11 @@ const CustomersPage = () => {
           </Stack>
         )}
       </Drawer>
-      <Modal opened={!!toDelete} onClose={() => setToDelete(null)} title="Delete customer" centered>
+      <Modal opened={!!toDelete} onClose={() => setToDelete(null)} title="Delete role" centered>
         <Stack gap="md">
           <Text size="sm">
-            Are you sure you want to delete{' '}
-            <strong>
-              {toDelete?.firstName} {toDelete?.lastName ?? ''}
-            </strong>
-            ? This cannot be undone.
+            Are you sure you want to delete <strong>{toDelete?.name}</strong>? This cannot be
+            undone.
           </Text>
           <Group justify="flex-end">
             <Button variant="default" onClick={() => setToDelete(null)}>
@@ -324,4 +312,4 @@ const CustomersPage = () => {
   );
 };
 
-export default CustomersPage;
+export default RolesPage;

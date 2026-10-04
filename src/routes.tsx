@@ -12,6 +12,11 @@ import SuppliersPage from '@/pages/suppliers';
 import ProductsPage from '@/pages/products';
 import OrdersPage from '@/pages/orders';
 import SalesPage from '@/pages/sales';
+import { SettingsLayout } from '@/layouts/SettingsLayout';
+import ProfilePage from '@/pages/settings/ProfilePage';
+import UsersPage from '@/pages/settings/UsersPage';
+import RolesPage from '@/pages/settings/RolesPage';
+import AddEditRolePage from '@/pages/settings/AddEditRolePage';
 import { Loader } from '@/components/Loader';
 
 export const router = createBrowserRouter([
@@ -39,6 +44,18 @@ export const router = createBrowserRouter([
       { path: 'products', element: <ProductsPage /> },
       { path: 'orders', element: <OrdersPage /> },
       { path: 'sales', element: <SalesPage /> },
+      {
+        path: 'settings',
+        element: <SettingsLayout />,
+        children: [
+          { index: true, element: <Navigate to="profile" replace /> },
+          { path: 'profile', element: <ProfilePage /> },
+          { path: 'users', element: <UsersPage /> },
+          { path: 'roles', element: <RolesPage /> },
+          { path: 'roles/add-edit', element: <AddEditRolePage /> },
+          { path: 'roles/add-edit/:id', element: <AddEditRolePage /> },
+        ],
+      },
     ],
   },
   { path: '*', element: <Navigate to="/login" replace /> },

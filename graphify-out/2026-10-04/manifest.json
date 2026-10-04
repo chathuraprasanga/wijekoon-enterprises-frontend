@@ -30,8 +30,8 @@
     "semantic_hash": "256d79359a27b55f287ccbd833f14a8f"
   },
   "package.json": {
-    "mtime": 1790703167.2249808,
-    "seen": 1790704268.972907,
+    "mtime": 1790704296.3147082,
+    "seen": 1790706435.103755,
     "ast_hash": "0fc4286de6147ce7d2cd6d56a638ef61",
     "semantic_hash": ""
   },
@@ -42,14 +42,14 @@
     "semantic_hash": "5cc2c31a896667acadfeb96fcfe8ede9"
   },
   "src/App.tsx": {
-    "mtime": 1790700698.3817968,
-    "seen": 1790704268.972908,
-    "ast_hash": "b41b096efe5dfe7163aad797fc099757",
-    "semantic_hash": "b41b096efe5dfe7163aad797fc099757"
+    "mtime": 1790706664.7359931,
+    "seen": 1790706686.998595,
+    "ast_hash": "269600b9f28c9626bd94aa465ad98b22",
+    "semantic_hash": ""
   },
   "src/components/AppShell.tsx": {
-    "mtime": 1790702892.5373564,
-    "seen": 1790704268.972909,
+    "mtime": 1790704296.3154101,
+    "seen": 1790706435.103758,
     "ast_hash": "3616c904eb3132078c78f84d21511a4d",
     "semantic_hash": ""
   },
@@ -114,20 +114,20 @@
     "semantic_hash": "5081b66b052c677e1fef0d4873aacb57"
   },
   "src/layouts/AuthSplitLayout.tsx": {
-    "mtime": 1790700810.6836183,
-    "seen": 1790704268.9729211,
+    "mtime": 1790704296.3166401,
+    "seen": 1790706435.103772,
     "ast_hash": "f925bd8684febc7969b3fc9790ab7e87",
     "semantic_hash": ""
   },
   "src/main.tsx": {
-    "mtime": 1790703180.8916514,
-    "seen": 1790704268.972922,
+    "mtime": 1790704296.3169906,
+    "seen": 1790706435.1037729,
     "ast_hash": "aa57a61cad71a3cd9fcd55b414839d20",
     "semantic_hash": ""
   },
   "src/pages/DashboardPage.tsx": {
-    "mtime": 1790702677.5097826,
-    "seen": 1790704268.9729228,
+    "mtime": 1790704296.3174827,
+    "seen": 1790706435.103774,
     "ast_hash": "7294e3dbf17095dcc14fa5fe00bfd54f",
     "semantic_hash": ""
   },
@@ -156,14 +156,14 @@
     "semantic_hash": "ab99cc08412944ea8d02b99c428aeb62"
   },
   "src/routes.tsx": {
-    "mtime": 1790704195.2333817,
-    "seen": 1790704268.97293,
+    "mtime": 1790704296.319628,
+    "seen": 1790706435.103783,
     "ast_hash": "c1570a531292369ae5b9c772365030b8",
     "semantic_hash": ""
   },
   "src/store/authSlice/authSlice.ts": {
-    "mtime": 1790704267.9491436,
-    "seen": 1790704268.9729311,
+    "mtime": 1790704296.3200195,
+    "seen": 1790706435.103783,
     "ast_hash": "df90b1ab8d5372875fa8c5ef4f8472b8",
     "semantic_hash": ""
   },
@@ -174,14 +174,14 @@
     "semantic_hash": "3e45d3e434aff26066324aebc7f04047"
   },
   "src/store/store.ts": {
-    "mtime": 1790700689.2597976,
-    "seen": 1790704268.972933,
+    "mtime": 1790704296.3203886,
+    "seen": 1790706435.103785,
     "ast_hash": "46dca480cac0b4abef8968a825b0075d",
     "semantic_hash": ""
   },
   "src/theme.ts": {
-    "mtime": 1790704267.9542801,
-    "seen": 1790704268.9729338,
+    "mtime": 1790704296.3207603,
+    "seen": 1790706435.103786,
     "ast_hash": "b5e88aeb2cc4312afc247d391f13ae00",
     "semantic_hash": ""
   },
@@ -192,8 +192,8 @@
     "semantic_hash": "3454eb3bd809e297812e5ec11bc077bd"
   },
   "src/utils/authChecker.ts": {
-    "mtime": 1790701179.5270386,
-    "seen": 1790704268.972935,
+    "mtime": 1790704296.3210986,
+    "seen": 1790706435.1037881,
     "ast_hash": "d31834e05c831d98ef1292e5ccde6c89",
     "semantic_hash": ""
   },
@@ -276,8 +276,8 @@
     "semantic_hash": "3f3840a77749173f30cb66e128227f68"
   },
   "CLAUDE.md": {
-    "mtime": 1790701185.8774033,
-    "seen": 1790704268.972948,
+    "mtime": 1790704296.3132174,
+    "seen": 1790706435.103801,
     "ast_hash": "995f1d4c902a5894c438b70cc6fe5fa0",
     "semantic_hash": ""
   },
@@ -312,56 +312,56 @@
     "semantic_hash": "3b4fcfcf393eca4d264dca4a4663bc37"
   },
   ".husky/post-checkout": {
-    "mtime": 1790692379.1821096,
-    "seen": 1790704268.972894,
+    "mtime": 1790704296.3123817,
+    "seen": 1790706435.103744,
     "ast_hash": "d81901b83080273958935cb7e6bec57c",
     "semantic_hash": ""
   },
   ".husky/post-commit": {
-    "mtime": 1790692379.181886,
-    "seen": 1790704268.972897,
+    "mtime": 1790704296.3127756,
+    "seen": 1790706435.1037471,
     "ast_hash": "fc24f3bfe4c7df113fff57c326beb2b2",
     "semantic_hash": ""
   },
   "src/components/FilterBar.tsx": {
-    "mtime": 1790704267.8943996,
-    "seen": 1790704268.9729102,
+    "mtime": 1790704296.3160477,
+    "seen": 1790706435.1037598,
     "ast_hash": "0158e2616935963d3ed2da0e4369735c",
     "semantic_hash": ""
   },
   "src/components/PageHeader.tsx": {
-    "mtime": 1790702769.5928435,
-    "seen": 1790704268.972915,
+    "mtime": 1790704296.316321,
+    "seen": 1790706435.103766,
     "ast_hash": "3899dc22ca54b48eb876a16c03395553",
     "semantic_hash": ""
   },
   "src/pages/customers/index.tsx": {
-    "mtime": 1790704003.6784604,
-    "seen": 1790704268.972926,
+    "mtime": 1790704296.3178854,
+    "seen": 1790706435.103779,
     "ast_hash": "3ce1539946e45100b48aa7fccaa49645",
     "semantic_hash": ""
   },
   "src/pages/orders/index.tsx": {
-    "mtime": 1790704153.5685773,
-    "seen": 1790704268.972927,
+    "mtime": 1790704296.3183024,
+    "seen": 1790706435.10378,
     "ast_hash": "8b6d68c8db8b70496b05b8d28633bce0",
     "semantic_hash": ""
   },
   "src/pages/products/index.tsx": {
-    "mtime": 1790704149.904926,
-    "seen": 1790704268.972928,
+    "mtime": 1790704296.3187692,
+    "seen": 1790706435.10378,
     "ast_hash": "a7ab68e178e1051773b8bc77e31bca22",
     "semantic_hash": ""
   },
   "src/pages/sales/index.tsx": {
-    "mtime": 1790704157.1658087,
-    "seen": 1790704268.972929,
+    "mtime": 1790704296.3190494,
+    "seen": 1790706435.1037812,
     "ast_hash": "bdca0d8766a8cc15ca86f4911a2e94ee",
     "semantic_hash": ""
   },
   "src/pages/suppliers/index.tsx": {
-    "mtime": 1790704146.2243328,
-    "seen": 1790704268.972929,
+    "mtime": 1790704296.3193078,
+    "seen": 1790706435.103782,
     "ast_hash": "3ade691cc2a5365615c8a81efeecd6e3",
     "semantic_hash": ""
   },
@@ -381,6 +381,12 @@
     "mtime": 1788028284.0425367,
     "seen": 1790704268.972955,
     "ast_hash": "775f30cb125f15520e9b945eda666fee",
+    "semantic_hash": ""
+  },
+  "src/components/DesktopOnlyGate.tsx": {
+    "mtime": 1790706664.736416,
+    "seen": 1790706686.9985979,
+    "ast_hash": "14f36ccd4adc03ea99568f61bfafc6cd",
     "semantic_hash": ""
   }
 }

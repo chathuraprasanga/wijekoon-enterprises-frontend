@@ -45,5 +45,6 @@
   "43": "orders/index.tsx",
   "44": "products/index.tsx",
   "45": "sales/index.tsx",
-  "46": "suppliers/index.tsx"
+  "46": "suppliers/index.tsx",
+  "47": "DesktopOnlyGate.tsx"
 }

@@ -1,0 +1,101 @@
+{
+  "nodes": [
+    {
+      "id": "$graphify-root$_claude_skills_build_admin_panel_references_build_and_verify_md",
+      "label": "build-and-verify.md",
+      "file_type": "document",
+      "node_kind": "page",
+      "source_file": ".claude/skills/build-admin-panel/references/build-and-verify.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "$graphify-root$_claude_skills_build_admin_panel_references_build_and_verify_build_pattern_gotchas_and_verification_playbook",
+      "label": "Build pattern, gotchas, and verification playbook",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": ".claude/skills/build-admin-panel/references/build-and-verify.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "$graphify-root$_claude_skills_build_admin_panel_references_build_and_verify_backend_admin_module_skeleton",
+      "label": "Backend admin-module skeleton",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": ".claude/skills/build-admin-panel/references/build-and-verify.md",
+      "source_location": "L3"
+    },
+    {
+      "id": "$graphify-root$_claude_skills_build_admin_panel_references_build_and_verify_frontend_skeleton",
+      "label": "Frontend skeleton",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": ".claude/skills/build-admin-panel/references/build-and-verify.md",
+      "source_location": "L39"
+    },
+    {
+      "id": "$graphify-root$_claude_skills_build_admin_panel_references_build_and_verify_gotchas",
+      "label": "Gotchas",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": ".claude/skills/build-admin-panel/references/build-and-verify.md",
+      "source_location": "L54"
+    },
+    {
+      "id": "$graphify-root$_claude_skills_build_admin_panel_references_build_and_verify_verification_playbook",
+      "label": "Verification playbook",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": ".claude/skills/build-admin-panel/references/build-and-verify.md",
+      "source_location": "L103"
+    }
+  ],
+  "edges": [
+    {
+      "source": "$graphify-root$_claude_skills_build_admin_panel_references_build_and_verify_md",
+      "target": "$graphify-root$_claude_skills_build_admin_panel_references_build_and_verify_build_pattern_gotchas_and_verification_playbook",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/build-admin-panel/references/build-and-verify.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_claude_skills_build_admin_panel_references_build_and_verify_build_pattern_gotchas_and_verification_playbook",
+      "target": "$graphify-root$_claude_skills_build_admin_panel_references_build_and_verify_backend_admin_module_skeleton",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/build-admin-panel/references/build-and-verify.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_claude_skills_build_admin_panel_references_build_and_verify_build_pattern_gotchas_and_verification_playbook",
+      "target": "$graphify-root$_claude_skills_build_admin_panel_references_build_and_verify_frontend_skeleton",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/build-admin-panel/references/build-and-verify.md",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_claude_skills_build_admin_panel_references_build_and_verify_build_pattern_gotchas_and_verification_playbook",
+      "target": "$graphify-root$_claude_skills_build_admin_panel_references_build_and_verify_gotchas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/build-admin-panel/references/build-and-verify.md",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_claude_skills_build_admin_panel_references_build_and_verify_build_pattern_gotchas_and_verification_playbook",
+      "target": "$graphify-root$_claude_skills_build_admin_panel_references_build_and_verify_verification_playbook",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/build-admin-panel/references/build-and-verify.md",
+      "source_location": "L103",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}
