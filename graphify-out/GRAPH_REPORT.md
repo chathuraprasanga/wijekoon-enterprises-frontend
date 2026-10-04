@@ -2,18 +2,18 @@
 
 ## Corpus Check
 
-- 77 files · ~76,999 words
+- 77 files · ~77,421 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
 
-- 476 nodes · 436 edges · 67 communities (44 shown, 23 thin omitted)
+- 477 nodes · 437 edges · 67 communities (43 shown, 24 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 7 edges (avg confidence: 0.79)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
 
-- Built from commit: `464b93c8`
+- Built from commit: `8230dc31`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -49,6 +49,7 @@
 - deploy.sh
 - bootstrap.sh
 - Type-aware ESLint config recommendation
+- DashboardPage.tsx
 - PageHeader.tsx
 - routes.tsx
 - apiBaseUrl.ts
@@ -91,20 +92,20 @@
 7. `Research checklist + standard scoping questions` - 5 edges
 8. `FilterBar()` - 4 edges
 9. `Two-tier API layer (axiosInstance vs raw axios)` - 4 edges
-10. `App()` - 3 edges
+10. `AppShell()` - 3 edges
 
 ## Surprising Connections (you probably didn't know these)
 
 - `/new-slice slash command` --semantically_similar_to--> `Presentational form components convention` [INFERRED] [semantically similar]
   .claude/commands/new-slice.md → CLAUDE.md
-- `/new-slice slash command` --references--> `authSlice` [EXTRACTED]
-  .claude/commands/new-slice.md → src/store/authSlice/authSlice.ts
-- `/new-slice slash command` --references--> `store` [EXTRACTED]
-  .claude/commands/new-slice.md → src/store/store.ts
 - `/new-slice slash command` --references--> `ForgotPasswordPage()` [EXTRACTED]
   .claude/commands/new-slice.md → src/pages/ForgotPasswordPage.tsx
 - `/new-slice slash command` --references--> `LoginPage()` [EXTRACTED]
   .claude/commands/new-slice.md → src/pages/LoginPage.tsx
+- `/new-slice slash command` --references--> `getErrorMessage()` [EXTRACTED]
+  .claude/commands/new-slice.md → src/utils/getErrorMessage.ts
+- `/new-slice slash command` --references--> `authSlice` [EXTRACTED]
+  .claude/commands/new-slice.md → src/store/authSlice/authSlice.ts
 
 ## Import Cycles
 
@@ -119,7 +120,7 @@
 - **Solid-fill brand/social platform logo icons (bluesky, discord, github, x)** — public_icons_svg_bluesky_icon, public_icons_svg_discord_icon, public_icons_svg_github_icon, public_icons_svg_x_icon [INFERRED 0.85]
 - **Feature-scaffolding slash command workflow** — claude_commands_new_component_command, claude_commands_new_hook_command, claude_commands_new_page_command, claude_commands_new_route_command, claude_commands_new_slice_command [INFERRED 0.85]
 
-## Communities (67 total, 23 thin omitted)
+## Communities (67 total, 24 thin omitted)
 
 ### Community 0 - "devDependencies"
 
@@ -308,9 +309,9 @@ Nodes (3): datePreview(), formatTime(), isSameDay()
 
 ## Knowledge Gaps
 
-- **252 isolated node(s):** `Phase 1: Research the target app first`, `Phase 2: Surface scope decisions before building`, `Phase 3: Design the plan`, `Phase 4: Build phase by phase`, `Phase 5: Verify for real, not just "it compiles"` (+247 more)
+- **253 isolated node(s):** `NAV_ITEMS`, `SETTINGS_ITEM`, `STAT_CARDS`, `FILTER_FIELDS`, `AVATAR_SEEDS` (+248 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **23 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **24 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 
@@ -322,8 +323,8 @@ _Questions this graph is uniquely positioned to answer:_
   _High betweenness centrality (0.023) - this node is a cross-community bridge._
 - **Why does `/new-slice slash command` connect `authSlice.ts` to `/new-component slash command`?**
   _High betweenness centrality (0.007) - this node is a cross-community bridge._
-- **What connects `Phase 1: Research the target app first`, `Phase 2: Surface scope decisions before building`, `Phase 3: Design the plan` to the rest of the system?**
-  _252 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **What connects `NAV_ITEMS`, `SETTINGS_ITEM`, `STAT_CARDS` to the rest of the system?**
+  _253 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `devDependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.0425531914893617 - nodes in this community are weakly interconnected._
 - **Should `authSlice.ts` be split into smaller, more focused modules?**
