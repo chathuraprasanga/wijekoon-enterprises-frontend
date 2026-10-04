@@ -1,0 +1,101 @@
+{
+  "nodes": [
+    {
+      "id": "$graphify-root$_claude_skills_build_admin_panel_references_research_and_scope_md",
+      "label": "research-and-scope.md",
+      "file_type": "document",
+      "node_kind": "page",
+      "source_file": ".claude/skills/build-admin-panel/references/research-and-scope.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "$graphify-root$_claude_skills_build_admin_panel_references_research_and_scope_research_checklist_standard_scoping_questions",
+      "label": "Research checklist + standard scoping questions",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": ".claude/skills/build-admin-panel/references/research-and-scope.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "$graphify-root$_claude_skills_build_admin_panel_references_research_and_scope_what_to_read_in_the_backend",
+      "label": "What to read in the backend",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": ".claude/skills/build-admin-panel/references/research-and-scope.md",
+      "source_location": "L3"
+    },
+    {
+      "id": "$graphify-root$_claude_skills_build_admin_panel_references_research_and_scope_what_to_read_in_the_frontend_mobile_app",
+      "label": "What to read in the frontend/mobile app",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": ".claude/skills/build-admin-panel/references/research-and-scope.md",
+      "source_location": "L52"
+    },
+    {
+      "id": "$graphify-root$_claude_skills_build_admin_panel_references_research_and_scope_finding_and_evaluating_sibling_reference_templates",
+      "label": "Finding and evaluating sibling reference templates",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": ".claude/skills/build-admin-panel/references/research-and-scope.md",
+      "source_location": "L85"
+    },
+    {
+      "id": "$graphify-root$_claude_skills_build_admin_panel_references_research_and_scope_standard_scoping_questions_to_ask_via_askuserquestion",
+      "label": "Standard scoping questions to ask (via AskUserQuestion)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": ".claude/skills/build-admin-panel/references/research-and-scope.md",
+      "source_location": "L102"
+    }
+  ],
+  "edges": [
+    {
+      "source": "$graphify-root$_claude_skills_build_admin_panel_references_research_and_scope_md",
+      "target": "$graphify-root$_claude_skills_build_admin_panel_references_research_and_scope_research_checklist_standard_scoping_questions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/build-admin-panel/references/research-and-scope.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_claude_skills_build_admin_panel_references_research_and_scope_research_checklist_standard_scoping_questions",
+      "target": "$graphify-root$_claude_skills_build_admin_panel_references_research_and_scope_what_to_read_in_the_backend",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/build-admin-panel/references/research-and-scope.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_claude_skills_build_admin_panel_references_research_and_scope_research_checklist_standard_scoping_questions",
+      "target": "$graphify-root$_claude_skills_build_admin_panel_references_research_and_scope_what_to_read_in_the_frontend_mobile_app",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/build-admin-panel/references/research-and-scope.md",
+      "source_location": "L52",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_claude_skills_build_admin_panel_references_research_and_scope_research_checklist_standard_scoping_questions",
+      "target": "$graphify-root$_claude_skills_build_admin_panel_references_research_and_scope_finding_and_evaluating_sibling_reference_templates",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/build-admin-panel/references/research-and-scope.md",
+      "source_location": "L85",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_claude_skills_build_admin_panel_references_research_and_scope_research_checklist_standard_scoping_questions",
+      "target": "$graphify-root$_claude_skills_build_admin_panel_references_research_and_scope_standard_scoping_questions_to_ask_via_askuserquestion",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/build-admin-panel/references/research-and-scope.md",
+      "source_location": "L102",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -1,19 +1,19 @@
-# Graph Report - Frontend (2026-10-04)
+# Graph Report - Frontend (2026-09-29)
 
 ## Corpus Check
 
-- 77 files · ~76,999 words
+- 58 files · ~62,925 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
 
-- 476 nodes · 436 edges · 67 communities (44 shown, 23 thin omitted)
+- 332 nodes · 305 edges · 48 communities (26 shown, 22 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 7 edges (avg confidence: 0.79)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
 
-- Built from commit: `464b93c8`
+- Built from commit: `d14c7cc2`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -59,26 +59,7 @@
 - products/index.tsx
 - sales/index.tsx
 - suppliers/index.tsx
-- roleSlice.ts
-- productSlice.ts
-- customerSlice.ts
-- supplierSlice.ts
-- userSlice.ts
-- ProfilePage.tsx
-- SKILL.md
-- Build pattern, gotchas, and verification playbook
-- Research checklist + standard scoping questions
-- AddEditCustomerModal.tsx
-- AddEditProductModal.tsx
-- AddEditUserModal.tsx
-- AddEditSupplierModal.tsx
-- permissionSlice.ts
-- permissionLabels.ts
-- AddEditRolePage.tsx
-- RolesPage.tsx
-- datePreview.ts
-- SettingsLayout.tsx
-- UsersPage.tsx
+- DesktopOnlyGate.tsx
 
 ## God Nodes (most connected - your core abstractions)
 
@@ -87,24 +68,24 @@
 3. `scripts` - 8 edges
 4. `/new-slice slash command` - 8 edges
 5. `icons.svg (Icon Sprite Sheet)` - 6 edges
-6. `Build pattern, gotchas, and verification playbook` - 5 edges
-7. `Research checklist + standard scoping questions` - 5 edges
-8. `FilterBar()` - 4 edges
-9. `Two-tier API layer (axiosInstance vs raw axios)` - 4 edges
-10. `App()` - 3 edges
+6. `FilterBar()` - 4 edges
+7. `Two-tier API layer (axiosInstance vs raw axios)` - 4 edges
+8. `App()` - 3 edges
+9. `logClientUp()` - 3 edges
+10. `AuthLoaderChecker()` - 3 edges
 
 ## Surprising Connections (you probably didn't know these)
 
 - `/new-slice slash command` --semantically_similar_to--> `Presentational form components convention` [INFERRED] [semantically similar]
   .claude/commands/new-slice.md → CLAUDE.md
-- `/new-slice slash command` --references--> `authSlice` [EXTRACTED]
-  .claude/commands/new-slice.md → src/store/authSlice/authSlice.ts
-- `/new-slice slash command` --references--> `store` [EXTRACTED]
-  .claude/commands/new-slice.md → src/store/store.ts
 - `/new-slice slash command` --references--> `ForgotPasswordPage()` [EXTRACTED]
   .claude/commands/new-slice.md → src/pages/ForgotPasswordPage.tsx
 - `/new-slice slash command` --references--> `LoginPage()` [EXTRACTED]
   .claude/commands/new-slice.md → src/pages/LoginPage.tsx
+- `/new-slice slash command` --references--> `getErrorMessage()` [EXTRACTED]
+  .claude/commands/new-slice.md → src/utils/getErrorMessage.ts
+- `/new-slice slash command` --references--> `authSlice` [EXTRACTED]
+  .claude/commands/new-slice.md → src/store/authSlice/authSlice.ts
 
 ## Import Cycles
 
@@ -119,7 +100,7 @@
 - **Solid-fill brand/social platform logo icons (bluesky, discord, github, x)** — public_icons_svg_bluesky_icon, public_icons_svg_discord_icon, public_icons_svg_github_icon, public_icons_svg_x_icon [INFERRED 0.85]
 - **Feature-scaffolding slash command workflow** — claude_commands_new_component_command, claude_commands_new_hook_command, claude_commands_new_page_command, claude_commands_new_route_command, claude_commands_new_slice_command [INFERRED 0.85]
 
-## Communities (67 total, 23 thin omitted)
+## Communities (48 total, 22 thin omitted)
 
 ### Community 0 - "devDependencies"
 
@@ -129,7 +110,7 @@ Nodes (47): eslint, eslint-config-prettier, @eslint/js, eslint-plugin-react-hook
 ### Community 1 - "authSlice.ts"
 
 Cohesion: 0.06
-Nodes (30): Access token kept in Redux memory only, never localStorage, Two-tier API layer (axiosInstance vs raw axios), /new-page slash command, /new-route slash command, /new-slice slash command, Two-zone routing architecture (logged-out vs protected), App(), axiosInstance (+22 more)
+Nodes (28): Access token kept in Redux memory only, never localStorage, Two-tier API layer (axiosInstance vs raw axios), /new-page slash command, /new-route slash command, /new-slice slash command, Two-zone routing architecture (logged-out vs protected), App(), axiosInstance (+20 more)
 
 ### Community 2 - "dependencies"
 
@@ -168,8 +149,8 @@ Nodes (7): Centralized Mantine-only theming convention, app service (docker-comp
 
 ### Community 9 - "Folder conventions table"
 
-Cohesion: 0.29
-Nodes (6): Folder conventions table, AppShell(), NAV_ITEMS, SETTINGS_ITEM, AppLayout(), AuthLayout (tried and removed)
+Cohesion: 0.33
+Nodes (5): Folder conventions table, AppShell(), NAV_ITEMS, AppLayout(), AuthLayout (tried and removed)
 
 ### Community 10 - "icons.svg (Icon Sprite Sheet)"
 
@@ -216,117 +197,27 @@ Nodes (3): NOTIFY_VISUALS, NotifyType, NotifyVisual
 Cohesion: 0.50
 Nodes (3): post-checkout script, GRAPHIFY_REBUILD_LOG, PYTHONHASHSEED
 
-### Community 47 - "roleSlice.ts"
-
-Cohesion: 0.13
-Nodes (14): createRole, deleteRole, fetchRoleById, fetchRoles, initialState, PagedRolesParams, PagedRolesResponse, Permission (+6 more)
-
-### Community 48 - "productSlice.ts"
-
-Cohesion: 0.15
-Nodes (12): createProduct, deleteProduct, fetchProducts, initialState, PagedProductsParams, PagedProductsResponse, Product, PRODUCT_UNITS (+4 more)
-
-### Community 49 - "customerSlice.ts"
-
-Cohesion: 0.18
-Nodes (10): createCustomer, Customer, customerSlice, CustomerState, deleteCustomer, fetchCustomers, initialState, PagedCustomersParams (+2 more)
-
-### Community 50 - "supplierSlice.ts"
-
-Cohesion: 0.18
-Nodes (10): createSupplier, deleteSupplier, fetchSuppliers, initialState, PagedSuppliersParams, PagedSuppliersResponse, Supplier, supplierSlice (+2 more)
-
-### Community 51 - "userSlice.ts"
-
-Cohesion: 0.18
-Nodes (10): createUser, deleteUser, fetchUsers, initialState, PagedUsersParams, PagedUsersResponse, updateUser, User (+2 more)
-
-### Community 52 - "ProfilePage.tsx"
-
-Cohesion: 0.22
-Nodes (6): AVATAR_SEEDS, AvatarPickerModal(), avatarUrl(), ModalProps, PasswordFormValues, ProfileFormValues
-
-### Community 53 - "SKILL.md"
-
-Cohesion: 0.25
-Nodes (7): Phase 1: Research the target app first, Phase 2: Surface scope decisions before building, Phase 3: Design the plan, Phase 4: Build phase by phase, Phase 5: Verify for real, not just "it compiles", Phase 6: Deploy, if asked, Reference files
-
-### Community 54 - "Build pattern, gotchas, and verification playbook"
-
-Cohesion: 0.33
-Nodes (5): Backend admin-module skeleton, Build pattern, gotchas, and verification playbook, Frontend skeleton, Gotchas, Verification playbook
-
-### Community 55 - "Research checklist + standard scoping questions"
-
-Cohesion: 0.33
-Nodes (5): Finding and evaluating sibling reference templates, Research checklist + standard scoping questions, Standard scoping questions to ask (via AskUserQuestion), What to read in the backend, What to read in the frontend/mobile app
-
-### Community 56 - "AddEditCustomerModal.tsx"
-
-Cohesion: 0.33
-Nodes (3): CustomerFormValues, FormProps, Props
-
-### Community 57 - "AddEditProductModal.tsx"
-
-Cohesion: 0.33
-Nodes (3): FormProps, ProductFormValues, Props
-
-### Community 58 - "AddEditUserModal.tsx"
-
-Cohesion: 0.33
-Nodes (3): FormProps, Props, UserFormValues
-
-### Community 59 - "AddEditSupplierModal.tsx"
-
-Cohesion: 0.33
-Nodes (3): FormProps, Props, SupplierFormValues
-
-### Community 60 - "permissionSlice.ts"
-
-Cohesion: 0.33
-Nodes (5): fetchPermissions, initialState, Permission, permissionSlice, PermissionState
-
-### Community 61 - "permissionLabels.ts"
-
-Cohesion: 0.50
-Nodes (4): formatModuleLabel(), formatPermissionKey(), PERMISSION_ACTION_LABELS, PERMISSION_ACTION_ORDER
-
-### Community 62 - "AddEditRolePage.tsx"
-
-Cohesion: 0.67
-Nodes (3): AddEditRolePage(), findPermission(), RoleFormValues
-
-### Community 63 - "RolesPage.tsx"
-
-Cohesion: 0.67
-Nodes (3): FILTER_FIELDS, groupPermissionsByModule(), RolesPage()
-
-### Community 64 - "datePreview.ts"
-
-Cohesion: 0.83
-Nodes (3): datePreview(), formatTime(), isSameDay()
-
 ## Knowledge Gaps
 
-- **252 isolated node(s):** `Phase 1: Research the target app first`, `Phase 2: Surface scope decisions before building`, `Phase 3: Design the plan`, `Phase 4: Build phase by phase`, `Phase 5: Verify for real, not just "it compiles"` (+247 more)
+- **152 isolated node(s):** `Props`, `RetryableRequestConfig`, `Admin`, `AuthState`, `AppDispatch` (+147 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **23 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **22 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `devDependencies` connect `devDependencies` to `package.json`?**
-  _High betweenness centrality (0.031) - this node is a cross-community bridge._
+  _High betweenness centrality (0.063) - this node is a cross-community bridge._
 - **Why does `dependencies` connect `dependencies` to `package.json`?**
-  _High betweenness centrality (0.023) - this node is a cross-community bridge._
+  _High betweenness centrality (0.048) - this node is a cross-community bridge._
 - **Why does `/new-slice slash command` connect `authSlice.ts` to `/new-component slash command`?**
-  _High betweenness centrality (0.007) - this node is a cross-community bridge._
-- **What connects `Phase 1: Research the target app first`, `Phase 2: Surface scope decisions before building`, `Phase 3: Design the plan` to the rest of the system?**
-  _252 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _High betweenness centrality (0.014) - this node is a cross-community bridge._
+- **What connects `Props`, `RetryableRequestConfig`, `Admin` to the rest of the system?**
+  _152 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `devDependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.0425531914893617 - nodes in this community are weakly interconnected._
 - **Should `authSlice.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.05689900426742532 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06031746031746032 - nodes in this community are weakly interconnected._
 - **Should `dependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.06060606060606061 - nodes in this community are weakly interconnected._
