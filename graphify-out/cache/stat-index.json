@@ -121,8 +121,9 @@
   "package.json": {
     "size": 1857,
     "mtime_ns": 1790704296314708337,
-    "indexed_at_ns": 1790706434916160000,
-    "word_count": 147
+    "indexed_at_ns": 1790706686303280000,
+    "word_count": 147,
+    "hashes": { "package.json": "567752e9441f8dd9465bcdfe9ba624b20da3a5f2e7cbc879de9d773a2a9cbbc1" }
   },
   "postcss.config.cjs": {
     "size": 375,
@@ -141,8 +142,8 @@
   },
   "src/App.tsx": {
     "size": 283,
-    "mtime_ns": 1790705945370528296,
-    "indexed_at_ns": 1790706434916859000,
+    "mtime_ns": 1790706664735993105,
+    "indexed_at_ns": 1790706686204757000,
     "word_count": 34
   },
   "src/components/AppShell.tsx": {
@@ -355,14 +356,20 @@
   ".husky/post-checkout": {
     "size": 10981,
     "mtime_ns": 1790704296312381634,
-    "indexed_at_ns": 1790706434911243000,
-    "word_count": 1319
+    "indexed_at_ns": 1790706686295996000,
+    "word_count": 1319,
+    "hashes": {
+      ".husky/post-checkout": "4cdfda20b5cf8f0610b7b4db262149a67c5fd4746c327dfe556ace3aa642541f"
+    }
   },
   ".husky/post-commit": {
     "size": 11184,
     "mtime_ns": 1790704296312775640,
-    "indexed_at_ns": 1790706434911598000,
-    "word_count": 1335
+    "indexed_at_ns": 1790706686297111000,
+    "word_count": 1335,
+    "hashes": {
+      ".husky/post-commit": "85b67340f58e911395973f80bd7b8cba0d710de127b4a1cc77d6f331cdf2d6c1"
+    }
   },
   "assets/company-logo.jpg": {
     "size": 472530,
@@ -426,8 +433,8 @@
   },
   "src/components/DesktopOnlyGate.tsx": {
     "size": 1211,
-    "mtime_ns": 1790706005870278771,
-    "indexed_at_ns": 1790706434917467000,
+    "mtime_ns": 1790706664736416196,
+    "indexed_at_ns": 1790706686205432000,
     "word_count": 137
   }
 }

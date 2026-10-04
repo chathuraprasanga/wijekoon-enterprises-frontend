@@ -42,8 +42,8 @@
     "semantic_hash": "5cc2c31a896667acadfeb96fcfe8ede9"
   },
   "src/App.tsx": {
-    "mtime": 1790705945.3705282,
-    "seen": 1790706435.1037571,
+    "mtime": 1790706664.7359931,
+    "seen": 1790706686.998595,
     "ast_hash": "269600b9f28c9626bd94aa465ad98b22",
     "semantic_hash": ""
   },
@@ -384,8 +384,8 @@
     "semantic_hash": ""
   },
   "src/components/DesktopOnlyGate.tsx": {
-    "mtime": 1790706005.8702788,
-    "seen": 1790706435.103759,
+    "mtime": 1790706664.736416,
+    "seen": 1790706686.9985979,
     "ast_hash": "14f36ccd4adc03ea99568f61bfafc6cd",
     "semantic_hash": ""
   }

@@ -15,6 +15,7 @@ export type Admin = {
   lastName: string | null;
   email: string;
   phone: string;
+  avatar: string | null;
   isSuperAdmin: boolean;
   isActive: boolean;
   createdAt: string;
@@ -149,6 +150,44 @@ export const getCurrentAdmin = createAsyncThunk(
   },
 );
 
+export const updateProfile = createAsyncThunk(
+  'auth/updateProfile',
+  async (
+    payload: Pick<Admin, 'firstName' | 'lastName' | 'email' | 'phone' | 'avatar'>,
+    { getState, rejectWithValue },
+  ) => {
+    try {
+      const { auth } = getState() as { auth: AuthState };
+      const { data } = await axios.patch<Admin>(`${API_BASE_URL}/auth/admin/me`, payload, {
+        headers: { Authorization: `Bearer ${auth.accessToken}` },
+      });
+      return data;
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error));
+    }
+  },
+);
+
+export const changePassword = createAsyncThunk(
+  'auth/changePassword',
+  async (
+    payload: { currentPassword: string; newPassword: string },
+    { getState, rejectWithValue },
+  ) => {
+    try {
+      const { auth } = getState() as { auth: AuthState };
+      const { data } = await axios.post<{ message: string }>(
+        `${API_BASE_URL}/auth/admin/change-password`,
+        payload,
+        { headers: { Authorization: `Bearer ${auth.accessToken}` } },
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error));
+    }
+  },
+);
+
 export const logoutAdmin = createAsyncThunk(
   'auth/logout',
   async (_: void, { getState, rejectWithValue }) => {
@@ -190,6 +229,9 @@ const authSlice = createSlice({
       persistRefreshToken(action.payload.refreshToken, wasRefreshTokenRemembered());
     });
     builder.addCase(getCurrentAdmin.fulfilled, (state, action) => {
+      state.user = action.payload;
+    });
+    builder.addCase(updateProfile.fulfilled, (state, action) => {
       state.user = action.payload;
     });
   },
