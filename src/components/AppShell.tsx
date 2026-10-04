@@ -40,7 +40,7 @@ const NAV_ITEMS = [
 const SETTINGS_ITEM = { label: 'Settings', path: '/app/settings', icon: IconSettings };
 
 export const AppShell = () => {
-  const [opened, { toggle }] = useDisclosure();
+  const [opened, { toggle, close }] = useDisclosure();
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -62,22 +62,24 @@ export const AppShell = () => {
       padding="md"
     >
       <MantineAppShell.Header>
-        <Group h="100%" px="md" justify="space-between">
-          <Group>
+        <Group h="100%" px="md" justify="space-between" wrap="nowrap">
+          <Group wrap="nowrap" style={{ minWidth: 0 }}>
             <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-            <Image src={companyLogo} h={32} w={32} fit="contain" />
-            <Text fw={550}>Wijekoon Enterprises</Text>
+            <Image src={companyLogo} h={32} w={32} fit="contain" style={{ flexShrink: 0 }} />
+            <Text fw={550} truncate visibleFrom="xs">
+              Wijekoon Enterprises
+            </Text>
           </Group>
-          <Group gap="xl">
+          <Group gap="xl" wrap="nowrap" style={{ flexShrink: 0 }}>
             <ThemeToggle />
             {user && (
               <Menu shadow="md" width={200} position="bottom-end">
                 <Menu.Target>
-                  <Group gap="md" style={{ cursor: 'pointer' }}>
+                  <Group gap="md" wrap="nowrap" style={{ cursor: 'pointer' }}>
                     <Avatar src={user.avatar} size="md" radius="xl" color="gray">
                       {`${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`.toUpperCase()}
                     </Avatar>
-                    <Group>
+                    <Group wrap="nowrap" visibleFrom="sm">
                       <Box>
                         <Text size="sm" c="dimmed">
                           {user.firstName}
@@ -91,6 +93,15 @@ export const AppShell = () => {
                   </Group>
                 </Menu.Target>
                 <Menu.Dropdown>
+                  <Box px="sm" py={4}>
+                    <Text size="sm" fw={500} truncate>
+                      {user.firstName} {user.lastName ?? ''}
+                    </Text>
+                    <Text size="xs" c="dimmed" truncate>
+                      {user.email}
+                    </Text>
+                  </Box>
+                  <Menu.Divider />
                   <Menu.Label>Danger Zone</Menu.Label>
                   <Menu.Item
                     color="red"
@@ -115,12 +126,14 @@ export const AppShell = () => {
               label={item.label}
               leftSection={<item.icon size={18} />}
               active={location.pathname === item.path}
+              onClick={close}
             />
           ))}
         </Stack>
         <NavLink
           component={Link}
           to={SETTINGS_ITEM.path}
+          onClick={close}
           label={SETTINGS_ITEM.label}
           leftSection={<SETTINGS_ITEM.icon size={18} />}
           active={location.pathname.startsWith(SETTINGS_ITEM.path)}

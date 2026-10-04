@@ -174,24 +174,28 @@ const CustomersPage = () => {
             accessor: 'name',
             title: 'Name',
             sortable: true,
+            width: 180,
             render: (customer) => `${customer.firstName} ${customer.lastName ?? ''}`.trim(),
           },
-          { accessor: 'phone', title: 'Phone' },
+          { accessor: 'phone', title: 'Phone', width: 130 },
           {
             accessor: 'email',
             title: 'Email',
             sortable: true,
+            width: 190,
             render: (customer) => customer.email ?? '-',
           },
           {
             accessor: 'address',
             title: 'Address',
             sortable: true,
+            width: 190,
             render: (customer) => customer.address ?? '-',
           },
           {
             accessor: 'isActive',
             title: 'Status',
+            width: 110,
             render: (customer) => (
               <Badge color={customer.isActive ? 'green' : 'gray'} variant="light">
                 {customer.isActive ? 'Active' : 'Inactive'}
@@ -202,6 +206,7 @@ const CustomersPage = () => {
             accessor: 'actions',
             title: 'Actions',
             textAlign: 'right',
+            width: 130,
             render: (customer) => (
               <Group gap="xs" justify="flex-end" wrap="nowrap">
                 <Tooltip label="View">
