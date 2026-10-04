@@ -608,7 +608,7 @@
       "file_type": "code",
       "norm_label": "modalprops",
       "source_file": "src/pages/settings/ProfilePage.tsx",
-      "source_location": "L89"
+      "source_location": "L90"
     },
     {
       "id": "src_pages_settings_profilepage_passwordformvalues",
@@ -621,7 +621,7 @@
       "file_type": "code",
       "norm_label": "passwordformvalues",
       "source_file": "src/pages/settings/ProfilePage.tsx",
-      "source_location": "L267"
+      "source_location": "L268"
     },
     {
       "id": "src_pages_settings_profilepage_profileformvalues",
@@ -634,7 +634,7 @@
       "file_type": "code",
       "norm_label": "profileformvalues",
       "source_file": "src/pages/settings/ProfilePage.tsx",
-      "source_location": "L91"
+      "source_location": "L92"
     },
     {
       "id": "src_pages_customers_addeditcustomermodal_customerformvalues",
@@ -1186,7 +1186,7 @@
       "file_type": "code",
       "norm_label": "dashboardpage()",
       "source_file": "src/pages/DashboardPage.tsx",
-      "source_location": "L4"
+      "source_location": "L24"
     },
     {
       "id": "src_pages_resetpasswordpage_resetpasswordpage",
@@ -1294,7 +1294,7 @@
       "file_type": "code",
       "norm_label": "avatarpickermodal()",
       "source_file": "src/pages/settings/ProfilePage.tsx",
-      "source_location": "L180"
+      "source_location": "L181"
     },
     {
       "id": "src_pages_settings_profilepage_avatarurl",
@@ -1318,7 +1318,7 @@
       "file_type": "code",
       "norm_label": "changepasswordmodal()",
       "source_file": "src/pages/settings/ProfilePage.tsx",
-      "source_location": "L273"
+      "source_location": "L274"
     },
     {
       "id": "src_pages_settings_profilepage_editprofilemodal",
@@ -1330,7 +1330,7 @@
       "file_type": "code",
       "norm_label": "editprofilemodal()",
       "source_file": "src/pages/settings/ProfilePage.tsx",
-      "source_location": "L98"
+      "source_location": "L99"
     },
     {
       "id": "src_pages_settings_profilepage_profilepage",
@@ -3591,6 +3591,17 @@
       "source_location": "L1"
     },
     {
+      "id": "src_pages_dashboardpage_stat_cards",
+      "label": "STAT_CARDS",
+      "_origin": "ast",
+      "community": 32,
+      "community_name": "DashboardPage.tsx",
+      "file_type": "code",
+      "norm_label": "stat_cards",
+      "source_file": "src/pages/DashboardPage.tsx",
+      "source_location": "L12"
+    },
+    {
       "id": "src_pages_resetpasswordpage",
       "label": "ResetPasswordPage.tsx",
       "_origin": "ast",
@@ -5799,7 +5810,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/settings/ProfilePage.tsx",
-      "source_location": "L231",
+      "source_location": "L232",
       "weight": 1.0
     },
     {
@@ -8000,13 +8011,24 @@
     },
     {
       "source": "src_pages_dashboardpage",
+      "target": "src_pages_dashboardpage_stat_cards",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/pages/DashboardPage.tsx",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_dashboardpage",
       "target": "src_pages_dashboardpage_dashboardpage",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/pages/DashboardPage.tsx",
-      "source_location": "L4",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -8259,7 +8281,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/pages/settings/ProfilePage.tsx",
-      "source_location": "L180",
+      "source_location": "L181",
       "weight": 1.0
     },
     {
@@ -8281,7 +8303,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/pages/settings/ProfilePage.tsx",
-      "source_location": "L267",
+      "source_location": "L268",
       "weight": 1.0
     },
     {
@@ -8303,7 +8325,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/pages/settings/ProfilePage.tsx",
-      "source_location": "L273",
+      "source_location": "L274",
       "weight": 1.0
     },
     {
@@ -8325,7 +8347,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/pages/settings/ProfilePage.tsx",
-      "source_location": "L89",
+      "source_location": "L90",
       "weight": 1.0
     },
     {
@@ -8336,7 +8358,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/pages/settings/ProfilePage.tsx",
-      "source_location": "L91",
+      "source_location": "L92",
       "weight": 1.0
     },
     {
@@ -8347,7 +8369,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/pages/settings/ProfilePage.tsx",
-      "source_location": "L98",
+      "source_location": "L99",
       "weight": 1.0
     },
     {
@@ -10692,5 +10714,5 @@
       "source_file": ".claude/commands/new-page.md"
     }
   ],
-  "built_at_commit": "464b93c8c03de12412c67c3983c35b2112440163"
+  "built_at_commit": "8230dc31899cd9b67376f5c9a46c1040ccfa2217"
 }

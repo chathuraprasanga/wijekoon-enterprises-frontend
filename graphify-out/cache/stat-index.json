@@ -142,15 +142,15 @@
   },
   "src/App.tsx": {
     "size": 162,
-    "mtime_ns": 1791098961374211875,
-    "indexed_at_ns": 1791122122631468000,
+    "mtime_ns": 1791122156639742394,
+    "indexed_at_ns": 1791127432149841000,
     "word_count": 24
   },
   "src/components/AppShell.tsx": {
-    "size": 4377,
-    "mtime_ns": 1791121146188560652,
-    "indexed_at_ns": 1791122122631781000,
-    "word_count": 340
+    "size": 5020,
+    "mtime_ns": 1791126609702148907,
+    "indexed_at_ns": 1791127432150234000,
+    "word_count": 386
   },
   "src/components/ForgotPasswordForm.tsx": {
     "size": 1463,
@@ -160,8 +160,8 @@
   },
   "src/components/Loader.tsx": {
     "size": 421,
-    "mtime_ns": 1791091921809339457,
-    "indexed_at_ns": 1791122122633123000,
+    "mtime_ns": 1791122156640780566,
+    "indexed_at_ns": 1791127432151160000,
     "word_count": 55
   },
   "src/components/LoginForm.tsx": {
@@ -196,8 +196,8 @@
   },
   "src/hooks/toNotify.tsx": {
     "size": 718,
-    "mtime_ns": 1791119901416023954,
-    "indexed_at_ns": 1791122122634978000,
+    "mtime_ns": 1791122156641423151,
+    "indexed_at_ns": 1791127432153219000,
     "word_count": 77
   },
   "src/interceptors/axiosInterceptor.ts": {
@@ -213,10 +213,10 @@
     "word_count": 17
   },
   "src/layouts/AuthSplitLayout.tsx": {
-    "size": 1029,
-    "mtime_ns": 1790704296316640242,
-    "indexed_at_ns": 1790706434920418000,
-    "word_count": 91
+    "size": 2183,
+    "mtime_ns": 1791127070233414348,
+    "indexed_at_ns": 1791127432154097000,
+    "word_count": 175
   },
   "src/main.tsx": {
     "size": 1612,
@@ -225,10 +225,10 @@
     "word_count": 187
   },
   "src/pages/DashboardPage.tsx": {
-    "size": 373,
-    "mtime_ns": 1790704296317482796,
-    "indexed_at_ns": 1790706434920887000,
-    "word_count": 41
+    "size": 3086,
+    "mtime_ns": 1791127441227192685,
+    "indexed_at_ns": 1791127441733009000,
+    "word_count": 291
   },
   "src/pages/ForgotPasswordPage.tsx": {
     "size": 1048,
@@ -256,14 +256,14 @@
   },
   "src/routes.tsx": {
     "size": 2597,
-    "mtime_ns": 1791096493384027306,
-    "indexed_at_ns": 1791122122648800000,
+    "mtime_ns": 1791122156644899624,
+    "indexed_at_ns": 1791127432160305000,
     "word_count": 270
   },
   "src/store/authSlice/authSlice.ts": {
     "size": 6946,
-    "mtime_ns": 1791120419481391405,
-    "indexed_at_ns": 1791122122649196000,
+    "mtime_ns": 1791122156645240626,
+    "indexed_at_ns": 1791127432160634000,
     "word_count": 758
   },
   "src/store/hooks.ts": {
@@ -274,14 +274,14 @@
   },
   "src/store/store.ts": {
     "size": 852,
-    "mtime_ns": 1791121470733166173,
-    "indexed_at_ns": 1791122122651002000,
+    "mtime_ns": 1791122156646583631,
+    "indexed_at_ns": 1791127432162432000,
     "word_count": 69
   },
   "src/theme.ts": {
     "size": 912,
-    "mtime_ns": 1791092889680482124,
-    "indexed_at_ns": 1791122122651830000,
+    "mtime_ns": 1791122156647231009,
+    "indexed_at_ns": 1791127432163260000,
     "word_count": 104
   },
   "src/utils/apiBaseUrl.ts": {
@@ -397,15 +397,15 @@
   },
   "src/components/PageHeader.tsx": {
     "size": 1164,
-    "mtime_ns": 1791092728053377679,
-    "indexed_at_ns": 1791122122633883000,
+    "mtime_ns": 1791122156641091358,
+    "indexed_at_ns": 1791127432151982000,
     "word_count": 115
   },
   "src/pages/customers/index.tsx": {
-    "size": 10589,
-    "mtime_ns": 1791122121486328994,
-    "indexed_at_ns": 1791122122638059000,
-    "word_count": 837
+    "size": 10721,
+    "mtime_ns": 1791126717995791581,
+    "indexed_at_ns": 1791127432156256000,
+    "word_count": 849
   },
   "src/pages/orders/index.tsx": {
     "size": 763,
@@ -415,8 +415,8 @@
   },
   "src/pages/products/index.tsx": {
     "size": 12118,
-    "mtime_ns": 1791122121517644499,
-    "indexed_at_ns": 1791122122644268000,
+    "mtime_ns": 1791122156643106742,
+    "indexed_at_ns": 1791127432157273000,
     "word_count": 973
   },
   "src/pages/sales/index.tsx": {
@@ -427,14 +427,14 @@
   },
   "src/pages/suppliers/index.tsx": {
     "size": 10961,
-    "mtime_ns": 1791122121623851064,
-    "indexed_at_ns": 1791122122648425000,
+    "mtime_ns": 1791122156644606540,
+    "indexed_at_ns": 1791127432159885000,
     "word_count": 881
   },
   ".claude/skills/build-admin-panel/SKILL.md": {
     "size": 8935,
-    "mtime_ns": 1791122119424000491,
-    "indexed_at_ns": 1791122122745682000,
+    "mtime_ns": 1791122156630383897,
+    "indexed_at_ns": 1791127432205066000,
     "word_count": 1395,
     "hashes": {
       ".claude/skills/build-admin-panel/skill.md": "b0cd35b9be84972072a338fd06537c44ac096cfd33f871ea0a1be8a524636970"
@@ -442,8 +442,8 @@
   },
   ".claude/skills/build-admin-panel/references/build-and-verify.md": {
     "size": 8753,
-    "mtime_ns": 1791122119479090553,
-    "indexed_at_ns": 1791122122746158000,
+    "mtime_ns": 1791122156631171901,
+    "indexed_at_ns": 1791127432205675000,
     "word_count": 1216,
     "hashes": {
       ".claude/skills/build-admin-panel/references/build-and-verify.md": "ac4880bbcd4ade1ded1de383b5e938a7b6b14cb47045bc16c8df57cd74aadd37"
@@ -451,8 +451,8 @@
   },
   ".claude/skills/build-admin-panel/references/research-and-scope.md": {
     "size": 9273,
-    "mtime_ns": 1791122119503544279,
-    "indexed_at_ns": 1791122122746346000,
+    "mtime_ns": 1791122156631536610,
+    "indexed_at_ns": 1791127432206195000,
     "word_count": 1405,
     "hashes": {
       ".claude/skills/build-admin-panel/references/research-and-scope.md": "8b8fbaa2f234d60ffb1eca33fb25feeac1e64fbc122d3bf53b30bb112f45a879"
@@ -460,104 +460,104 @@
   },
   "src/layouts/SettingsLayout.tsx": {
     "size": 1367,
-    "mtime_ns": 1791122121445809785,
-    "indexed_at_ns": 1791122122636117000,
+    "mtime_ns": 1791122156642033487,
+    "indexed_at_ns": 1791127432154353000,
     "word_count": 141
   },
   "src/pages/customers/AddEditCustomerModal.tsx": {
     "size": 3870,
-    "mtime_ns": 1791122121462146436,
-    "indexed_at_ns": 1791122122637749000,
+    "mtime_ns": 1791122156642302447,
+    "indexed_at_ns": 1791127432155964000,
     "word_count": 372
   },
   "src/pages/products/AddEditProductModal.tsx": {
     "size": 5556,
-    "mtime_ns": 1791122121499576132,
-    "indexed_at_ns": 1791122122640786000,
+    "mtime_ns": 1791122156642886491,
+    "indexed_at_ns": 1791127432156974000,
     "word_count": 528
   },
   "src/pages/settings/AddEditRolePage.tsx": {
     "size": 7063,
-    "mtime_ns": 1791122121535473323,
-    "indexed_at_ns": 1791122122645698000,
+    "mtime_ns": 1791122156643391910,
+    "indexed_at_ns": 1791127432157991000,
     "word_count": 565
   },
   "src/pages/settings/AddEditUserModal.tsx": {
     "size": 4569,
-    "mtime_ns": 1791122121543588148,
-    "indexed_at_ns": 1791122122646627000,
+    "mtime_ns": 1791122156643579494,
+    "indexed_at_ns": 1791127432158318000,
     "word_count": 451
   },
   "src/pages/settings/ProfilePage.tsx": {
-    "size": 10978,
-    "mtime_ns": 1791122121561725724,
-    "indexed_at_ns": 1791122122647084000,
-    "word_count": 896
+    "size": 11185,
+    "mtime_ns": 1791126473672111756,
+    "indexed_at_ns": 1791127432158632000,
+    "word_count": 926
   },
   "src/pages/settings/RolesPage.tsx": {
     "size": 10634,
-    "mtime_ns": 1791122121579895715,
-    "indexed_at_ns": 1791122122647437000,
+    "mtime_ns": 1791122156643940287,
+    "indexed_at_ns": 1791127432158962000,
     "word_count": 871
   },
   "src/pages/settings/UsersPage.tsx": {
     "size": 11911,
-    "mtime_ns": 1791122121600469509,
-    "indexed_at_ns": 1791122122647773000,
+    "mtime_ns": 1791122156644115121,
+    "indexed_at_ns": 1791127432159273000,
     "word_count": 989
   },
   "src/pages/suppliers/AddEditSupplierModal.tsx": {
     "size": 3892,
-    "mtime_ns": 1791122121609169337,
-    "indexed_at_ns": 1791122122648114000,
+    "mtime_ns": 1791122156644310288,
+    "indexed_at_ns": 1791127432159595000,
     "word_count": 373
   },
   "src/store/customerSlice/customerSlice.ts": {
     "size": 3410,
-    "mtime_ns": 1791119575392490335,
-    "indexed_at_ns": 1791122122649532000,
+    "mtime_ns": 1791122156645588960,
+    "indexed_at_ns": 1791127432161085000,
     "word_count": 362
   },
   "src/store/permissionSlice/permissionSlice.ts": {
     "size": 995,
-    "mtime_ns": 1791095983892431881,
-    "indexed_at_ns": 1791122122650128000,
+    "mtime_ns": 1791122156645916045,
+    "indexed_at_ns": 1791127432161600000,
     "word_count": 108
   },
   "src/store/productSlice/productSlice.ts": {
     "size": 3631,
-    "mtime_ns": 1791122121666210823,
-    "indexed_at_ns": 1791122122650431000,
+    "mtime_ns": 1791122156646129796,
+    "indexed_at_ns": 1791127432161882000,
     "word_count": 393
   },
   "src/store/roleSlice/roleSlice.ts": {
     "size": 4133,
-    "mtime_ns": 1791097755848323974,
-    "indexed_at_ns": 1791122122650733000,
+    "mtime_ns": 1791122156646366797,
+    "indexed_at_ns": 1791127432162169000,
     "word_count": 475
   },
   "src/store/supplierSlice/supplierSlice.ts": {
     "size": 3419,
-    "mtime_ns": 1791122121689854254,
-    "indexed_at_ns": 1791122122651286000,
+    "mtime_ns": 1791122156646787257,
+    "indexed_at_ns": 1791127432162753000,
     "word_count": 362
   },
   "src/store/userSlice/userSlice.ts": {
     "size": 3323,
-    "mtime_ns": 1791119579618837207,
-    "indexed_at_ns": 1791122122651589000,
+    "mtime_ns": 1791122156647022925,
+    "indexed_at_ns": 1791127432163039000,
     "word_count": 370
   },
   "src/utils/datePreview.ts": {
     "size": 1044,
-    "mtime_ns": 1791122121707449869,
-    "indexed_at_ns": 1791122122652857000,
+    "mtime_ns": 1791122156647912470,
+    "indexed_at_ns": 1791127432164124000,
     "word_count": 128
   },
   "src/utils/permissionLabels.ts": {
     "size": 599,
-    "mtime_ns": 1791096847095121296,
-    "indexed_at_ns": 1791122122653391000,
+    "mtime_ns": 1791122156648072096,
+    "indexed_at_ns": 1791127432164587000,
     "word_count": 63
   }
 }

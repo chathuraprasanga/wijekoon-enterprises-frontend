@@ -42,15 +42,15 @@
     "semantic_hash": "5cc2c31a896667acadfeb96fcfe8ede9"
   },
   "src/App.tsx": {
-    "mtime": 1790706664.7359931,
-    "seen": 1790706686.998595,
-    "ast_hash": "269600b9f28c9626bd94aa465ad98b22",
+    "mtime": 1791122156.6397424,
+    "seen": 1791127432.956668,
+    "ast_hash": "b41b096efe5dfe7163aad797fc099757",
     "semantic_hash": ""
   },
   "src/components/AppShell.tsx": {
-    "mtime": 1790704296.3154101,
-    "seen": 1790706435.103758,
-    "ast_hash": "3616c904eb3132078c78f84d21511a4d",
+    "mtime": 1791126609.702149,
+    "seen": 1791127432.9566689,
+    "ast_hash": "e6ea889afeb639aeeed0d8e4d7eea876",
     "semantic_hash": ""
   },
   "src/components/ForgotPasswordForm.tsx": {
@@ -60,10 +60,10 @@
     "semantic_hash": "b91bc29d850ab090dfeca9f29dc4d799"
   },
   "src/components/Loader.tsx": {
-    "mtime": 1790700685.34019,
-    "seen": 1790704268.972912,
-    "ast_hash": "a17ca0e64558133fdc86b8613663692b",
-    "semantic_hash": "a17ca0e64558133fdc86b8613663692b"
+    "mtime": 1791122156.6407804,
+    "seen": 1791127432.956672,
+    "ast_hash": "febfc49a321b1c8a4b2196fe8308cb34",
+    "semantic_hash": ""
   },
   "src/components/LoginForm.tsx": {
     "mtime": 1790700685.3406334,
@@ -96,10 +96,10 @@
     "semantic_hash": ""
   },
   "src/hooks/toNotify.tsx": {
-    "mtime": 1790700685.3421443,
-    "seen": 1790704268.972918,
-    "ast_hash": "1880592bbad345b9a03118a5084680b7",
-    "semantic_hash": "1880592bbad345b9a03118a5084680b7"
+    "mtime": 1791122156.6414232,
+    "seen": 1791127432.9566789,
+    "ast_hash": "95a02bfd5e0337f73fb0aede53c8c63f",
+    "semantic_hash": ""
   },
   "src/interceptors/axiosInterceptor.ts": {
     "mtime": 1790700685.3424366,
@@ -114,9 +114,9 @@
     "semantic_hash": "5081b66b052c677e1fef0d4873aacb57"
   },
   "src/layouts/AuthSplitLayout.tsx": {
-    "mtime": 1790704296.3166401,
-    "seen": 1790706435.103772,
-    "ast_hash": "f925bd8684febc7969b3fc9790ab7e87",
+    "mtime": 1791127070.2334144,
+    "seen": 1791127432.956682,
+    "ast_hash": "0f52304f6c08aefa95007ef7c0ec0b45",
     "semantic_hash": ""
   },
   "src/main.tsx": {
@@ -126,9 +126,9 @@
     "semantic_hash": ""
   },
   "src/pages/DashboardPage.tsx": {
-    "mtime": 1790704296.3174827,
-    "seen": 1790706435.103774,
-    "ast_hash": "7294e3dbf17095dcc14fa5fe00bfd54f",
+    "mtime": 1791127281.6488302,
+    "seen": 1791127432.956684,
+    "ast_hash": "2b5957448d5c58955fbe450dc507a1f0",
     "semantic_hash": ""
   },
   "src/pages/ForgotPasswordPage.tsx": {
@@ -156,15 +156,15 @@
     "semantic_hash": "ab99cc08412944ea8d02b99c428aeb62"
   },
   "src/routes.tsx": {
-    "mtime": 1790704296.319628,
-    "seen": 1790706435.103783,
-    "ast_hash": "c1570a531292369ae5b9c772365030b8",
+    "mtime": 1791122156.6448996,
+    "seen": 1791127432.956699,
+    "ast_hash": "8a68dc571471566ab89d214052881ff1",
     "semantic_hash": ""
   },
   "src/store/authSlice/authSlice.ts": {
-    "mtime": 1790704296.3200195,
-    "seen": 1790706435.103783,
-    "ast_hash": "df90b1ab8d5372875fa8c5ef4f8472b8",
+    "mtime": 1791122156.6452405,
+    "seen": 1791127432.9566998,
+    "ast_hash": "cc7dbdee8daa8448667a1c498edad945",
     "semantic_hash": ""
   },
   "src/store/hooks.ts": {
@@ -174,15 +174,15 @@
     "semantic_hash": "3e45d3e434aff26066324aebc7f04047"
   },
   "src/store/store.ts": {
-    "mtime": 1790704296.3203886,
-    "seen": 1790706435.103785,
-    "ast_hash": "46dca480cac0b4abef8968a825b0075d",
+    "mtime": 1791122156.6465836,
+    "seen": 1791127432.956705,
+    "ast_hash": "6ba8427c4a4adea6f2f10293c5489b79",
     "semantic_hash": ""
   },
   "src/theme.ts": {
-    "mtime": 1790704296.3207603,
-    "seen": 1790706435.103786,
-    "ast_hash": "b5e88aeb2cc4312afc247d391f13ae00",
+    "mtime": 1791122156.647231,
+    "seen": 1791127432.9567082,
+    "ast_hash": "406d20abfea8c3ef87d1bf6e0c236907",
     "semantic_hash": ""
   },
   "src/utils/apiBaseUrl.ts": {
@@ -324,21 +324,21 @@
     "semantic_hash": ""
   },
   "src/components/FilterBar.tsx": {
-    "mtime": 1790704296.3160477,
-    "seen": 1790706435.1037598,
+    "mtime": 1791094017.3697298,
+    "seen": 1791122123.446582,
     "ast_hash": "0158e2616935963d3ed2da0e4369735c",
     "semantic_hash": ""
   },
   "src/components/PageHeader.tsx": {
-    "mtime": 1790704296.316321,
-    "seen": 1790706435.103766,
-    "ast_hash": "3899dc22ca54b48eb876a16c03395553",
+    "mtime": 1791122156.6410913,
+    "seen": 1791127432.956675,
+    "ast_hash": "1a1399f5edc6245f02b7a74f8da5a930",
     "semantic_hash": ""
   },
   "src/pages/customers/index.tsx": {
-    "mtime": 1790704296.3178854,
-    "seen": 1790706435.103779,
-    "ast_hash": "3ce1539946e45100b48aa7fccaa49645",
+    "mtime": 1791126717.9957917,
+    "seen": 1791127432.956689,
+    "ast_hash": "d509d45d3a8e46ea00d6d308c53aa0b1",
     "semantic_hash": ""
   },
   "src/pages/orders/index.tsx": {
@@ -348,9 +348,9 @@
     "semantic_hash": ""
   },
   "src/pages/products/index.tsx": {
-    "mtime": 1790704296.3187692,
-    "seen": 1790706435.10378,
-    "ast_hash": "a7ab68e178e1051773b8bc77e31bca22",
+    "mtime": 1791122156.6431067,
+    "seen": 1791127432.956692,
+    "ast_hash": "4009684ac442f789b2997e48613ea937",
     "semantic_hash": ""
   },
   "src/pages/sales/index.tsx": {
@@ -360,9 +360,9 @@
     "semantic_hash": ""
   },
   "src/pages/suppliers/index.tsx": {
-    "mtime": 1790704296.3193078,
-    "seen": 1790706435.103782,
-    "ast_hash": "3ade691cc2a5365615c8a81efeecd6e3",
+    "mtime": 1791122156.6446066,
+    "seen": 1791127432.9566982,
+    "ast_hash": "809848b3df64e66fb3bd1b02de083488",
     "semantic_hash": ""
   },
   "assets/company-logo.jpg": {
@@ -383,10 +383,124 @@
     "ast_hash": "775f30cb125f15520e9b945eda666fee",
     "semantic_hash": ""
   },
-  "src/components/DesktopOnlyGate.tsx": {
-    "mtime": 1790706664.736416,
-    "seen": 1790706686.9985979,
-    "ast_hash": "14f36ccd4adc03ea99568f61bfafc6cd",
+  "src/layouts/SettingsLayout.tsx": {
+    "mtime": 1791122156.6420336,
+    "seen": 1791127432.956682,
+    "ast_hash": "7eee0c2e5aa2716de2467caba3c0dacc",
+    "semantic_hash": ""
+  },
+  "src/pages/customers/AddEditCustomerModal.tsx": {
+    "mtime": 1791122156.6423025,
+    "seen": 1791127432.956689,
+    "ast_hash": "3d4f1cd901078ff33ed80cb35b29e2a2",
+    "semantic_hash": ""
+  },
+  "src/pages/products/AddEditProductModal.tsx": {
+    "mtime": 1791122156.6428864,
+    "seen": 1791127432.956691,
+    "ast_hash": "f836f46ed95c4de5394b15b20caaa510",
+    "semantic_hash": ""
+  },
+  "src/pages/settings/AddEditRolePage.tsx": {
+    "mtime": 1791122156.6433918,
+    "seen": 1791127432.9566941,
+    "ast_hash": "1927e5943c43893c79affbda4bac3f0b",
+    "semantic_hash": ""
+  },
+  "src/pages/settings/AddEditUserModal.tsx": {
+    "mtime": 1791122156.6435795,
+    "seen": 1791127432.9566941,
+    "ast_hash": "fb91411ee54e66ec5b3e19aa21c6aa83",
+    "semantic_hash": ""
+  },
+  "src/pages/settings/ProfilePage.tsx": {
+    "mtime": 1791126473.6721117,
+    "seen": 1791127432.956695,
+    "ast_hash": "3f9f719802a116fe1c126be235f99fa8",
+    "semantic_hash": ""
+  },
+  "src/pages/settings/RolesPage.tsx": {
+    "mtime": 1791122156.6439402,
+    "seen": 1791127432.956696,
+    "ast_hash": "f2029f9d4cbfe35a794707136689b53b",
+    "semantic_hash": ""
+  },
+  "src/pages/settings/UsersPage.tsx": {
+    "mtime": 1791122156.6441152,
+    "seen": 1791127432.956697,
+    "ast_hash": "7b5fc12a34cc9df1f6f777bb3e15d1f4",
+    "semantic_hash": ""
+  },
+  "src/pages/suppliers/AddEditSupplierModal.tsx": {
+    "mtime": 1791122156.6443102,
+    "seen": 1791127432.9566982,
+    "ast_hash": "46cda0b0814155579fd7765f37f9bbfb",
+    "semantic_hash": ""
+  },
+  "src/store/customerSlice/customerSlice.ts": {
+    "mtime": 1791122156.6455889,
+    "seen": 1791127432.956701,
+    "ast_hash": "e46239ac3757227995e0391deadbdd7b",
+    "semantic_hash": ""
+  },
+  "src/store/permissionSlice/permissionSlice.ts": {
+    "mtime": 1791122156.645916,
+    "seen": 1791127432.956703,
+    "ast_hash": "15490bc292640a8875b47625adf30953",
+    "semantic_hash": ""
+  },
+  "src/store/productSlice/productSlice.ts": {
+    "mtime": 1791122156.6461298,
+    "seen": 1791127432.956704,
+    "ast_hash": "55fb070f74211cd636bda7de80ea4383",
+    "semantic_hash": ""
+  },
+  "src/store/roleSlice/roleSlice.ts": {
+    "mtime": 1791122156.6463668,
+    "seen": 1791127432.956704,
+    "ast_hash": "8cd398489761e3a9f6a37e3ec40ed33b",
+    "semantic_hash": ""
+  },
+  "src/store/supplierSlice/supplierSlice.ts": {
+    "mtime": 1791122156.6467872,
+    "seen": 1791127432.956706,
+    "ast_hash": "ffd0f7a1d4096190c9dc4ff775a8a47d",
+    "semantic_hash": ""
+  },
+  "src/store/userSlice/userSlice.ts": {
+    "mtime": 1791122156.647023,
+    "seen": 1791127432.956707,
+    "ast_hash": "9f49214f42a0d1699be2cc8ef9c701f9",
+    "semantic_hash": ""
+  },
+  "src/utils/datePreview.ts": {
+    "mtime": 1791122156.6479125,
+    "seen": 1791127432.9567108,
+    "ast_hash": "29b10404b1429cc42ecbf252ecebf9ca",
+    "semantic_hash": ""
+  },
+  "src/utils/permissionLabels.ts": {
+    "mtime": 1791122156.648072,
+    "seen": 1791127432.956713,
+    "ast_hash": "b59b8bb58ea3e27fd98a432e46ef627e",
+    "semantic_hash": ""
+  },
+  ".claude/skills/build-admin-panel/SKILL.md": {
+    "mtime": 1791122156.630384,
+    "seen": 1791127432.956724,
+    "ast_hash": "6a7475e22c64727b37be47b7431e1d4a",
+    "semantic_hash": ""
+  },
+  ".claude/skills/build-admin-panel/references/build-and-verify.md": {
+    "mtime": 1791122156.631172,
+    "seen": 1791127432.956725,
+    "ast_hash": "bf951903a602fabac5bd6e101ccfac2b",
+    "semantic_hash": ""
+  },
+  ".claude/skills/build-admin-panel/references/research-and-scope.md": {
+    "mtime": 1791122156.6315367,
+    "seen": 1791127432.956726,
+    "ast_hash": "460d91f0baa6357ecae83212bf596c7b",
     "semantic_hash": ""
   }
 }

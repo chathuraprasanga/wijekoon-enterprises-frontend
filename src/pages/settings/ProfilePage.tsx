@@ -40,20 +40,20 @@ const ProfilePage = () => {
       <PageHeader title="Profile" description="Manage your personal account details." />
       <Paper withBorder radius="md" p="lg">
         <Group justify="space-between" wrap="nowrap" align="flex-start">
-          <Group wrap="nowrap">
-            <UnstyledButton onClick={() => setAvatarOpen(true)}>
+          <Group wrap="nowrap" style={{ minWidth: 0, flex: 1 }}>
+            <UnstyledButton onClick={() => setAvatarOpen(true)} style={{ flexShrink: 0 }}>
               <Avatar src={user.avatar} size={72} radius="xl">
                 {`${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`.toUpperCase()}
               </Avatar>
             </UnstyledButton>
-            <Stack gap={2}>
-              <Text fw={600} size="lg">
+            <Stack gap={2} style={{ minWidth: 0 }}>
+              <Text fw={600} size="lg" truncate>
                 {user.firstName} {user.lastName ?? ''}
               </Text>
-              <Text size="sm" c="dimmed">
+              <Text size="sm" c="dimmed" truncate>
                 {user.email}
               </Text>
-              <Text size="sm" c="dimmed">
+              <Text size="sm" c="dimmed" truncate>
                 {user.phone}
               </Text>
             </Stack>
@@ -62,19 +62,20 @@ const ProfilePage = () => {
             variant="default"
             leftSection={<IconPencil size={16} />}
             onClick={() => setEditOpen(true)}
+            style={{ flexShrink: 0 }}
           >
             Edit
           </Button>
         </Group>
         <Divider my="lg" />
         <Group justify="space-between" wrap="nowrap">
-          <Stack gap={2}>
+          <Stack gap={2} style={{ minWidth: 0 }}>
             <Text fw={600}>Password</Text>
-            <Text size="sm" c="dimmed">
+            <Text size="sm" c="dimmed" truncate>
               Change your account password.
             </Text>
           </Stack>
-          <Button variant="default" onClick={() => setPasswordOpen(true)}>
+          <Button variant="default" onClick={() => setPasswordOpen(true)} style={{ flexShrink: 0 }}>
             Change password
           </Button>
         </Group>
