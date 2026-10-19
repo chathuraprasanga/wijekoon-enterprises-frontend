@@ -17,6 +17,7 @@ import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
 import { IconEdit, IconEye, IconPlus, IconTrash } from '@tabler/icons-react';
 import { PageHeader } from '@/components/PageHeader';
 import { Loader } from '@/components/Loader';
+import { LocationMap } from '@/components/LocationMap';
 import { FilterBar, type FilterFieldConfig } from '@/components/FilterBar';
 import { AddEditCustomerModal } from '@/pages/customers/AddEditCustomerModal';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -287,6 +288,19 @@ const CustomersPage = () => {
                   {viewTarget.address ?? '-'}
                 </Text>
               </Group>
+              {viewTarget.location && (
+                <Stack gap={6}>
+                  <Group justify="space-between" wrap="nowrap">
+                    <Text size="sm" c="dimmed">
+                      Location
+                    </Text>
+                    <Text size="sm">
+                      {viewTarget.location.lat.toFixed(5)}, {viewTarget.location.lng.toFixed(5)}
+                    </Text>
+                  </Group>
+                  <LocationMap lat={viewTarget.location.lat} lng={viewTarget.location.lng} />
+                </Stack>
+              )}
             </Stack>
             <Divider />
             <Stack gap="xs">

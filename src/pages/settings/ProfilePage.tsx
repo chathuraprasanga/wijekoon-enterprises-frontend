@@ -23,7 +23,22 @@ import { toNotify } from '@/hooks/toNotify';
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^(070|071|072|074|075|076|077|078)\d{7}$/;
 
-const AVATAR_SEEDS = ['Felix', 'Aneka', 'Milo', 'Zoe', 'Leo', 'Nala', 'Max', 'Luna', 'Rex', 'Coco'];
+const AVATAR_SEEDS = [
+  'Felix',
+  'Aneka',
+  'Milo',
+  'Zoe',
+  'Leo',
+  'Nala',
+  'Max',
+  'Luna',
+  'Rex',
+  'Coco',
+  'Oscar',
+  'Mia',
+  'Jasper',
+  'Ruby',
+];
 const avatarUrl = (seed: string) =>
   `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(seed)}`;
 

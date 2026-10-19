@@ -19,6 +19,7 @@ import './index.css';
 // happens first, otherwise the layer ends up lower-priority than Tailwind's preflight
 // (`base` layer), which silently strips borders/hover styles via `border-width: 0`.
 import 'mantine-datatable/styles.layer.css';
+import 'leaflet/dist/leaflet.css';
 
 import { App } from './App';
 import theme from '@/theme.ts';
