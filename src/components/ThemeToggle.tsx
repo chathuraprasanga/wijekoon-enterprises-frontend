@@ -1,40 +1,21 @@
-import { SegmentedControl, Tooltip, useMantineColorScheme } from '@mantine/core';
-import { IconDeviceDesktop, IconMoonStars, IconSun } from '@tabler/icons-react';
+import { ActionIcon, Tooltip, useComputedColorScheme, useMantineColorScheme } from '@mantine/core';
+import { IconMoon, IconSun } from '@tabler/icons-react';
 
 export const ThemeToggle = () => {
-  const { colorScheme, setColorScheme } = useMantineColorScheme();
+  const { setColorScheme } = useMantineColorScheme();
+  const scheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
+  const next = scheme === 'dark' ? 'light' : 'dark';
 
   return (
-    <SegmentedControl
-      size="xs"
-      value={colorScheme}
-      onChange={(value) => setColorScheme(value as 'light' | 'dark' | 'auto')}
-      data={[
-        {
-          value: 'light',
-          label: (
-            <Tooltip label="Light">
-              <IconSun size={16} style={{ display: 'block' }} />
-            </Tooltip>
-          ),
-        },
-        {
-          value: 'dark',
-          label: (
-            <Tooltip label="Dark">
-              <IconMoonStars size={16} style={{ display: 'block' }} />
-            </Tooltip>
-          ),
-        },
-        {
-          value: 'auto',
-          label: (
-            <Tooltip label="System">
-              <IconDeviceDesktop size={16} style={{ display: 'block' }} />
-            </Tooltip>
-          ),
-        },
-      ]}
-    />
+    <Tooltip label={`Switch to ${next} mode`}>
+      <ActionIcon
+        variant="subtle"
+        size={36}
+        aria-label={`Switch to ${next} mode`}
+        onClick={() => setColorScheme(next)}
+      >
+        {scheme === 'dark' ? <IconSun size={18} /> : <IconMoon size={18} />}
+      </ActionIcon>
+    </Tooltip>
   );
 };

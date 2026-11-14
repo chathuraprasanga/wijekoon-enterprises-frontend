@@ -2,6 +2,12 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { axiosInstance } from '@/interceptors/axiosInterceptor';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 
+export type CustomerLocation = {
+  lat: number;
+  lng: number;
+  h3index: string;
+};
+
 export type Customer = {
   _id: string;
   firstName: string;
@@ -10,6 +16,7 @@ export type Customer = {
   phone: string;
   address: string | null;
   isActive: boolean;
+  location: CustomerLocation | null;
   createdAt: string;
   updatedAt: string;
 };

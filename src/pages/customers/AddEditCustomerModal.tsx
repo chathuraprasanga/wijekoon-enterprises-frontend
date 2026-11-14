@@ -1,8 +1,12 @@
+import { IconMail, IconPhone } from '@tabler/icons-react';
 import { useState } from 'react';
-import { Button, Group, Modal, Stack, TextInput } from '@mantine/core';
+import { SimpleGrid, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { FormModal } from '@/components/FormModal';
+import { useErrorSummary } from '@/hooks/useErrorSummary';
 import { useAppDispatch } from '@/store/hooks';
 import { type Customer, createCustomer, updateCustomer } from '@/store/customerSlice/customerSlice';
+import { optionalEmail, phone, required, digitsOnly } from '@/utils/validators';
 import { toNotify } from '@/hooks/toNotify';
 
 type CustomerFormValues = {
@@ -13,29 +17,16 @@ type CustomerFormValues = {
   address: string;
 };
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PHONE_REGEX = /^(070|071|072|074|075|076|077|078)\d{7}$/;
-
 type Props = {
   opened: boolean;
   customer: Customer | null;
   onClose: () => void;
 };
 
-export const AddEditCustomerModal = ({ opened, customer, onClose }: Props) => {
-  return (
-    <Modal
-      opened={opened}
-      onClose={onClose}
-      title={customer ? 'Edit customer' : 'Add customer'}
-      centered
-    >
-      {opened && (
-        <AddEditCustomerForm key={customer?._id ?? 'new'} customer={customer} onClose={onClose} />
-      )}
-    </Modal>
-  );
-};
+export const AddEditCustomerModal = ({ opened, customer, onClose }: Props) =>
+  opened ? (
+    <AddEditCustomerForm key={customer?._id ?? 'new'} customer={customer} onClose={onClose} />
+  ) : null;
 
 type FormProps = {
   customer: Customer | null;
@@ -55,9 +46,9 @@ const AddEditCustomerForm = ({ customer, onClose }: FormProps) => {
       address: customer?.address ?? '',
     },
     validate: {
-      firstName: (value) => (value.trim() ? null : 'First name is required'),
-      phone: (value) => (PHONE_REGEX.test(value) ? null : 'Enter a valid 10-digit mobile number'),
-      email: (value) => (!value || EMAIL_REGEX.test(value) ? null : 'Enter a valid email address'),
+      firstName: required('First name is required.'),
+      phone: phone,
+      email: optionalEmail,
     },
   });
 
@@ -67,16 +58,24 @@ const AddEditCustomerForm = ({ customer, onClose }: FormProps) => {
       firstName: values.firstName.trim(),
       lastName: values.lastName.trim() || null,
       email: values.email.trim() || null,
-      phone: values.phone.trim(),
+      phone: digitsOnly(values.phone),
       address: values.address.trim() || null,
     };
     try {
       if (customer) {
         await dispatch(updateCustomer({ _id: customer._id, ...payload })).unwrap();
-        toNotify('Updated', 'Customer updated successfully', 'SUCCESS');
+        toNotify(
+          'Customer saved',
+          `${payload.firstName} ${payload.lastName ?? ''}`.trim() + ' was updated.',
+          'SUCCESS',
+        );
       } else {
         await dispatch(createCustomer(payload)).unwrap();
-        toNotify('Created', 'Customer created successfully', 'SUCCESS');
+        toNotify(
+          'Customer added',
+          `${payload.firstName} ${payload.lastName ?? ''}`.trim() + ' was added.',
+          'SUCCESS',
+        );
       }
       onClose();
     } catch (error) {
@@ -90,9 +89,25 @@ const AddEditCustomerForm = ({ customer, onClose }: FormProps) => {
     }
   };
 
+  const errorLabels = useErrorSummary(form, {
+    firstName: 'First name',
+    phone: 'Phone',
+    email: 'Email',
+  });
+
   return (
-    <form onSubmit={form.onSubmit(handleSubmit)}>
-      <Stack gap="md">
+    <FormModal
+      opened
+      title={customer ? 'Edit customer' : 'Add customer'}
+      subject={customer ? `${customer.firstName} ${customer.lastName ?? ''}`.trim() : undefined}
+      submitLabel={customer ? 'Save customer' : 'Create customer'}
+      loading={loading}
+      dirty={form.isDirty()}
+      errorLabels={errorLabels}
+      onSubmit={form.onSubmit(handleSubmit)}
+      onClose={onClose}
+    >
+      <SimpleGrid cols={{ base: 1, xs: 2 }}>
         <TextInput
           label="First name"
           withAsterisk
@@ -104,27 +119,26 @@ const AddEditCustomerForm = ({ customer, onClose }: FormProps) => {
           placeholder="Enter last name"
           {...form.getInputProps('lastName')}
         />
-        <TextInput
-          label="Phone"
-          withAsterisk
-          placeholder="07XXXXXXXX"
-          {...form.getInputProps('phone')}
-        />
-        <TextInput
-          label="Email"
-          placeholder="Enter email address"
-          {...form.getInputProps('email')}
-        />
-        <TextInput label="Address" placeholder="Enter address" {...form.getInputProps('address')} />
-        <Group justify="flex-end">
-          <Button variant="default" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button type="submit" loading={loading}>
-            {customer ? 'Save changes' : 'Create customer'}
-          </Button>
-        </Group>
-      </Stack>
-    </form>
+      </SimpleGrid>
+      <TextInput
+        label="Phone"
+        withAsterisk
+        inputMode="tel"
+        autoComplete="tel"
+        placeholder="077 123 4567"
+        description="Sri Lankan mobile, 07X XXXXXXX."
+        leftSection={<IconPhone size={16} aria-hidden />}
+        {...form.getInputProps('phone')}
+      />
+      <TextInput
+        label="Email"
+        type="email"
+        autoComplete="email"
+        placeholder="name@example.lk"
+        leftSection={<IconMail size={16} aria-hidden />}
+        {...form.getInputProps('email')}
+      />
+      <TextInput label="Address" placeholder="Enter address" {...form.getInputProps('address')} />
+    </FormModal>
   );
 };

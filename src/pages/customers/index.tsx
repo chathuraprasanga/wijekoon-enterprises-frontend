@@ -1,23 +1,14 @@
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import {
-  ActionIcon,
-  Badge,
-  Button,
-  Divider,
-  Drawer,
-  Group,
-  Modal,
-  Stack,
-  Switch,
-  Text,
-  Tooltip,
-} from '@mantine/core';
-import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
-import { IconEdit, IconEye, IconPlus, IconTrash } from '@tabler/icons-react';
-import { PageHeader } from '@/components/PageHeader';
-import { Loader } from '@/components/Loader';
-import { FilterBar, type FilterFieldConfig } from '@/components/FilterBar';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Anchor, Button } from '@mantine/core';
+import { IconPencil, IconUsers } from '@tabler/icons-react';
+import { ListPage } from '@/components/data/ListPage';
+import { DetailDialog } from '@/components/DetailDialog';
+import { SimpleGrid, Box } from '@mantine/core';
+import { Field } from '@/components/Field';
+import { LocationMap } from '@/components/LocationMap';
+import { StatusSection } from '@/components/StatusSection';
+import { ActiveBadge } from '@/components/StatusBadge';
 import { AddEditCustomerModal } from '@/pages/customers/AddEditCustomerModal';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
@@ -26,16 +17,16 @@ import {
   fetchCustomers,
   updateCustomer,
 } from '@/store/customerSlice/customerSlice';
-import { toNotify } from '@/hooks/toNotify';
-import { datePreview } from '@/utils/datePreview';
+import { useActiveToggle } from '@/hooks/useActiveToggle';
+import { formatDate, formatPhone, fullName, orDash } from '@/utils/format';
 
-const FILTER_FIELDS: FilterFieldConfig[] = [
-  { type: 'search', key: 'q', placeholder: 'Search customers' },
+const SORT_MAP = { name: 'firstName' };
+const FILTERS = [
   {
-    type: 'select',
+    type: 'select' as const,
     key: 'status',
     label: 'Status',
-    placeholder: 'Any status',
+    placeholder: 'All statuses',
     options: [
       { value: 'active', label: 'Active' },
       { value: 'inactive', label: 'Inactive' },
@@ -45,287 +36,173 @@ const FILTER_FIELDS: FilterFieldConfig[] = [
 
 const CustomersPage = () => {
   const dispatch = useAppDispatch();
-  const [searchParams] = useSearchParams();
-  const { items, limit, total } = useAppSelector((state) => state.customer);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [toDelete, setToDelete] = useState<Customer | null>(null);
-  const [deleting, setDeleting] = useState(false);
-  const [formTarget, setFormTarget] = useState<Customer | null>();
-  const [formOpen, setFormOpen] = useState(false);
-  const [viewTarget, setViewTarget] = useState<Customer | null>(null);
-  const [togglingId, setTogglingId] = useState<string | null>(null);
-  const [sortStatus, setSortStatus] = useState<DataTableSortStatus<Customer>>({
-    columnAccessor: 'name',
-    direction: 'asc',
-  });
+  const { items, total } = useAppSelector((s) => s.customer);
+  const [form, setForm] = useState<{ customer: Customer | null } | null>(null);
+  const [view, setView] = useState<Customer | null>(null);
 
-  const searchText = searchParams.get('q') ?? undefined;
-  const status = searchParams.get('status') ?? undefined;
-  const sortBy =
-    sortStatus.columnAccessor === 'name' ? 'firstName' : (sortStatus.columnAccessor as string);
-  const sortType = sortStatus.direction;
-
-  const filterKey = `${searchText ?? ''}|${status ?? ''}|${sortBy}|${sortType}`;
-  const [appliedFilterKey, setAppliedFilterKey] = useState(filterKey);
-  if (filterKey !== appliedFilterKey) {
-    setAppliedFilterKey(filterKey);
-    setPage(1);
-  }
-
-  useEffect(() => {
-    const load = async () => {
-      setLoading(true);
-      try {
-        await dispatch(
-          fetchCustomers({ page, limit, searchText, status, sortBy, sortType }),
-        ).unwrap();
-      } catch (error) {
-        toNotify('Failed to load customers', error as string, 'ERROR');
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, [dispatch, page, limit, searchText, status, sortBy, sortType]);
-
-  const handleToggleActive = async (customer: Customer) => {
-    setTogglingId(customer._id);
-    try {
-      const updated = await dispatch(
+  const { toggle, busyId } = useActiveToggle<Customer>(
+    'Customer',
+    (c) =>
+      dispatch(
         updateCustomer({
-          _id: customer._id,
-          firstName: customer.firstName,
-          lastName: customer.lastName,
-          email: customer.email,
-          phone: customer.phone,
-          address: customer.address,
-          isActive: !customer.isActive,
+          _id: c._id,
+          firstName: c.firstName,
+          lastName: c.lastName,
+          email: c.email,
+          phone: c.phone,
+          address: c.address,
+          isActive: !c.isActive,
         }),
-      ).unwrap();
-      toNotify(
-        'Updated',
-        `Customer ${customer.isActive ? 'deactivated' : 'activated'} successfully`,
-        'SUCCESS',
-      );
-      setViewTarget((prev) =>
-        prev && prev._id === customer._id ? { ...prev, isActive: updated.isActive } : prev,
-      );
-    } catch (error) {
-      toNotify('Failed to update customer', error as string, 'ERROR');
-    } finally {
-      setTogglingId(null);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!toDelete) return;
-    setDeleting(true);
-    try {
-      await dispatch(deleteCustomer(toDelete._id)).unwrap();
-      toNotify('Deleted', 'Customer deleted successfully', 'SUCCESS');
-      setToDelete(null);
-    } catch (error) {
-      toNotify('Failed to delete customer', error as string, 'ERROR');
-    } finally {
-      setDeleting(false);
-    }
-  };
-
-  const openAdd = () => {
-    setFormTarget(null);
-    setFormOpen(true);
-  };
-
-  const openEdit = (customer: Customer) => {
-    setFormTarget(customer);
-    setFormOpen(true);
-  };
+      ).unwrap(),
+    (id, isActive) => setView((v) => (v && v._id === id ? { ...v, isActive } : v)),
+  );
 
   return (
-    <Stack gap="md">
-      <PageHeader
-        title="Customers"
-        description="Manage your customer records."
-        action={
-          <Button leftSection={<IconPlus size={16} />} onClick={openAdd}>
-            Add customer
-          </Button>
-        }
-      />
-      <FilterBar fields={FILTER_FIELDS} />
-      <DataTable
-        withTableBorder
-        borderRadius="md"
-        minHeight={loading || items.length === 0 ? 200 : undefined}
-        records={items}
-        fetching={loading}
-        customLoader={<Loader h="100%" />}
-        noRecordsText="No customers found"
-        page={page}
-        onPageChange={setPage}
-        totalRecords={total}
-        recordsPerPage={limit}
-        idAccessor="_id"
-        sortStatus={sortStatus}
-        onSortStatusChange={setSortStatus}
-        columns={[
-          {
-            accessor: 'name',
-            title: 'Name',
-            sortable: true,
-            width: 180,
-            render: (customer) => `${customer.firstName} ${customer.lastName ?? ''}`.trim(),
-          },
-          { accessor: 'phone', title: 'Phone', width: 130 },
-          {
-            accessor: 'email',
-            title: 'Email',
-            sortable: true,
-            width: 190,
-            render: (customer) => customer.email ?? '-',
-          },
-          {
-            accessor: 'address',
-            title: 'Address',
-            sortable: true,
-            width: 190,
-            render: (customer) => customer.address ?? '-',
-          },
-          {
-            accessor: 'isActive',
-            title: 'Status',
-            width: 110,
-            render: (customer) => (
-              <Badge color={customer.isActive ? 'green' : 'gray'} variant="light">
-                {customer.isActive ? 'Active' : 'Inactive'}
-              </Badge>
-            ),
-          },
-          {
-            accessor: 'actions',
-            title: 'Actions',
-            textAlign: 'right',
-            width: 130,
-            render: (customer) => (
-              <Group gap="xs" justify="flex-end" wrap="nowrap">
-                <Tooltip label="View">
-                  <ActionIcon variant="subtle" onClick={() => setViewTarget(customer)}>
-                    <IconEye size={16} />
-                  </ActionIcon>
-                </Tooltip>
-                <Tooltip label="Edit">
-                  <ActionIcon variant="subtle" onClick={() => openEdit(customer)}>
-                    <IconEdit size={16} />
-                  </ActionIcon>
-                </Tooltip>
-                <Tooltip label="Delete">
-                  <ActionIcon variant="subtle" color="red" onClick={() => setToDelete(customer)}>
-                    <IconTrash size={16} />
-                  </ActionIcon>
-                </Tooltip>
-              </Group>
-            ),
-          },
-        ]}
-      />
-      <AddEditCustomerModal
-        opened={formOpen}
-        customer={formTarget ?? null}
-        onClose={() => setFormOpen(false)}
-      />
-      <Drawer
-        opened={!!viewTarget}
-        onClose={() => setViewTarget(null)}
-        title="Customer details"
-        position="right"
-      >
-        {viewTarget && (
-          <Stack gap="md">
-            <Text fw={600} size="lg">
-              {viewTarget.firstName} {viewTarget.lastName ?? ''}
-            </Text>
-            <Group justify="space-between" wrap="nowrap">
-              <Text size="sm" c="dimmed">
-                Status
-              </Text>
-              <Switch
-                checked={viewTarget.isActive}
-                size="md"
-                onLabel="ACTIVE"
-                offLabel="INACTIVE"
-                color="green"
-                styles={{
-                  trackLabel: {
-                    padding: 'var(--mantine-spacing-xs)',
-                    fontSize: 'var(--mantine-font-size-xs)',
-                  },
-                }}
-                disabled={togglingId === viewTarget._id}
-                onChange={() => handleToggleActive(viewTarget)}
-              />
-            </Group>
-            <Divider />
-            <Stack gap="xs">
-              <Group justify="space-between" wrap="nowrap">
-                <Text size="sm" c="dimmed">
-                  Email
-                </Text>
-                <Text size="sm">{viewTarget.email ?? '-'}</Text>
-              </Group>
-              <Group justify="space-between" wrap="nowrap">
-                <Text size="sm" c="dimmed">
-                  Phone
-                </Text>
-                <Text size="sm">{viewTarget.phone}</Text>
-              </Group>
-              <Group justify="space-between" wrap="nowrap" align="flex-start">
-                <Text size="sm" c="dimmed">
-                  Address
-                </Text>
-                <Text size="sm" ta="right">
-                  {viewTarget.address ?? '-'}
-                </Text>
-              </Group>
-            </Stack>
-            <Divider />
-            <Stack gap="xs">
-              <Group justify="space-between" wrap="nowrap">
-                <Text size="sm" c="dimmed">
-                  Created
-                </Text>
-                <Text size="sm">{datePreview(viewTarget.createdAt)}</Text>
-              </Group>
-              <Group justify="space-between" wrap="nowrap">
-                <Text size="sm" c="dimmed">
-                  Last updated
-                </Text>
-                <Text size="sm">{datePreview(viewTarget.updatedAt)}</Text>
-              </Group>
-            </Stack>
-          </Stack>
-        )}
-      </Drawer>
-      <Modal opened={!!toDelete} onClose={() => setToDelete(null)} title="Delete customer" centered>
-        <Stack gap="md">
-          <Text size="sm">
-            Are you sure you want to delete{' '}
-            <strong>
-              {toDelete?.firstName} {toDelete?.lastName ?? ''}
-            </strong>
-            ? This cannot be undone.
-          </Text>
-          <Group justify="flex-end">
-            <Button variant="default" onClick={() => setToDelete(null)}>
-              Cancel
-            </Button>
-            <Button color="red" loading={deleting} onClick={handleDelete}>
-              Delete
-            </Button>
-          </Group>
-        </Stack>
-      </Modal>
-    </Stack>
+    <ListPage<Customer>
+      title="Customers"
+      description="People and shops you sell to. Search, filter and open any record."
+      entity={{ singular: 'customer', plural: 'customers' }}
+      searchPlaceholder="Search by name, phone or email"
+      filters={FILTERS}
+      records={items}
+      total={total}
+      rowKey={(c) => c._id}
+      rowName={fullName}
+      defaultSort={{ key: 'name', dir: 'asc' }}
+      sortMap={SORT_MAP}
+      load={({ page, limit, searchText, sortBy, sortType, filters }) =>
+        dispatch(
+          fetchCustomers({ page, limit, searchText, status: filters.status, sortBy, sortType }),
+        ).unwrap()
+      }
+      createLabel="Add customer"
+      emptyDescription="Add the people and shops you sell to. Their sales and cheques will show on their record."
+      emptyIcon={<IconUsers size={20} />}
+      onCreate={() => setForm({ customer: null })}
+      onView={setView}
+      onEdit={(customer) => setForm({ customer })}
+      remove={{
+        title: 'Delete customer?',
+        describe: (c) => (
+          <>
+            This permanently removes <strong>{fullName(c)}</strong> and their contact details.
+          </>
+        ),
+        run: (c) => dispatch(deleteCustomer(c._id)).unwrap(),
+        done: 'Customer deleted.',
+      }}
+      columns={[
+        {
+          key: 'name',
+          header: 'Name',
+          sortable: true,
+          primary: true,
+          render: (c) => (
+            <Anchor component={Link} to={`/app/customers/${c._id}`} fw={500} size="sm">
+              {fullName(c)}
+            </Anchor>
+          ),
+        },
+        {
+          key: 'phone',
+          header: 'Phone',
+          render: (c) => <span className="num">{formatPhone(c.phone)}</span>,
+        },
+        {
+          key: 'email',
+          header: 'Email',
+          sortable: true,
+          hideBelow: 'md',
+          render: (c) => orDash(c.email),
+        },
+        { key: 'address', header: 'Address', sortable: true, render: (c) => orDash(c.address) },
+        {
+          key: 'status',
+          header: 'Status',
+          badge: true,
+          render: (c) => <ActiveBadge active={c.isActive} />,
+        },
+      ]}
+    >
+      {({ reload }) => (
+        <>
+          <AddEditCustomerModal
+            opened={!!form}
+            customer={form?.customer ?? null}
+            onClose={() => {
+              setForm(null);
+              reload();
+            }}
+          />
+          <DetailDialog
+            opened={!!view}
+            onClose={() => setView(null)}
+            title={view ? fullName(view) : ''}
+            subtitle={view ? `Customer · since ${formatDate(view.createdAt)}` : undefined}
+            actions={
+              view && (
+                <Button
+                  leftSection={<IconPencil size={16} aria-hidden />}
+                  onClick={() => {
+                    setForm({ customer: view });
+                    setView(null);
+                  }}
+                >
+                  Edit customer
+                </Button>
+              )
+            }
+          >
+            {view && (
+              <>
+                <SimpleGrid cols={{ base: 1, xs: 2 }} spacing="md" verticalSpacing="md">
+                  <Field label="Mobile">
+                    <span className="num">{formatPhone(view.phone)}</span>
+                  </Field>
+                  <Field label="Email">{view.email}</Field>
+                </SimpleGrid>
+                <Box mt="md">
+                  <Field label="Address">{view.address}</Field>
+                </Box>
+                {view.location && (
+                  <Box mt="md">
+                    <Field label="Location">
+                      <span className="num">
+                        {view.location.lat.toFixed(5)}, {view.location.lng.toFixed(5)}
+                      </span>
+                    </Field>
+                    <Box mt={6}>
+                      <LocationMap
+                        lat={view.location.lat}
+                        lng={view.location.lng}
+                        label={fullName(view)}
+                      />
+                    </Box>
+                  </Box>
+                )}
+                <StatusSection
+                  label="STATUS"
+                  title="Active customer"
+                  description="Inactive customers can't be picked on new sales."
+                  checked={view.isActive}
+                  disabled={busyId === view._id}
+                  onChange={() => toggle(view)}
+                />
+                <Anchor
+                  component={Link}
+                  to={`/app/customers/${view._id}`}
+                  fw={500}
+                  display="inline-block"
+                  mt="lg"
+                >
+                  Open full record →
+                </Anchor>
+              </>
+            )}
+          </DetailDialog>
+        </>
+      )}
+    </ListPage>
   );
 };
 

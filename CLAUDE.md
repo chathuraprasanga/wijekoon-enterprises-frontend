@@ -1,6 +1,6 @@
 # Wijekoon Enterprises — Admin Frontend
 
-React 19 + TypeScript + Vite admin panel, styled with Mantine (Tailwind v4 utilities used sparingly on top, preflight disabled).
+React 19 + TypeScript + Vite admin panel, styled with Mantine and the "Ledger · Forest" design system.
 
 ## Commands
 
@@ -48,22 +48,27 @@ Every thunk's catch block returns `rejectWithValue(getErrorMessage(error))` (`sr
 
 `@mantine/form`'s `useForm` with an inline `validate` object (no Yup/Zod). Pages own submission (dispatch a thunk, `try/catch` + `.unwrap()`, local `useState<boolean>` for loading) and pass `onSubmit`/`loading` down. **Form components stay presentational** — they validate and call `onSubmit(values)`; they never call `axiosInstance` or `dispatch` directly. See `/new-component`.
 
-### Theming
+### Design system (Ledger · Forest)
 
-`src/theme.ts` — Mantine only. `primaryColor: 'gray'`, `defaultRadius: 'md'`, Ubuntu font. Rely on Mantine's own color-scheme handling (`defaultColorScheme="auto"` in `main.tsx`) — don't introduce the "define a `dark`/`light` const object per file and switch manually" pattern; centralize any new tokens in `theme.ts` instead.
+- Tokens live in `src/theme/tokens.css` as `--ldg-*` CSS variables (surface, border, text, accent, success/warning/danger/info, focus, elevation, motion), with a light and a dark value each. **Components use these names, never raw hex.**
+- `src/theme/index.ts` holds the Mantine theme (component defaults/styles) and a `cssVariablesResolver` that maps Mantine's own colour variables onto the tokens, so un-extended Mantine components follow the system too. Keep Mantine's colour-scheme handling (`defaultColorScheme="auto"`); don't switch colours manually per file.
+- Fonts are self-hosted via `@fontsource` (IBM Plex Sans/Mono, Noto Sans Sinhala/Tamil), imported in `main.tsx`.
+- Data display: money `formatLkr`, dates `formatDate`, phones `formatPhone`, empty value `—` (`src/utils/format.ts`). Numbers/IDs use the `.num` / `.mono` classes. Validation rules are shared in `src/utils/validators.ts`.
+- Lists: build with `ListPage` (`src/components/data/`) — URL-synced search/filter/sort/page/size, loading/empty/error states, row actions, delete confirmation. Overlays: `FormModal` (≤5 fields, `as="drawer"` for 6+), `DetailDrawer`, `ConfirmDialog`. Status is always `StatusBadge` (colour + icon + text). Toasts only through `toNotify` (de-duplicated).
 
 ## Folder conventions
 
-| Path                                       | Contents                                                                                    |
-| ------------------------------------------ | ------------------------------------------------------------------------------------------- |
-| `src/pages/`                               | Route-level `*Page.tsx`, default export                                                     |
-| `src/components/`                          | Shared, presentational, named export, explicit `Props` type                                 |
-| `src/layouts/`                             | Shared page chrome (currently unused — see note below)                                      |
-| `src/store/<domain>Slice/`                 | One Redux slice per domain                                                                  |
-| `src/store/store.ts`, `src/store/hooks.ts` | Store setup + typed hooks                                                                   |
-| `src/interceptors/`                        | `axiosInstance` + interceptors                                                              |
-| `src/hooks/`                               | Cross-cutting hooks (e.g. `toNotify`), `.tsx` even without JSX-heavy logic, for consistency |
-| `src/utils/`                               | Small stateless helpers (`getErrorMessage`, `apiBaseUrl`)                                   |
+| Path                                       | Contents                                                                                          |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| `src/pages/`                               | Route-level `*Page.tsx`, default export                                                           |
+| `src/components/`, `src/components/data/`  | Shared, presentational, named export, explicit `Props` type; `data/` = table/list building blocks |
+| `src/theme/`                               | Design tokens (`tokens.css`) and the Mantine theme                                                |
+| `src/layouts/`                             | Auth split layout and Settings tab layout                                                         |
+| `src/store/<domain>Slice/`                 | One Redux slice per domain                                                                        |
+| `src/store/store.ts`, `src/store/hooks.ts` | Store setup + typed hooks                                                                         |
+| `src/interceptors/`                        | `axiosInstance` + interceptors                                                                    |
+| `src/hooks/`                               | Cross-cutting hooks (e.g. `toNotify`), `.tsx` even without JSX-heavy logic, for consistency       |
+| `src/utils/`                               | Small stateless helpers (`getErrorMessage`, `apiBaseUrl`)                                         |
 
 Path alias `@/` → `./src` (both `vite.config.ts` and `tsconfig.app.json`).
 

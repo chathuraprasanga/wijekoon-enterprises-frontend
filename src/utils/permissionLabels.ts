@@ -1,6 +1,6 @@
 export const PERMISSION_ACTION_LABELS: Record<string, string> = {
   read: 'View',
-  create: 'Add',
+  create: 'Create',
   update: 'Edit',
   delete: 'Delete',
 };

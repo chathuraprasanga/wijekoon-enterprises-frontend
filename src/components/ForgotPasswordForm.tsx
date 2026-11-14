@@ -1,11 +1,13 @@
-import { Anchor, Button, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Anchor, Group, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { IconMail } from '@tabler/icons-react';
+import { IconArrowLeft, IconUser } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
+import { AuthFormShell } from '@/components/AuthFormShell';
+import { AuthSteps } from '@/components/AuthSteps';
+import { AuthSubmitButton } from '@/components/AuthSubmitButton';
+import { required } from '@/utils/validators';
 
-export type ForgotPasswordFormValues = {
-  identifier: string;
-};
+export type ForgotPasswordFormValues = { identifier: string };
 
 export type ForgotPasswordFormProps = {
   onSubmit: (values: ForgotPasswordFormValues) => void;
@@ -15,33 +17,38 @@ export type ForgotPasswordFormProps = {
 export const ForgotPasswordForm = ({ onSubmit, loading }: ForgotPasswordFormProps) => {
   const form = useForm<ForgotPasswordFormValues>({
     initialValues: { identifier: '' },
-    validate: {
-      identifier: (value) => (value.trim() ? null : 'Email or phone is required'),
-    },
+    validate: { identifier: required('Enter your email address or phone number.') },
   });
 
   return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
-      <Stack gap={4} mb="xl">
-        <Title order={2}>Forgot password</Title>
-        <Text size="sm" c="dimmed">
-          Enter your email or phone and we&apos;ll send you a code to reset your password
-        </Text>
-      </Stack>
-      <Stack gap="md">
-        <TextInput
-          label="Email or phone"
-          placeholder="Enter your email or phone"
-          leftSection={<IconMail size={16} />}
-          {...form.getInputProps('identifier')}
-        />
-        <Button type="submit" loading={loading} fullWidth mt="xs">
-          Send code
-        </Button>
-        <Anchor component={Link} to="/login" size="sm" ta="center">
-          Back to log in
+    <AuthFormShell
+      steps={<AuthSteps current={0} />}
+      title="Forgot your password?"
+      subtitle="Enter your email or phone and we'll send a 6-digit code."
+      onSubmit={form.onSubmit(onSubmit)}
+    >
+      <TextInput
+        size="md"
+        styles={{ input: { height: 44 } }}
+        label="Email or phone"
+        withAsterisk
+        autoFocus
+        autoComplete="username"
+        disabled={loading}
+        placeholder="ruwan@wijekoon.lk or 077 123 4567"
+        leftSection={<IconUser size={16} aria-hidden />}
+        {...form.getInputProps('identifier')}
+      />
+      <AuthSubmitButton loading={loading} loadingLabel="Sending code…">
+        Send code
+      </AuthSubmitButton>
+      <Group>
+        <Anchor component={Link} to="/login" size="sm" fw={500}>
+          <Group gap={6} wrap="nowrap">
+            <IconArrowLeft size={16} aria-hidden /> Back to sign in
+          </Group>
         </Anchor>
-      </Stack>
-    </form>
+      </Group>
+    </AuthFormShell>
   );
 };

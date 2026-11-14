@@ -6,6 +6,8 @@ import permissionReducer from '@/store/permissionSlice/permissionSlice';
 import userReducer from '@/store/userSlice/userSlice';
 import supplierReducer from '@/store/supplierSlice/supplierSlice';
 import productReducer from '@/store/productSlice/productSlice';
+import saleReducer from '@/store/saleSlice/saleSlice';
+import chequeReducer from '@/store/chequeSlice/chequeSlice';
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +18,8 @@ export const store = configureStore({
     user: userReducer,
     supplier: supplierReducer,
     product: productReducer,
+    sale: saleReducer,
+    cheque: chequeReducer,
   },
 });
 
