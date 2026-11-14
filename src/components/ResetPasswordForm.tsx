@@ -1,52 +1,61 @@
-import { Button, PasswordInput, Stack, Text, Title } from '@mantine/core';
+import { PasswordInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconLock } from '@tabler/icons-react';
+import { AuthFormShell } from '@/components/AuthFormShell';
+import { AuthSteps } from '@/components/AuthSteps';
+import { AuthSubmitButton } from '@/components/AuthSubmitButton';
+import { password } from '@/utils/validators';
 
-export type ResetPasswordFormValues = {
-  newPassword: string;
-  confirmPassword: string;
-};
+export type ResetPasswordFormValues = { newPassword: string; confirmPassword: string };
 
 export type ResetPasswordFormProps = {
   onSubmit: (values: ResetPasswordFormValues) => void;
   loading: boolean;
 };
 
+const touch = { size: 'md', styles: { input: { height: 44 } } } as const;
+
 export const ResetPasswordForm = ({ onSubmit, loading }: ResetPasswordFormProps) => {
   const form = useForm<ResetPasswordFormValues>({
     initialValues: { newPassword: '', confirmPassword: '' },
     validate: {
-      newPassword: (value) => (value.length >= 8 ? null : 'Password must be at least 8 characters'),
-      confirmPassword: (value, values) =>
-        value === values.newPassword ? null : 'Passwords do not match',
+      newPassword: password,
+      confirmPassword: (v, values) => (v === values.newPassword ? null : 'Passwords do not match.'),
     },
   });
 
   return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
-      <Stack gap={4} mb="xl">
-        <Title order={2}>Reset password</Title>
-        <Text size="sm" c="dimmed">
-          Choose a new password for your account
-        </Text>
-      </Stack>
-      <Stack gap="md">
-        <PasswordInput
-          label="New password"
-          placeholder="Enter your new password"
-          leftSection={<IconLock size={16} />}
-          {...form.getInputProps('newPassword')}
-        />
-        <PasswordInput
-          label="Confirm password"
-          placeholder="Re-enter your new password"
-          leftSection={<IconLock size={16} />}
-          {...form.getInputProps('confirmPassword')}
-        />
-        <Button type="submit" loading={loading} fullWidth mt="xs">
-          Reset password
-        </Button>
-      </Stack>
-    </form>
+    <AuthFormShell
+      steps={<AuthSteps current={2} />}
+      title="Set a new password"
+      subtitle="Choose a password you don't use anywhere else."
+      onSubmit={form.onSubmit(onSubmit)}
+    >
+      <PasswordInput
+        {...touch}
+        label="New password"
+        placeholder="Enter a new password"
+        withAsterisk
+        autoFocus
+        autoComplete="new-password"
+        disabled={loading}
+        description="At least 8 characters."
+        leftSection={<IconLock size={16} aria-hidden />}
+        {...form.getInputProps('newPassword')}
+      />
+      <PasswordInput
+        {...touch}
+        label="Confirm new password"
+        placeholder="Re-enter the new password"
+        withAsterisk
+        autoComplete="new-password"
+        disabled={loading}
+        leftSection={<IconLock size={16} aria-hidden />}
+        {...form.getInputProps('confirmPassword')}
+      />
+      <AuthSubmitButton loading={loading} loadingLabel="Resetting…">
+        Reset password
+      </AuthSubmitButton>
+    </AuthFormShell>
   );
 };

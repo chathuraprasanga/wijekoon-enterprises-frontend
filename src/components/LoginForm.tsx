@@ -1,72 +1,77 @@
-import {
-  Anchor,
-  Button,
-  Checkbox,
-  Group,
-  PasswordInput,
-  Stack,
-  Text,
-  TextInput,
-  Title,
-} from '@mantine/core';
+import { Anchor, Checkbox, Group, PasswordInput, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { IconLock, IconMail } from '@tabler/icons-react';
+import { IconLock, IconUser } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
+import { AuthFormShell } from '@/components/AuthFormShell';
+import { AuthSubmitButton } from '@/components/AuthSubmitButton';
+import { InlineAlert } from '@/components/InlineAlert';
+import { required } from '@/utils/validators';
 
-export type LoginFormValues = {
-  identifier: string;
-  password: string;
-  rememberMe: boolean;
-};
+export type LoginFormValues = { identifier: string; password: string; rememberMe: boolean };
 
 export type LoginFormProps = {
   onSubmit: (values: LoginFormValues) => void;
   loading: boolean;
+  /** Form-level failure from the server (e.g. wrong credentials). */
+  error?: string | null;
 };
 
-export const LoginForm = ({ onSubmit, loading }: LoginFormProps) => {
+const touch = { size: 'md', styles: { input: { height: 44 } } } as const;
+
+export const LoginForm = ({ onSubmit, loading, error }: LoginFormProps) => {
   const form = useForm<LoginFormValues>({
     initialValues: { identifier: '', password: '', rememberMe: false },
     validate: {
-      identifier: (value) => (value.trim() ? null : 'Email or phone is required'),
-      password: (value) => (value ? null : 'Password is required'),
+      identifier: required('Enter your email address or phone number.'),
+      password: required('Enter your password.'),
     },
   });
 
   return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
-      <Stack gap={4} mb="xl">
-        <Title order={2}>Log in to your account</Title>
-        <Text size="sm" c="dimmed">
-          Please enter your details
-        </Text>
-      </Stack>
-      <Stack gap="md">
-        <TextInput
-          label="Email or phone"
-          placeholder="Enter your email or phone"
-          leftSection={<IconMail size={16} />}
-          {...form.getInputProps('identifier')}
+    <AuthFormShell
+      title="Sign in"
+      subtitle="Use your Wijekoon Enterprises account."
+      onSubmit={form.onSubmit(onSubmit)}
+    >
+      {error && (
+        <InlineAlert tone="danger" title="Sign-in failed">
+          {error}
+        </InlineAlert>
+      )}
+      <TextInput
+        {...touch}
+        label="Email or phone"
+        withAsterisk
+        autoFocus
+        autoComplete="username"
+        disabled={loading}
+        placeholder="ruwan@wijekoon.lk or 077 123 4567"
+        leftSection={<IconUser size={16} aria-hidden />}
+        {...form.getInputProps('identifier')}
+      />
+      <PasswordInput
+        {...touch}
+        label="Password"
+        placeholder="Enter your password"
+        withAsterisk
+        autoComplete="current-password"
+        disabled={loading}
+        leftSection={<IconLock size={16} aria-hidden />}
+        {...form.getInputProps('password')}
+      />
+      <Group justify="space-between">
+        <Checkbox
+          label="Remember me for 30 days"
+          disabled={loading}
+          {...form.getInputProps('rememberMe', { type: 'checkbox' })}
         />
-        <PasswordInput
-          label="Password"
-          placeholder="Enter your password"
-          leftSection={<IconLock size={16} />}
-          {...form.getInputProps('password')}
-        />
-        <Group justify="space-between">
-          <Checkbox
-            label="Remember me for 30 days"
-            {...form.getInputProps('rememberMe', { type: 'checkbox' })}
-          />
-          <Anchor component={Link} to="/forgot-password" size="sm">
-            Forgot password?
-          </Anchor>
-        </Group>
-        <Button type="submit" loading={loading} fullWidth mt="xs">
-          Log in
-        </Button>
-      </Stack>
-    </form>
+        <Anchor component={Link} to="/forgot-password" size="sm" fw={500}>
+          Forgot password?
+        </Anchor>
+      </Group>
+      <AuthSubmitButton loading={loading} loadingLabel="Signing in…">
+        Sign in
+      </AuthSubmitButton>
+    </AuthFormShell>
   );
 };

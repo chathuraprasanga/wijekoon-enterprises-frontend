@@ -1,0 +1,119 @@
+/* Ledger design tokens. Components use these names, never raw hex.
+   Values match the approved "Ledger · Forest" design system (light + dark). */
+:root {
+  /* surfaces */
+  --ldg-surface: #f4f2ee;
+  --ldg-surface-raised: #ffffff;
+  --ldg-surface-sunken: #edeae4;
+  /* borders */
+  --ldg-border: #e1ddd4;
+  --ldg-border-strong: #cbc6bb;
+  --ldg-border-input: #8a8579;
+  /* text */
+  --ldg-text: #1f1d1a;
+  --ldg-text-muted: #5a564e;
+  --ldg-text-subtle: #6a665c;
+  /* accent */
+  --ldg-accent: #0f5c4f;
+  --ldg-accent-hover: #0b4a40;
+  --ldg-accent-pressed: #083a32;
+  --ldg-on-accent: #ffffff;
+  --ldg-accent-subtle: #e2efeb;
+  --ldg-accent-subtle-text: #0b4a40;
+  --ldg-accent-border: #9bc7bc;
+  --ldg-accent-text: #0f5c4f;
+  /* success */
+  --ldg-success-text: #1a6b2f;
+  --ldg-success-fill: #1e7a35;
+  --ldg-success-subtle: #e5f3e6;
+  --ldg-success-border: #a8d4ae;
+  /* warning */
+  --ldg-warning-text: #8a4b00;
+  --ldg-warning-fill: #b45f06;
+  --ldg-warning-subtle: #fff2d9;
+  --ldg-warning-border: #ebcb8b;
+  /* danger */
+  --ldg-danger-text: #a32020;
+  --ldg-danger-fill: #c62828;
+  --ldg-danger-subtle: #fce8e6;
+  --ldg-danger-border: #efb0aa;
+  /* info */
+  --ldg-info-text: #1a4f8f;
+  --ldg-info-fill: #1f63b8;
+  --ldg-info-subtle: #e5effb;
+  --ldg-info-border: #a6c4ea;
+  /* focus */
+  --ldg-focus-ring: #0f5c4f;
+
+  /* flat brand panel on the sign-in screens */
+  --ldg-brand-panel: #0f5c4f;
+
+  /* text on solid danger/success/warning fills */
+  --ldg-on-fill: #ffffff;
+
+  /* elevation: flat surfaces, shadows only on floating layers */
+  --ldg-shadow-1: 0 4px 12px rgba(31, 29, 26, 0.08);
+  --ldg-shadow-2: 0 4px 14px rgba(31, 29, 26, 0.1);
+  --ldg-shadow-3: 0 12px 32px rgba(31, 29, 26, 0.18);
+
+  /* motion */
+  --ldg-motion-fast: 120ms ease-out;
+  --ldg-motion-base: 160ms ease-out;
+  --ldg-motion-slow: 200ms ease-out;
+
+  /* layout */
+  --ldg-header-height: 48px;
+  --ldg-nav-width: 240px;
+  --ldg-content-max: 1440px;
+}
+
+:root[data-mantine-color-scheme='dark'] {
+  --ldg-surface: #151412;
+  --ldg-surface-raised: #1e1c19;
+  --ldg-surface-sunken: #26231f;
+  --ldg-border: #37342e;
+  --ldg-border-strong: #4b473f;
+  --ldg-border-input: #847f73;
+  --ldg-text: #eeebe4;
+  --ldg-text-muted: #b3aea2;
+  --ldg-text-subtle: #9c978b;
+  --ldg-accent: #34b79c;
+  --ldg-accent-hover: #4cc7ad;
+  --ldg-accent-pressed: #26a088;
+  --ldg-on-accent: #06201a;
+  --ldg-accent-subtle: #173630;
+  --ldg-accent-subtle-text: #8fe3cf;
+  --ldg-accent-border: #2c6b5e;
+  --ldg-accent-text: #5dd3b8;
+  --ldg-success-text: #7ed895;
+  --ldg-success-fill: #4dba68;
+  --ldg-success-subtle: #16301d;
+  --ldg-success-border: #2d6b3c;
+  --ldg-warning-text: #f4bc62;
+  --ldg-warning-fill: #e3a33c;
+  --ldg-warning-subtle: #3a2b0e;
+  --ldg-warning-border: #7a5a1f;
+  --ldg-danger-text: #ff9d95;
+  --ldg-danger-fill: #eb6a62;
+  --ldg-danger-subtle: #401a18;
+  --ldg-danger-border: #85403b;
+  --ldg-info-text: #93bdf3;
+  --ldg-info-fill: #5e9de8;
+  --ldg-info-subtle: #162a42;
+  --ldg-info-border: #38608f;
+  --ldg-focus-ring: #5dd3b8;
+  --ldg-brand-panel: #0b3833;
+  --ldg-on-fill: #1e0a09;
+
+  --ldg-shadow-1: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --ldg-shadow-2: 0 4px 14px rgba(0, 0, 0, 0.45);
+  --ldg-shadow-3: 0 12px 32px rgba(0, 0, 0, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ldg-motion-fast: 0ms;
+    --ldg-motion-base: 0ms;
+    --ldg-motion-slow: 0ms;
+  }
+}

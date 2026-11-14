@@ -1,36 +1,181 @@
-/* Tailwind's preflight is intentionally skipped: it resets base element
-   styles (buttons, inputs, headings) which conflicts with Mantine's own
-   component styling. Only theme tokens + utility classes are loaded. */
-@import 'tailwindcss';
-@layer mantine, mantine-datatable;
+@import './theme/tokens.css';
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
 
 body {
   margin: 0;
+  background: var(--ldg-surface);
+  color: var(--ldg-text);
+  font-variant-numeric: normal;
 }
 
-.notify-bar {
-  position: relative;
-  overflow: hidden;
+/* Tabular numerals wherever money, dates, counts or IDs are shown. */
+.num,
+.mono {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.mono {
+  font-family: var(--mantine-font-family-monospace);
+  font-size: 13px;
 }
 
-.notify-bar::after {
-  content: '';
+.eyebrow {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ldg-text-muted);
+}
+
+/* One visible focus treatment on every interactive element. */
+:focus-visible {
+  outline: 2px solid var(--ldg-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Skip link: the only element at z-index 9999. */
+.skip-link {
   position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 3px;
-  width: 100%;
-  background: var(--mantine-color-dimmed);
-  background: var(--notify-bar-color, currentColor);
-  animation: notify-bar-shrink var(--notify-bar-duration, 4000ms) linear forwards;
-  transform-origin: left;
+  left: 8px;
+  top: -48px;
+  z-index: 9999;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: var(--ldg-accent);
+  color: var(--ldg-on-accent);
+  font-weight: 500;
+}
+.skip-link:focus {
+  top: 8px;
 }
 
-@keyframes notify-bar-shrink {
-  from {
-    transform: scaleX(1);
+/* Touch size (44px) for every control on tablet and mobile. */
+@media (max-width: 62em) {
+  .mantine-Button-root,
+  .mantine-Input-input,
+  .mantine-InputWrapper-root input,
+  .mantine-Select-input,
+  .mantine-PasswordInput-innerInput {
+    min-height: 44px;
   }
-  to {
-    transform: scaleX(0);
+  .mantine-ActionIcon-root {
+    min-width: 44px;
+    min-height: 44px;
   }
+}
+
+/* Skeleton pulse is 1.4s and stops under reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .mantine-Skeleton-root::after {
+    animation: none !important;
+  }
+}
+
+/* Field errors: red 2px edge and an alert icon before the message (never colour alone). */
+.mantine-Input-input[data-error],
+.mantine-PasswordInput-input[data-error] {
+  border-color: var(--ldg-danger-fill);
+  box-shadow: 0 0 0 1px var(--ldg-danger-fill);
+}
+.mantine-InputWrapper-error,
+.mantine-Input-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+.mantine-InputWrapper-error::before,
+.mantine-Input-error::before {
+  content: '';
+  flex: none;
+  width: 14px;
+  height: 14px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 8v5M12 16.5v.01'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 8v5M12 16.5v.01'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+}
+
+.mantine-Input-input[data-error]::placeholder {
+  color: var(--ldg-text-subtle);
+  opacity: 1;
+}
+
+/* Search + Clear: side by side, split evenly on phones. */
+.toolbar-actions {
+  display: flex;
+  gap: 8px;
+}
+@media (max-width: 47.99em) {
+  .toolbar-actions {
+    width: 100%;
+  }
+  .toolbar-actions > * {
+    flex: 1;
+  }
+}
+
+/* Phones: the page's primary action is pinned in a bottom bar; content gets room beneath it. */
+@media (max-width: 47.99em) {
+  .page-action {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    padding: 12px 16px;
+    background: var(--ldg-surface-raised);
+    border-top: 1px solid var(--ldg-border);
+  }
+  .page-action .mantine-Button-root,
+  .page-action-inline,
+  .page-action-inline .mantine-Group-root {
+    width: 100%;
+  }
+  .page-action-inline .mantine-Group-root > * {
+    flex: 1;
+  }
+  .mantine-AppShell-main {
+    padding-bottom: 88px;
+  }
+}
+
+/* Modal / bottom-sheet footer: hairline above; two equal buttons on phones. */
+.sheet-footer {
+  border-top: 1px solid var(--ldg-border);
+}
+@media (max-width: 47.99em) {
+  .sheet-footer {
+    flex-wrap: nowrap;
+  }
+  .sheet-footer > * {
+    flex: 1;
+  }
+}
+
+/* Toasts: bottom-right on desktop and tablet; full width on phones, above the pinned action bar. */
+@media (max-width: 47.99em) {
+  .mantine-Notifications-root {
+    left: 8px !important;
+    right: 8px !important;
+    top: auto !important;
+    bottom: 80px !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+}
+
+/* An error replaces the helper text under a field. */
+.mantine-InputWrapper-root:has(.mantine-InputWrapper-error) .mantine-InputWrapper-description {
+  display: none;
+}
+
+/* Leaflet stacks its panes at z-index 400+; contain them so dialogs and menus always sit above a map. */
+.leaflet-container {
+  isolation: isolate;
+  z-index: 0;
 }

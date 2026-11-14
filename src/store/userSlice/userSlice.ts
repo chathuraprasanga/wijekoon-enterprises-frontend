@@ -107,6 +107,18 @@ export const deleteUser = createAsyncThunk(
   },
 );
 
+export const resetUserPassword = createAsyncThunk(
+  'user/resetPassword',
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const { data } = await axiosInstance.post<{ message: string }>(`/users/${id}/reset-password`);
+      return data;
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error));
+    }
+  },
+);
+
 const userSlice = createSlice({
   name: 'user',
   initialState,

@@ -1,11 +1,9 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import {
   Avatar,
+  Box,
   Button,
-  Divider,
   Group,
-  Modal,
-  Paper,
   PasswordInput,
   SimpleGrid,
   Stack,
@@ -14,15 +12,18 @@ import {
   UnstyledButton,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { IconPencil } from '@tabler/icons-react';
-import { PageHeader } from '@/components/PageHeader';
+import { IconLock, IconMail, IconPencil, IconPhone } from '@tabler/icons-react';
+import { SectionCard } from '@/components/SectionCard';
+import { StatusBadge } from '@/components/StatusBadge';
+import { FormModal } from '@/components/FormModal';
+import { useErrorSummary } from '@/hooks/useErrorSummary';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { changePassword, updateProfile } from '@/store/authSlice/authSlice';
 import { toNotify } from '@/hooks/toNotify';
+import { email, password, phone, required, digitsOnly } from '@/utils/validators';
+import { formatDate, formatPhone, fullName, initials } from '@/utils/format';
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PHONE_REGEX = /^(070|071|072|074|075|076|077|078)\d{7}$/;
-
+// Optional illustrated avatars are the one third-party image source in the app.
 const AVATAR_SEEDS = [
   'Felix',
   'Aneka',
@@ -42,81 +43,97 @@ const AVATAR_SEEDS = [
 const avatarUrl = (seed: string) =>
   `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(seed)}`;
 
-const ProfilePage = () => {
-  const user = useAppSelector((state) => state.auth.user);
-  const [editOpen, setEditOpen] = useState(false);
-  const [avatarOpen, setAvatarOpen] = useState(false);
-  const [passwordOpen, setPasswordOpen] = useState(false);
+type ModalProps = { opened: boolean; onClose: () => void };
 
+const Field = ({ label, children }: { label: string; children: ReactNode }) => (
+  <Box>
+    <Text size="sm" c="dimmed">
+      {label}
+    </Text>
+    <Text component="div">{children}</Text>
+  </Box>
+);
+
+const ProfilePage = () => {
+  const user = useAppSelector((s) => s.auth.user);
+  const [modal, setModal] = useState<'edit' | 'avatar' | 'password' | null>(null);
   if (!user) return null;
+  const close = () => setModal(null);
 
   return (
     <Stack gap="md">
-      <PageHeader title="Profile" description="Manage your personal account details." />
-      <Paper withBorder radius="md" p="lg">
-        <Group justify="space-between" wrap="nowrap" align="flex-start">
-          <Group wrap="nowrap" style={{ minWidth: 0, flex: 1 }}>
-            <UnstyledButton onClick={() => setAvatarOpen(true)} style={{ flexShrink: 0 }}>
-              <Avatar src={user.avatar} size={72} radius="xl">
-                {`${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`.toUpperCase()}
-              </Avatar>
-            </UnstyledButton>
-            <Stack gap={2} style={{ minWidth: 0 }}>
-              <Text fw={600} size="lg" truncate>
-                {user.firstName} {user.lastName ?? ''}
-              </Text>
-              <Text size="sm" c="dimmed" truncate>
-                {user.email}
-              </Text>
-              <Text size="sm" c="dimmed" truncate>
-                {user.phone}
-              </Text>
-            </Stack>
-          </Group>
+      <SectionCard
+        title="Your profile"
+        action={
           <Button
             variant="default"
-            leftSection={<IconPencil size={16} />}
-            onClick={() => setEditOpen(true)}
-            style={{ flexShrink: 0 }}
+            leftSection={<IconPencil size={16} aria-hidden />}
+            onClick={() => setModal('edit')}
           >
-            Edit
+            Edit profile
           </Button>
-        </Group>
-        <Divider my="lg" />
-        <Group justify="space-between" wrap="nowrap">
-          <Stack gap={2} style={{ minWidth: 0 }}>
-            <Text fw={600}>Password</Text>
-            <Text size="sm" c="dimmed" truncate>
-              Change your account password.
+        }
+      >
+        <Group gap="md" wrap="nowrap" mb="lg">
+          <Avatar src={user.avatar} size={66} radius="xl" color="forest" aria-hidden>
+            {initials(user)}
+          </Avatar>
+          <Stack gap={4} align="flex-start">
+            <Text fz={20} fw={600} lh={1.25}>
+              {fullName(user)}
             </Text>
+            {user.isSuperAdmin && <StatusBadge tone="accent" label="Admin" />}
+            <UnstyledButton
+              onClick={() => setModal('avatar')}
+              fz="sm"
+              fw={500}
+              c="var(--ldg-accent-text)"
+            >
+              Change avatar
+            </UnstyledButton>
           </Stack>
-          <Button variant="default" onClick={() => setPasswordOpen(true)} style={{ flexShrink: 0 }}>
+        </Group>
+        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md" verticalSpacing="md">
+          <Field label="Full name">{fullName(user)}</Field>
+          <Field label="Email">{user.email}</Field>
+          <Field label="Phone">
+            <span className="num">{formatPhone(user.phone)}</span>
+          </Field>
+          <Field label="Member since">{formatDate(user.createdAt)}</Field>
+        </SimpleGrid>
+      </SectionCard>
+      <SectionCard title="Password">
+        <Group justify="space-between" gap="md" wrap="wrap">
+          <Box>
+            <Text fw={500}>Password</Text>
+            <Text size="sm" c="dimmed">
+              Change the password you use to sign in.
+            </Text>
+          </Box>
+          <Button
+            variant="default"
+            leftSection={<IconLock size={16} aria-hidden />}
+            onClick={() => setModal('password')}
+          >
             Change password
           </Button>
         </Group>
-      </Paper>
-      <EditProfileModal opened={editOpen} onClose={() => setEditOpen(false)} />
-      <AvatarPickerModal opened={avatarOpen} onClose={() => setAvatarOpen(false)} />
-      <ChangePasswordModal opened={passwordOpen} onClose={() => setPasswordOpen(false)} />
+      </SectionCard>
+      {modal === 'edit' && <EditProfileModal opened onClose={close} />}
+      {modal === 'avatar' && <AvatarPickerModal opened onClose={close} />}
+      {modal === 'password' && <ChangePasswordModal opened onClose={close} />}
     </Stack>
   );
 };
 
-type ModalProps = { opened: boolean; onClose: () => void };
-
-type ProfileFormValues = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-};
+type ProfileValues = { firstName: string; lastName: string; email: string; phone: string };
 
 const EditProfileModal = ({ opened, onClose }: ModalProps) => {
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.auth.user);
+  const user = useAppSelector((s) => s.auth.user);
   const [loading, setLoading] = useState(false);
 
-  const form = useForm<ProfileFormValues>({
+  const form = useForm<ProfileValues>({
     initialValues: {
       firstName: user?.firstName ?? '',
       lastName: user?.lastName ?? '',
@@ -124,78 +141,90 @@ const EditProfileModal = ({ opened, onClose }: ModalProps) => {
       phone: user?.phone ?? '',
     },
     validate: {
-      firstName: (value) => (value.trim() ? null : 'First name is required'),
-      email: (value) => (EMAIL_REGEX.test(value) ? null : 'Enter a valid email address'),
-      phone: (value) => (PHONE_REGEX.test(value) ? null : 'Enter a valid 10-digit mobile number'),
+      firstName: required('First name is required.'),
+      email,
+      phone,
     },
   });
 
-  const handleSubmit = async (values: ProfileFormValues) => {
+  const errorLabels = useErrorSummary(form, {
+    firstName: 'First name',
+    email: 'Email',
+    phone: 'Phone',
+  });
+
+  const handleSubmit = async (v: ProfileValues) => {
     if (!user) return;
     setLoading(true);
     try {
       await dispatch(
         updateProfile({
-          firstName: values.firstName.trim(),
-          lastName: values.lastName.trim() || null,
-          email: values.email.trim(),
-          phone: values.phone.trim(),
+          firstName: v.firstName.trim(),
+          lastName: v.lastName.trim() || null,
+          email: v.email.trim(),
+          phone: digitsOnly(v.phone),
           avatar: user.avatar,
         }),
       ).unwrap();
-      toNotify('Updated', 'Profile updated successfully', 'SUCCESS');
+      toNotify('Profile saved', 'Your details were updated.', 'SUCCESS');
       onClose();
     } catch (error) {
-      toNotify('Failed to update profile', error as string, 'ERROR');
+      toNotify("Couldn't save profile", error as string, 'ERROR');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Modal opened={opened} onClose={onClose} title="Edit profile" centered>
-      <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Stack gap="md">
-          <TextInput
-            label="First name"
-            withAsterisk
-            placeholder="Enter first name"
-            {...form.getInputProps('firstName')}
-          />
-          <TextInput
-            label="Last name"
-            placeholder="Enter last name"
-            {...form.getInputProps('lastName')}
-          />
-          <TextInput
-            label="Email"
-            withAsterisk
-            placeholder="Enter email address"
-            {...form.getInputProps('email')}
-          />
-          <TextInput
-            label="Phone"
-            withAsterisk
-            placeholder="07XXXXXXXX"
-            {...form.getInputProps('phone')}
-          />
-          <Group justify="flex-end">
-            <Button variant="default" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button type="submit" loading={loading}>
-              Save changes
-            </Button>
-          </Group>
-        </Stack>
-      </form>
-    </Modal>
+    <FormModal
+      opened={opened}
+      title="Edit profile"
+      submitLabel="Save changes"
+      loading={loading}
+      dirty={form.isDirty()}
+      errorLabels={errorLabels}
+      onSubmit={form.onSubmit(handleSubmit)}
+      onClose={onClose}
+    >
+      <SimpleGrid cols={{ base: 1, xs: 2 }}>
+        <TextInput
+          label="First name"
+          placeholder="e.g. Ruwan"
+          withAsterisk
+          {...form.getInputProps('firstName')}
+        />
+        <TextInput
+          label="Last name"
+          placeholder="e.g. Wijekoon"
+          {...form.getInputProps('lastName')}
+        />
+      </SimpleGrid>
+      <TextInput
+        label="Email"
+        placeholder="name@example.lk"
+        withAsterisk
+        type="email"
+        autoComplete="email"
+        leftSection={<IconMail size={16} aria-hidden />}
+        {...form.getInputProps('email')}
+      />
+      <TextInput
+        label="Phone"
+        withAsterisk
+        inputMode="tel"
+        autoComplete="tel"
+        placeholder="077 123 4567"
+        description="Sri Lankan mobile, 07X XXXXXXX."
+        leftSection={<IconPhone size={16} aria-hidden />}
+        {...form.getInputProps('phone')}
+      />
+    </FormModal>
   );
 };
 
 const AvatarPickerModal = ({ opened, onClose }: ModalProps) => {
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.auth.user);
+  const user = useAppSelector((s) => s.auth.user);
   const [selected, setSelected] = useState<string | null>(user?.avatar ?? null);
   const [loading, setLoading] = useState(false);
 
@@ -212,160 +241,124 @@ const AvatarPickerModal = ({ opened, onClose }: ModalProps) => {
           avatar: selected,
         }),
       ).unwrap();
-      toNotify('Updated', 'Avatar updated successfully', 'SUCCESS');
+      toNotify('Avatar saved', 'Your avatar was updated.', 'SUCCESS');
       onClose();
     } catch (error) {
-      toNotify('Failed to update avatar', error as string, 'ERROR');
+      toNotify("Couldn't save avatar", error as string, 'ERROR');
     } finally {
       setLoading(false);
     }
   };
 
+  const choices: { key: string; url: string | null; label: string }[] = [
+    { key: 'initials', url: null, label: 'Use initials' },
+    ...AVATAR_SEEDS.map((seed) => ({ key: seed, url: avatarUrl(seed), label: `Avatar ${seed}` })),
+  ];
+
   return (
-    <Modal opened={opened} onClose={onClose} title="Choose an avatar" centered>
-      <Stack gap="md">
-        <SimpleGrid cols={5} spacing="md" pt={6}>
+    <FormModal
+      opened={opened}
+      title="Choose an avatar"
+      submitLabel="Save avatar"
+      loading={loading}
+      dirty={selected !== (user?.avatar ?? null)}
+      onSubmit={(e) => {
+        e.preventDefault();
+        void handleSave();
+      }}
+      onClose={onClose}
+    >
+      <Text size="sm" c="dimmed">
+        Pick initials or an illustrated avatar.
+      </Text>
+      <SimpleGrid cols={5} spacing="sm">
+        {choices.map((c) => (
           <UnstyledButton
-            onClick={() => setSelected(null)}
+            key={c.key}
+            aria-label={c.label}
+            aria-pressed={selected === c.url}
+            onClick={() => setSelected(c.url)}
             style={{
-              width: 56,
-              height: 56,
-              margin: '0 auto',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
               borderRadius: '50%',
-              outline: selected === null ? '2px solid var(--mantine-color-gray-8)' : 'none',
-              outlineOffset: 3,
+              padding: 3,
+              justifySelf: 'center',
+              outline: selected === c.url ? '2px solid var(--ldg-accent)' : '2px solid transparent',
+              outlineOffset: 2,
             }}
           >
-            <Avatar size={56} radius="xl" color="gray">
-              {`${user?.firstName?.[0] ?? ''}${user?.lastName?.[0] ?? ''}`.toUpperCase()}
+            <Avatar src={c.url} size={48} radius="xl" color="forest">
+              {initials(user)}
             </Avatar>
           </UnstyledButton>
-          {AVATAR_SEEDS.map((seed) => {
-            const url = avatarUrl(seed);
-            const isSelected = selected === url;
-            return (
-              <UnstyledButton
-                key={seed}
-                onClick={() => setSelected(url)}
-                style={{
-                  width: 56,
-                  height: 56,
-                  margin: '0 auto',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  borderRadius: '50%',
-                  outline: isSelected ? '2px solid var(--mantine-color-gray-8)' : 'none',
-                  outlineOffset: 3,
-                }}
-              >
-                <Avatar src={url} size={56} radius="xl" />
-              </UnstyledButton>
-            );
-          })}
-        </SimpleGrid>
-        <Group justify="flex-end">
-          <Button variant="default" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button onClick={handleSave} loading={loading}>
-            Save
-          </Button>
-        </Group>
-      </Stack>
-    </Modal>
+        ))}
+      </SimpleGrid>
+    </FormModal>
   );
 };
 
-type PasswordFormValues = {
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword: string;
-};
+type PasswordValues = { currentPassword: string; newPassword: string; confirmPassword: string };
 
 const ChangePasswordModal = ({ opened, onClose }: ModalProps) => {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
 
-  const form = useForm<PasswordFormValues>({
+  const form = useForm<PasswordValues>({
     initialValues: { currentPassword: '', newPassword: '', confirmPassword: '' },
     validate: {
-      currentPassword: (value) => (value ? null : 'Current password is required'),
-      newPassword: (value) => (value.length >= 8 ? null : 'Must be at least 8 characters'),
-      confirmPassword: (value, values) =>
-        value === values.newPassword ? null : 'Passwords do not match',
+      currentPassword: required('Current password is required.'),
+      newPassword: password,
+      confirmPassword: (v, values) => (v === values.newPassword ? null : 'Passwords do not match'),
     },
   });
 
-  const handleSubmit = async (values: PasswordFormValues) => {
+  const handleSubmit = async (v: PasswordValues) => {
     setLoading(true);
     try {
       await dispatch(
-        changePassword({
-          currentPassword: values.currentPassword,
-          newPassword: values.newPassword,
-        }),
+        changePassword({ currentPassword: v.currentPassword, newPassword: v.newPassword }),
       ).unwrap();
-      toNotify('Updated', 'Password changed successfully', 'SUCCESS');
-      form.reset();
+      toNotify('Password changed', 'Use your new password next time you sign in.', 'SUCCESS');
       onClose();
     } catch (error) {
-      toNotify('Failed to change password', error as string, 'ERROR');
+      toNotify("Couldn't change password", error as string, 'ERROR');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Modal
+    <FormModal
       opened={opened}
-      onClose={() => {
-        form.reset();
-        onClose();
-      }}
       title="Change password"
-      centered
+      submitLabel="Change password"
+      loading={loading}
+      dirty={form.isDirty()}
+      onSubmit={form.onSubmit(handleSubmit)}
+      onClose={onClose}
     >
-      <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Stack gap="md">
-          <PasswordInput
-            label="Current password"
-            withAsterisk
-            placeholder="Enter current password"
-            {...form.getInputProps('currentPassword')}
-          />
-          <PasswordInput
-            label="New password"
-            withAsterisk
-            placeholder="Enter new password"
-            {...form.getInputProps('newPassword')}
-          />
-          <PasswordInput
-            label="Confirm new password"
-            withAsterisk
-            placeholder="Re-enter new password"
-            {...form.getInputProps('confirmPassword')}
-          />
-          <Group justify="flex-end">
-            <Button
-              variant="default"
-              onClick={() => {
-                form.reset();
-                onClose();
-              }}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" loading={loading}>
-              Change password
-            </Button>
-          </Group>
-        </Stack>
-      </form>
-    </Modal>
+      <PasswordInput
+        label="Current password"
+        placeholder="Enter your current password"
+        withAsterisk
+        autoComplete="current-password"
+        {...form.getInputProps('currentPassword')}
+      />
+      <PasswordInput
+        label="New password"
+        placeholder="Enter a new password"
+        withAsterisk
+        autoComplete="new-password"
+        description="At least 8 characters."
+        {...form.getInputProps('newPassword')}
+      />
+      <PasswordInput
+        label="Confirm new password"
+        placeholder="Re-enter the new password"
+        withAsterisk
+        autoComplete="new-password"
+        {...form.getInputProps('confirmPassword')}
+      />
+    </FormModal>
   );
 };
 

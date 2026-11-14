@@ -1,29 +1,41 @@
-import { Stack } from '@mantine/core';
+import { Box, Button, Group } from '@mantine/core';
+import { IconShoppingCart } from '@tabler/icons-react';
+import { Link } from 'react-router-dom';
 import { PageHeader } from '@/components/PageHeader';
-import { FilterBar, type FilterFieldConfig } from '@/components/FilterBar';
+import { EmptyState } from '@/components/EmptyState';
+import { NotAvailableBadge } from '@/components/StatusBadge';
 
-const FILTER_FIELDS: FilterFieldConfig[] = [
-  { type: 'search', key: 'q', placeholder: 'Search orders' },
-  {
-    type: 'select',
-    key: 'status',
-    label: 'Status',
-    placeholder: 'Any status',
-    options: [
-      { value: 'pending', label: 'Pending' },
-      { value: 'completed', label: 'Completed' },
-      { value: 'cancelled', label: 'Cancelled' },
-    ],
-  },
-];
-
-const OrdersPage = () => {
-  return (
-    <Stack gap="md">
-      <PageHeader title="Orders" description="Coming soon." />
-      <FilterBar fields={FILTER_FIELDS} />
-    </Stack>
-  );
-};
+const OrdersPage = () => (
+  <>
+    <PageHeader
+      title="Orders"
+      badge={<NotAvailableBadge />}
+      description="Customer and supplier orders."
+    />
+    <Box
+      style={{
+        background: 'var(--ldg-surface-raised)',
+        border: '1px solid var(--ldg-border)',
+        borderRadius: 8,
+      }}
+    >
+      <EmptyState
+        icon={<IconShoppingCart size={20} />}
+        title="Orders aren't available yet"
+        description="This section isn't switched on. Sales and cheques already cover day-to-day trading, and nothing here needs your attention."
+        action={
+          <Group gap="xs" justify="center">
+            <Button component={Link} to="/app/sales">
+              Go to Sales
+            </Button>
+            <Button component={Link} to="/app/dashboard" variant="default">
+              Back to Dashboard
+            </Button>
+          </Group>
+        }
+      />
+    </Box>
+  </>
+);
 
 export default OrdersPage;

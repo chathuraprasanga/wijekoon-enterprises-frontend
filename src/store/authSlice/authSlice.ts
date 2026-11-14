@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { isAxiosError } from 'axios';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { API_BASE_URL } from '@/utils/apiBaseUrl';
 import { getErrorMessage } from '@/utils/getErrorMessage';
@@ -49,6 +49,11 @@ export const login = createAsyncThunk(
       }>(`${API_BASE_URL}/auth/admin/login`, { identifier, password });
       return { ...data, rememberMe };
     } catch (error) {
+      if (isAxiosError(error) && error.response?.status === 401) {
+        return rejectWithValue(
+          'The email, phone number or password is incorrect. Check them and try again, or reset your password.',
+        );
+      }
       return rejectWithValue(getErrorMessage(error));
     }
   },

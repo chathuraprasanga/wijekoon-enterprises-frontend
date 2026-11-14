@@ -1,367 +1,255 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import {
-  ActionIcon,
-  Badge,
-  Button,
-  Divider,
-  Drawer,
-  Group,
-  Modal,
-  Stack,
-  Switch,
-  Text,
-  Tooltip,
-} from '@mantine/core';
-import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
-import { IconEdit, IconEye, IconPlus, IconTrash } from '@tabler/icons-react';
-import { PageHeader } from '@/components/PageHeader';
-import { Loader } from '@/components/Loader';
-import { FilterBar, type FilterFieldConfig } from '@/components/FilterBar';
+import { Button, Group } from '@mantine/core';
+import { IconKey, IconPencil } from '@tabler/icons-react';
+import { ListPage } from '@/components/data/ListPage';
+import { DetailDialog } from '@/components/DetailDialog';
+import { Box, Stack, Text } from '@mantine/core';
+import { Field } from '@/components/Field';
+import { StatusSection } from '@/components/StatusSection';
+import { ConfirmDialog } from '@/components/ConfirmDialog';
+import { ActiveBadge, StatusBadge } from '@/components/StatusBadge';
 import { AddEditUserModal } from '@/pages/settings/AddEditUserModal';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { type User, deleteUser, fetchUsers, updateUser } from '@/store/userSlice/userSlice';
+import {
+  type User,
+  deleteUser,
+  fetchUsers,
+  resetUserPassword,
+  updateUser,
+} from '@/store/userSlice/userSlice';
 import { fetchRoles } from '@/store/roleSlice/roleSlice';
 import { toNotify } from '@/hooks/toNotify';
-import { datePreview } from '@/utils/datePreview';
+import { useActiveToggle } from '@/hooks/useActiveToggle';
+import { formatPhone, fullName } from '@/utils/format';
 
-const STATIC_FILTER_FIELDS: FilterFieldConfig[] = [
-  { type: 'search', key: 'q', placeholder: 'Search users' },
-  {
-    type: 'select',
-    key: 'status',
-    label: 'Status',
-    placeholder: 'Any status',
-    options: [
-      { value: 'active', label: 'Active' },
-      { value: 'inactive', label: 'Inactive' },
-    ],
-  },
-];
+const SORT_MAP = { name: 'firstName' };
 
 const UsersPage = () => {
   const dispatch = useAppDispatch();
-  const [searchParams] = useSearchParams();
-  const { items, limit, total } = useAppSelector((state) => state.user);
-  const roles = useAppSelector((state) => state.role.items);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [toDelete, setToDelete] = useState<User | null>(null);
-  const [deleting, setDeleting] = useState(false);
-  const [formTarget, setFormTarget] = useState<User | null>();
-  const [formOpen, setFormOpen] = useState(false);
-  const [viewTarget, setViewTarget] = useState<User | null>(null);
-  const [togglingId, setTogglingId] = useState<string | null>(null);
-  const [sortStatus, setSortStatus] = useState<DataTableSortStatus<User>>({
-    columnAccessor: 'name',
-    direction: 'asc',
-  });
-
-  const searchText = searchParams.get('q') ?? undefined;
-  const status = searchParams.get('status') ?? undefined;
-  const role = searchParams.get('role') ?? undefined;
-  const sortBy =
-    sortStatus.columnAccessor === 'name' ? 'firstName' : (sortStatus.columnAccessor as string);
-  const sortType = sortStatus.direction;
-
-  const filterFields: FilterFieldConfig[] = [
-    ...STATIC_FILTER_FIELDS,
-    {
-      type: 'multiSelect',
-      key: 'role',
-      label: 'Role',
-      placeholder: 'Any role',
-      options: roles.map((r) => ({ value: r._id, label: r.name })),
-    },
-  ];
-
-  // Reset to page 1 whenever filters or sort change. Adjusted during render
-  // (React's recommended pattern for state derived from props) rather than
-  // in an effect, which would otherwise cause a cascading extra render.
-  const filterKey = `${searchText ?? ''}|${status ?? ''}|${role ?? ''}|${sortBy}|${sortType}`;
-  const [appliedFilterKey, setAppliedFilterKey] = useState(filterKey);
-  if (filterKey !== appliedFilterKey) {
-    setAppliedFilterKey(filterKey);
-    setPage(1);
-  }
-
-  useEffect(() => {
-    const load = async () => {
-      setLoading(true);
-      try {
-        await dispatch(
-          fetchUsers({ page, limit, searchText, status, role, sortBy, sortType }),
-        ).unwrap();
-      } catch (error) {
-        toNotify('Failed to load users', error as string, 'ERROR');
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, [dispatch, page, limit, searchText, status, role, sortBy, sortType]);
+  const { items, total } = useAppSelector((s) => s.user);
+  const roles = useAppSelector((s) => s.role.items);
+  const [form, setForm] = useState<{ user: User | null } | null>(null);
+  const [view, setView] = useState<User | null>(null);
+  const [toReset, setToReset] = useState<User | null>(null);
+  const [resetting, setResetting] = useState(false);
 
   useEffect(() => {
     dispatch(fetchRoles({ page: 1, limit: 100 }));
   }, [dispatch]);
 
-  const roleName = (roleId: string) => roles.find((role) => role._id === roleId)?.name ?? roleId;
+  const roleName = (id: string) => roles.find((r) => r._id === id)?.name ?? '—';
 
-  const handleToggleActive = async (user: User) => {
-    setTogglingId(user._id);
-    try {
-      const updated = await dispatch(
+  const { toggle, busyId } = useActiveToggle<User>(
+    'User',
+    (u) =>
+      dispatch(
         updateUser({
-          _id: user._id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          phone: user.phone,
-          address: user.address,
-          roles: user.roles,
-          isActive: !user.isActive,
+          _id: u._id,
+          firstName: u.firstName,
+          lastName: u.lastName,
+          email: u.email,
+          phone: u.phone,
+          address: u.address,
+          roles: u.roles,
+          isActive: !u.isActive,
         }),
-      ).unwrap();
-      toNotify(
-        'Updated',
-        `User ${user.isActive ? 'deactivated' : 'activated'} successfully`,
-        'SUCCESS',
-      );
-      setViewTarget((prev) =>
-        prev && prev._id === user._id ? { ...prev, isActive: updated.isActive } : prev,
-      );
-    } catch (error) {
-      toNotify('Failed to update user', error as string, 'ERROR');
-    } finally {
-      setTogglingId(null);
-    }
-  };
+      ).unwrap(),
+    (id, isActive) => setView((v) => (v && v._id === id ? { ...v, isActive } : v)),
+  );
 
-  const handleDelete = async () => {
-    if (!toDelete) return;
-    setDeleting(true);
+  const handleReset = async () => {
+    if (!toReset) return;
+    setResetting(true);
     try {
-      await dispatch(deleteUser(toDelete._id)).unwrap();
-      toNotify('Deleted', 'User deleted successfully', 'SUCCESS');
-      setToDelete(null);
+      await dispatch(resetUserPassword(toReset._id)).unwrap();
+      toNotify('Password reset', 'A new password was emailed to the user.', 'SUCCESS');
+      setToReset(null);
     } catch (error) {
-      toNotify('Failed to delete user', error as string, 'ERROR');
+      toNotify("Couldn't reset password", error as string, 'ERROR');
     } finally {
-      setDeleting(false);
+      setResetting(false);
     }
   };
 
-  const openAdd = () => {
-    setFormTarget(null);
-    setFormOpen(true);
-  };
-
-  const openEdit = (user: User) => {
-    setFormTarget(user);
-    setFormOpen(true);
-  };
+  const filters = [
+    {
+      type: 'select' as const,
+      key: 'status',
+      label: 'Status',
+      placeholder: 'All statuses',
+      options: [
+        { value: 'active', label: 'Active' },
+        { value: 'inactive', label: 'Inactive' },
+      ],
+    },
+    {
+      type: 'multiSelect' as const,
+      key: 'role',
+      label: 'Role',
+      placeholder: 'All roles',
+      options: roles.map((r) => ({ value: r._id, label: r.name })),
+    },
+  ];
 
   return (
-    <Stack gap="md">
-      <PageHeader
-        title="Users"
-        description="Manage your team members."
-        action={
-          <Button leftSection={<IconPlus size={16} />} onClick={openAdd}>
-            Add user
-          </Button>
-        }
-      />
-      <FilterBar fields={filterFields} />
-      <DataTable
-        withTableBorder
-        borderRadius="md"
-        minHeight={loading || items.length === 0 ? 200 : undefined}
-        records={items}
-        fetching={loading}
-        customLoader={<Loader h="100%" />}
-        noRecordsText="No users found"
-        page={page}
-        onPageChange={setPage}
-        totalRecords={total}
-        recordsPerPage={limit}
-        idAccessor="_id"
-        sortStatus={sortStatus}
-        onSortStatusChange={setSortStatus}
-        columns={[
-          {
-            accessor: 'name',
-            title: 'Name',
-            sortable: true,
-            width: 180,
-            render: (user) => `${user.firstName} ${user.lastName ?? ''}`.trim(),
-          },
-          { accessor: 'phone', title: 'Phone', width: 130 },
-          {
-            accessor: 'email',
-            title: 'Email',
-            sortable: true,
-            width: 200,
-            render: (user) => user.email ?? '-',
-          },
-          {
-            accessor: 'address',
-            title: 'Address',
-            sortable: true,
-            width: 200,
-            render: (user) => user.address ?? '-',
-          },
-          {
-            accessor: 'isActive',
-            title: 'Status',
-            width: 110,
-            render: (user) => (
-              <Badge color={user.isActive ? 'green' : 'gray'} variant="light">
-                {user.isActive ? 'Active' : 'Inactive'}
-              </Badge>
+    <ListPage<User>
+      embedded
+      title="Users"
+      description="Staff accounts and the roles they hold."
+      entity={{ singular: 'user', plural: 'users' }}
+      searchPlaceholder="Search by name, phone or email"
+      filters={filters}
+      records={items}
+      total={total}
+      rowKey={(u) => u._id}
+      rowName={fullName}
+      defaultSort={{ key: 'name', dir: 'asc' }}
+      sortMap={SORT_MAP}
+      load={({ page, limit, searchText, sortBy, sortType, filters: f }) =>
+        dispatch(
+          fetchUsers({ page, limit, searchText, status: f.status, role: f.role, sortBy, sortType }),
+        ).unwrap()
+      }
+      createLabel="Add user"
+      onCreate={() => setForm({ user: null })}
+      onView={setView}
+      onEdit={(user) => setForm({ user })}
+      remove={{
+        title: 'Delete user?',
+        describe: (u) => (
+          <>
+            This permanently removes <strong>{fullName(u)}</strong> and their access. This cannot be
+            undone.
+          </>
+        ),
+        run: (u) => dispatch(deleteUser(u._id)).unwrap(),
+        done: 'User deleted.',
+      }}
+      columns={[
+        {
+          key: 'name',
+          header: 'Name',
+          sortable: true,
+          primary: true,
+          render: (u) => <b style={{ fontWeight: 500 }}>{fullName(u)}</b>,
+        },
+        { key: 'email', header: 'Email', sortable: true, render: (u) => u.email },
+        {
+          key: 'phone',
+          header: 'Phone',
+          render: (u) => <span className="num">{formatPhone(u.phone)}</span>,
+        },
+        {
+          key: 'roles',
+          header: 'Roles',
+          render: (u) =>
+            u.roles.length ? (
+              <Group gap={4}>
+                {u.roles.map((id) => (
+                  <StatusBadge key={id} tone="accent" label={roleName(id)} />
+                ))}
+              </Group>
+            ) : (
+              '—'
             ),
-          },
-          {
-            accessor: 'actions',
-            title: 'Actions',
-            textAlign: 'right',
-            width: 130,
-            render: (user) => (
-              <Group gap="xs" justify="flex-end" wrap="nowrap">
-                <Tooltip label="View">
-                  <ActionIcon variant="subtle" onClick={() => setViewTarget(user)}>
-                    <IconEye size={16} />
-                  </ActionIcon>
-                </Tooltip>
-                <Tooltip label="Edit">
-                  <ActionIcon variant="subtle" onClick={() => openEdit(user)}>
-                    <IconEdit size={16} />
-                  </ActionIcon>
-                </Tooltip>
-                <Tooltip label="Delete">
-                  <ActionIcon variant="subtle" color="red" onClick={() => setToDelete(user)}>
-                    <IconTrash size={16} />
-                  </ActionIcon>
-                </Tooltip>
-              </Group>
-            ),
-          },
-        ]}
-      />
-      <AddEditUserModal
-        opened={formOpen}
-        user={formTarget ?? null}
-        onClose={() => setFormOpen(false)}
-      />
-      <Drawer
-        opened={!!viewTarget}
-        onClose={() => setViewTarget(null)}
-        title="User details"
-        position="right"
-      >
-        {viewTarget && (
-          <Stack gap="md">
-            <Text fw={600} size="lg">
-              {viewTarget.firstName} {viewTarget.lastName ?? ''}
-            </Text>
-            <Group justify="space-between" wrap="nowrap">
-              <Text size="sm" c="dimmed">
-                Status
-              </Text>
-              <Switch
-                checked={viewTarget.isActive}
-                size="md"
-                onLabel="ACTIVE"
-                offLabel="INACTIVE"
-                color="green"
-                styles={{
-                  trackLabel: {
-                    padding: 'var(--mantine-spacing-xs)',
-                    fontSize: 'var(--mantine-font-size-xs)',
-                  },
-                }}
-                disabled={togglingId === viewTarget._id}
-                onChange={() => handleToggleActive(viewTarget)}
-              />
-            </Group>
-            <Divider />
-            <Stack gap="xs">
-              <Group justify="space-between" wrap="nowrap">
-                <Text size="sm" c="dimmed">
-                  Email
-                </Text>
-                <Text size="sm">{viewTarget.email}</Text>
-              </Group>
-              <Group justify="space-between" wrap="nowrap">
-                <Text size="sm" c="dimmed">
-                  Phone
-                </Text>
-                <Text size="sm">{viewTarget.phone}</Text>
-              </Group>
-              <Group justify="space-between" wrap="nowrap" align="flex-start">
-                <Text size="sm" c="dimmed">
-                  Address
-                </Text>
-                <Text size="sm" ta="right">
-                  {viewTarget.address ?? '-'}
-                </Text>
-              </Group>
-            </Stack>
-            <Divider />
-            <Stack gap="xs">
-              <Text size="sm" c="dimmed">
-                Roles
-              </Text>
-              {viewTarget.roles.length ? (
-                <Group gap="xs">
-                  {viewTarget.roles.map((roleId) => (
-                    <Badge key={roleId} variant="light">
-                      {roleName(roleId)}
-                    </Badge>
-                  ))}
-                </Group>
-              ) : (
-                <Text size="sm">-</Text>
-              )}
-            </Stack>
-            <Divider />
-            <Stack gap="xs">
-              <Group justify="space-between" wrap="nowrap">
-                <Text size="sm" c="dimmed">
-                  Created
-                </Text>
-                <Text size="sm">{datePreview(viewTarget.createdAt)}</Text>
-              </Group>
-              <Group justify="space-between" wrap="nowrap">
-                <Text size="sm" c="dimmed">
-                  Last updated
-                </Text>
-                <Text size="sm">{datePreview(viewTarget.updatedAt)}</Text>
-              </Group>
-            </Stack>
-          </Stack>
-        )}
-      </Drawer>
-      <Modal opened={!!toDelete} onClose={() => setToDelete(null)} title="Delete user" centered>
-        <Stack gap="md">
-          <Text size="sm">
-            Are you sure you want to delete{' '}
-            <strong>
-              {toDelete?.firstName} {toDelete?.lastName ?? ''}
-            </strong>
-            ? This cannot be undone.
-          </Text>
-          <Group justify="flex-end">
-            <Button variant="default" onClick={() => setToDelete(null)}>
-              Cancel
-            </Button>
-            <Button color="red" loading={deleting} onClick={handleDelete}>
-              Delete
-            </Button>
-          </Group>
-        </Stack>
-      </Modal>
-    </Stack>
+        },
+        {
+          key: 'status',
+          header: 'Status',
+          badge: true,
+          render: (u) => <ActiveBadge active={u.isActive} />,
+        },
+      ]}
+    >
+      {({ reload }) => (
+        <>
+          <AddEditUserModal
+            opened={!!form}
+            user={form?.user ?? null}
+            onClose={() => {
+              setForm(null);
+              reload();
+            }}
+          />
+          <DetailDialog
+            opened={!!view}
+            onClose={() => setView(null)}
+            title={view ? fullName(view) : ''}
+            subtitle="User account"
+            actions={
+              view && (
+                <Button
+                  leftSection={<IconPencil size={16} aria-hidden />}
+                  onClick={() => {
+                    setForm({ user: view });
+                    setView(null);
+                  }}
+                >
+                  Edit user
+                </Button>
+              )
+            }
+          >
+            {view && (
+              <>
+                <Stack gap="md">
+                  <Field label="Email">{view.email}</Field>
+                  <Field label="Phone">
+                    <span className="num">{formatPhone(view.phone)}</span>
+                  </Field>
+                  <Field label="Roles">
+                    {view.roles.length ? (
+                      <Group gap={4} mt={4}>
+                        {view.roles.map((id) => (
+                          <StatusBadge key={id} tone="accent" label={roleName(id)} />
+                        ))}
+                      </Group>
+                    ) : (
+                      '—'
+                    )}
+                  </Field>
+                </Stack>
+                <StatusSection
+                  label="ACCOUNT"
+                  title="Active account"
+                  description="Inactive users can't sign in."
+                  checked={view.isActive}
+                  disabled={busyId === view._id}
+                  onChange={() => toggle(view)}
+                />
+                <Box mt="lg">
+                  <Text className="eyebrow" mb={6}>
+                    PASSWORD
+                  </Text>
+                  <Button
+                    variant="default"
+                    leftSection={<IconKey size={16} aria-hidden />}
+                    onClick={() => setToReset(view)}
+                  >
+                    Reset password
+                  </Button>
+                  <Text size="sm" c="dimmed" mt={6}>
+                    Emails a new password to this user.
+                  </Text>
+                </Box>
+              </>
+            )}
+          </DetailDialog>
+          <ConfirmDialog
+            opened={!!toReset}
+            title="Reset password?"
+            destructive={false}
+            confirmLabel="Reset password"
+            loading={resetting}
+            onConfirm={handleReset}
+            onClose={() => setToReset(null)}
+          >
+            A new password will be generated for <strong>{toReset ? fullName(toReset) : ''}</strong>{' '}
+            and emailed to <strong>{toReset?.email}</strong>. Their current password stops working.
+          </ConfirmDialog>
+        </>
+      )}
+    </ListPage>
   );
 };
 
