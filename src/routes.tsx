@@ -71,6 +71,8 @@ export const router = createBrowserRouter([
           },
         ],
       },
+      // AuthLoaderChecker on /app sends logged-out users on to /login.
+      { path: '/', element: <Navigate to="/app/dashboard" replace /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

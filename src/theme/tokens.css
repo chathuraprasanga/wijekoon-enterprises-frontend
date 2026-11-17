@@ -64,7 +64,7 @@
   /* layout */
   --ldg-header-height: 48px;
   --ldg-nav-width: 240px;
-  --ldg-content-max: 1440px;
+  --ldg-content-max: 100%;
 }
 
 :root[data-mantine-color-scheme='dark'] {
