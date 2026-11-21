@@ -122,7 +122,7 @@ const AddEditCustomerForm = ({ customer, onClose }: FormProps) => {
       opened
       title={customer ? 'Edit customer' : 'Add customer'}
       subject={customer ? `${customer.firstName} ${customer.lastName ?? ''}`.trim() : undefined}
-      as="drawer"
+      size="lg"
       submitLabel={customer ? 'Save customer' : 'Create customer'}
       loading={loading}
       dirty={form.isDirty()}
