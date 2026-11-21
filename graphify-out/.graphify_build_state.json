@@ -1,0 +1,17 @@
+{
+  "ambiguous_scale": "",
+  "code_only": false,
+  "epoch": "v0.9.104-s40-g5779fce85d4e",
+  "excludes": [],
+  "follow_symlinks": false,
+  "full_clean": true,
+  "gitignore": true,
+  "graph_mtime_ns": 1795248192275516145,
+  "graph_size": 700206,
+  "html_present": true,
+  "no_cluster": false,
+  "rcfile": "",
+  "scan_digest": "9f107d3b96919df7b15a96bbf8ae21c7",
+  "scan_root": "/Users/chathuraprasanga/Documents/Wijekoon Enterprises/Frontend",
+  "viz_node_limit": ""
+}

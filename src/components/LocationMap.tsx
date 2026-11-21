@@ -1,23 +1,9 @@
 import { useState } from 'react';
 import { Box, UnstyledButton } from '@mantine/core';
 import { MapContainer, Marker, TileLayer } from 'react-leaflet';
-import L from 'leaflet';
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import type { CustomerType } from '@/store/customerSlice/customerSlice';
+import { pinIcon } from '@/components/mapPin';
 import { ResponsiveModal } from '@/components/ResponsiveModal';
-
-// Bundlers break Leaflet's default marker icon (it resolves image URLs relative
-// to the CSS file, which doesn't exist post-bundle), so point it at the bundled assets.
-const markerIconDefault = L.icon({
-  iconUrl: markerIcon,
-  iconRetinaUrl: markerIcon2x,
-  shadowUrl: markerShadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
 
 const TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const TILE_ATTRIBUTION =
@@ -28,11 +14,19 @@ export type LocationMapProps = {
   lng: number;
   /** Shown as the title of the enlarged map, e.g. the customer's name. */
   label?: string;
+  /** Picks the pin: person for individuals, storefront for hardware stores. */
+  customerType?: CustomerType;
 };
 
 // A small static preview; clicking it opens a larger, fully interactive map.
-export const LocationMap = ({ lat, lng, label }: LocationMapProps) => {
+export const LocationMap = ({
+  lat,
+  lng,
+  label,
+  customerType = 'HARDWARE_STORE',
+}: LocationMapProps) => {
   const [opened, setOpened] = useState(false);
+  const icon = pinIcon(customerType);
   const position: [number, number] = [lat, lng];
 
   return (
@@ -66,7 +60,7 @@ export const LocationMap = ({ lat, lng, label }: LocationMapProps) => {
             attributionControl={false}
           >
             <TileLayer url={TILE_URL} />
-            <Marker position={position} icon={markerIconDefault} />
+            <Marker position={position} icon={icon} />
           </MapContainer>
         </Box>
       </UnstyledButton>
@@ -89,7 +83,7 @@ export const LocationMap = ({ lat, lng, label }: LocationMapProps) => {
               style={{ height: '100%', width: '100%' }}
             >
               <TileLayer attribution={TILE_ATTRIBUTION} url={TILE_URL} />
-              <Marker position={position} icon={markerIconDefault} />
+              <Marker position={position} icon={icon} />
             </MapContainer>
           </Box>
         </Box>

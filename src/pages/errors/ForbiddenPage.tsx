@@ -5,8 +5,9 @@ import { PageHeader } from '@/components/PageHeader';
 import { ErrorCard } from './ErrorCard';
 
 // Shown inside the shell when a role lacks access. Pass { section } in router state to name the area.
-const ForbiddenPage = () => {
-  const section = (useLocation().state as { section?: string } | null)?.section ?? 'this page';
+const ForbiddenPage = ({ section: sectionProp }: { section?: string }) => {
+  const state = useLocation().state as { section?: string } | null;
+  const section = sectionProp ?? state?.section ?? 'this page';
 
   return (
     <>

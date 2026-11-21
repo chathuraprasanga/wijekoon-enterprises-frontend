@@ -7,8 +7,11 @@ export const PERMISSION_ACTION_LABELS: Record<string, string> = {
 
 export const PERMISSION_ACTION_ORDER = ['read', 'create', 'update', 'delete'];
 
-export const formatModuleLabel = (module: string) =>
-  `${module.charAt(0).toUpperCase()}${module.slice(1)}s`;
+// "customer" -> "Customers", "audit-log" -> "Audit logs"
+export const formatModuleLabel = (module: string) => {
+  const words = module.replace(/-/g, ' ');
+  return `${words.charAt(0).toUpperCase()}${words.slice(1)}s`;
+};
 
 export const formatPermissionKey = (key: string) => {
   const [module, action] = key.split(':');

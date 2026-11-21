@@ -114,563 +114,577 @@
     },
     {
       "id": "$graphify-root$_package_dependencies_mantine_core",
-      "label": "@mantine/core",
+      "label": "@mantine/core@^9.5.0",
       "file_type": "code",
       "source_file": "package.json",
       "source_location": "L19"
     },
     {
-      "id": "mantine_core",
+      "id": "ref_mantine_core",
       "label": "@mantine/core",
       "file_type": "concept",
       "source_file": "package.json",
       "source_location": "L19"
+    },
+    {
+      "id": "$graphify-root$_package_dependencies_mantine_dates",
+      "label": "@mantine/dates@^9.5.0",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L20"
+    },
+    {
+      "id": "ref_mantine_dates",
+      "label": "@mantine/dates",
+      "file_type": "concept",
+      "source_file": "package.json",
+      "source_location": "L20"
     },
     {
       "id": "$graphify-root$_package_dependencies_mantine_form",
-      "label": "@mantine/form",
+      "label": "@mantine/form@^9.5.1",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L20"
+      "source_location": "L21"
     },
     {
-      "id": "mantine_form",
+      "id": "ref_mantine_form",
       "label": "@mantine/form",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L20"
+      "source_location": "L21"
     },
     {
       "id": "$graphify-root$_package_dependencies_mantine_hooks",
-      "label": "@mantine/hooks",
+      "label": "@mantine/hooks@^9.5.0",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L21"
+      "source_location": "L22"
     },
     {
-      "id": "mantine_hooks",
+      "id": "ref_mantine_hooks",
       "label": "@mantine/hooks",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L21"
+      "source_location": "L22"
     },
     {
       "id": "$graphify-root$_package_dependencies_mantine_notifications",
-      "label": "@mantine/notifications",
+      "label": "@mantine/notifications@^9.5.0",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L22"
+      "source_location": "L23"
     },
     {
-      "id": "mantine_notifications",
+      "id": "ref_mantine_notifications",
       "label": "@mantine/notifications",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L22"
+      "source_location": "L23"
     },
     {
       "id": "$graphify-root$_package_dependencies_reduxjs_toolkit",
-      "label": "@reduxjs/toolkit",
+      "label": "@reduxjs/toolkit@^2.12.0",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L23"
+      "source_location": "L24"
     },
     {
-      "id": "reduxjs_toolkit",
+      "id": "ref_reduxjs_toolkit",
       "label": "@reduxjs/toolkit",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L23"
+      "source_location": "L24"
     },
     {
       "id": "$graphify-root$_package_dependencies_tabler_icons_react",
-      "label": "@tabler/icons-react",
+      "label": "@tabler/icons-react@^3.46.0",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L24"
+      "source_location": "L25"
     },
     {
-      "id": "tabler_icons_react",
+      "id": "ref_tabler_icons_react",
       "label": "@tabler/icons-react",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L24"
+      "source_location": "L25"
     },
     {
       "id": "$graphify-root$_package_dependencies_tailwindcss_vite",
-      "label": "@tailwindcss/vite",
+      "label": "@tailwindcss/vite@^4.3.3",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L25"
+      "source_location": "L26"
     },
     {
-      "id": "tailwindcss_vite",
+      "id": "ref_tailwindcss_vite",
       "label": "@tailwindcss/vite",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L25"
+      "source_location": "L26"
     },
     {
       "id": "$graphify-root$_package_dependencies_axios",
-      "label": "axios",
+      "label": "axios@^1.19.0",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L26"
+      "source_location": "L27"
     },
     {
-      "id": "axios",
+      "id": "ref_axios",
       "label": "axios",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L26"
+      "source_location": "L27"
     },
     {
       "id": "$graphify-root$_package_dependencies_clsx",
-      "label": "clsx",
+      "label": "clsx@^2.1.1",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L27"
+      "source_location": "L28"
     },
     {
-      "id": "clsx",
+      "id": "ref_clsx",
       "label": "clsx",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L27"
+      "source_location": "L28"
+    },
+    {
+      "id": "$graphify-root$_package_dependencies_dayjs",
+      "label": "dayjs@^1.11.23",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L29"
+    },
+    {
+      "id": "ref_dayjs",
+      "label": "dayjs",
+      "file_type": "concept",
+      "source_file": "package.json",
+      "source_location": "L29"
     },
     {
       "id": "$graphify-root$_package_dependencies_mantine_datatable",
-      "label": "mantine-datatable",
+      "label": "mantine-datatable@^9.4.0",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L28"
+      "source_location": "L30"
     },
     {
-      "id": "mantine_datatable",
+      "id": "ref_mantine_datatable",
       "label": "mantine-datatable",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L28"
+      "source_location": "L30"
     },
     {
       "id": "$graphify-root$_package_dependencies_react",
-      "label": "react",
+      "label": "react@^19.2.8",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L29"
+      "source_location": "L31"
     },
     {
-      "id": "react",
+      "id": "ref_react",
       "label": "react",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L29"
+      "source_location": "L31"
     },
     {
       "id": "$graphify-root$_package_dependencies_react_dom",
-      "label": "react-dom",
+      "label": "react-dom@^19.2.8",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L30"
+      "source_location": "L32"
     },
     {
-      "id": "react_dom",
+      "id": "ref_react_dom",
       "label": "react-dom",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L30"
+      "source_location": "L32"
     },
     {
       "id": "$graphify-root$_package_dependencies_react_redux",
-      "label": "react-redux",
+      "label": "react-redux@^9.3.0",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L31"
+      "source_location": "L33"
     },
     {
-      "id": "react_redux",
+      "id": "ref_react_redux",
       "label": "react-redux",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L31"
+      "source_location": "L33"
     },
     {
       "id": "$graphify-root$_package_dependencies_react_router_dom",
-      "label": "react-router-dom",
+      "label": "react-router-dom@^7.18.2",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L32"
+      "source_location": "L34"
     },
     {
-      "id": "react_router_dom",
+      "id": "ref_react_router_dom",
       "label": "react-router-dom",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L32"
+      "source_location": "L34"
     },
     {
       "id": "$graphify-root$_package_devdependencies",
       "label": "devDependencies",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L34"
+      "source_location": "L36"
     },
     {
       "id": "$graphify-root$_package_devdependencies_eslint_js",
-      "label": "@eslint/js",
+      "label": "@eslint/js@^10.0.1",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L35"
+      "source_location": "L37"
     },
     {
-      "id": "eslint_js",
+      "id": "ref_eslint_js",
       "label": "@eslint/js",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L35"
+      "source_location": "L37"
     },
     {
       "id": "$graphify-root$_package_devdependencies_tailwindcss_postcss",
-      "label": "@tailwindcss/postcss",
+      "label": "@tailwindcss/postcss@^4.3.3",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L36"
+      "source_location": "L38"
     },
     {
-      "id": "tailwindcss_postcss",
+      "id": "ref_tailwindcss_postcss",
       "label": "@tailwindcss/postcss",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L36"
+      "source_location": "L38"
     },
     {
       "id": "$graphify-root$_package_devdependencies_types_figlet",
-      "label": "@types/figlet",
+      "label": "@types/figlet@^1.7.0",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L37"
+      "source_location": "L39"
     },
     {
-      "id": "types_figlet",
+      "id": "ref_types_figlet",
       "label": "@types/figlet",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L37"
+      "source_location": "L39"
     },
     {
       "id": "$graphify-root$_package_devdependencies_types_node",
-      "label": "@types/node",
+      "label": "@types/node@^24.13.3",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L38"
+      "source_location": "L40"
     },
     {
-      "id": "types_node",
+      "id": "ref_types_node",
       "label": "@types/node",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L38"
+      "source_location": "L40"
     },
     {
       "id": "$graphify-root$_package_devdependencies_types_react",
-      "label": "@types/react",
+      "label": "@types/react@^19.2.17",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L39"
+      "source_location": "L41"
     },
     {
-      "id": "types_react",
+      "id": "ref_types_react",
       "label": "@types/react",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L39"
+      "source_location": "L41"
     },
     {
       "id": "$graphify-root$_package_devdependencies_types_react_dom",
-      "label": "@types/react-dom",
+      "label": "@types/react-dom@^19.2.3",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L40"
+      "source_location": "L42"
     },
     {
-      "id": "types_react_dom",
+      "id": "ref_types_react_dom",
       "label": "@types/react-dom",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L40"
+      "source_location": "L42"
     },
     {
       "id": "$graphify-root$_package_devdependencies_vitejs_plugin_react",
-      "label": "@vitejs/plugin-react",
+      "label": "@vitejs/plugin-react@^6.0.4",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L41"
+      "source_location": "L43"
     },
     {
-      "id": "vitejs_plugin_react",
+      "id": "ref_vitejs_plugin_react",
       "label": "@vitejs/plugin-react",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L41"
+      "source_location": "L43"
     },
     {
       "id": "$graphify-root$_package_devdependencies_eslint",
-      "label": "eslint",
+      "label": "eslint@^10.8.0",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L42"
+      "source_location": "L44"
     },
     {
-      "id": "eslint",
+      "id": "ref_eslint",
       "label": "eslint",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L42"
+      "source_location": "L44"
     },
     {
       "id": "$graphify-root$_package_devdependencies_eslint_config_prettier",
-      "label": "eslint-config-prettier",
+      "label": "eslint-config-prettier@^10.1.8",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L43"
+      "source_location": "L45"
     },
     {
-      "id": "eslint_config_prettier",
+      "id": "ref_eslint_config_prettier",
       "label": "eslint-config-prettier",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L43"
+      "source_location": "L45"
     },
     {
       "id": "$graphify-root$_package_devdependencies_eslint_plugin_react_hooks",
-      "label": "eslint-plugin-react-hooks",
+      "label": "eslint-plugin-react-hooks@^7.1.1",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L44"
+      "source_location": "L46"
     },
     {
-      "id": "eslint_plugin_react_hooks",
+      "id": "ref_eslint_plugin_react_hooks",
       "label": "eslint-plugin-react-hooks",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L44"
+      "source_location": "L46"
     },
     {
       "id": "$graphify-root$_package_devdependencies_eslint_plugin_react_refresh",
-      "label": "eslint-plugin-react-refresh",
+      "label": "eslint-plugin-react-refresh@^0.5.3",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L45"
+      "source_location": "L47"
     },
     {
-      "id": "eslint_plugin_react_refresh",
+      "id": "ref_eslint_plugin_react_refresh",
       "label": "eslint-plugin-react-refresh",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L45"
+      "source_location": "L47"
     },
     {
       "id": "$graphify-root$_package_devdependencies_figlet",
-      "label": "figlet",
+      "label": "figlet@^1.11.4",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L46"
+      "source_location": "L48"
     },
     {
-      "id": "figlet",
+      "id": "ref_figlet",
       "label": "figlet",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L46"
+      "source_location": "L48"
     },
     {
       "id": "$graphify-root$_package_devdependencies_globals",
-      "label": "globals",
+      "label": "globals@^17.7.0",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L47"
+      "source_location": "L49"
     },
     {
-      "id": "globals",
+      "id": "ref_globals",
       "label": "globals",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L47"
+      "source_location": "L49"
     },
     {
       "id": "$graphify-root$_package_devdependencies_husky",
-      "label": "husky",
+      "label": "husky@^9.1.7",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L48"
+      "source_location": "L50"
     },
     {
-      "id": "husky",
+      "id": "ref_husky",
       "label": "husky",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L48"
+      "source_location": "L50"
     },
     {
       "id": "$graphify-root$_package_devdependencies_lint_staged",
-      "label": "lint-staged",
+      "label": "lint-staged@^16.4.0",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L49"
+      "source_location": "L51"
     },
     {
-      "id": "lint_staged",
+      "id": "ref_lint_staged",
       "label": "lint-staged",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L49"
+      "source_location": "L51"
     },
     {
       "id": "$graphify-root$_package_devdependencies_postcss",
-      "label": "postcss",
+      "label": "postcss@^8.5.25",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L50"
+      "source_location": "L52"
     },
     {
-      "id": "postcss",
+      "id": "ref_postcss",
       "label": "postcss",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L50"
+      "source_location": "L52"
     },
     {
       "id": "$graphify-root$_package_devdependencies_postcss_preset_mantine",
-      "label": "postcss-preset-mantine",
+      "label": "postcss-preset-mantine@^1.18.0",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L51"
+      "source_location": "L53"
     },
     {
-      "id": "postcss_preset_mantine",
+      "id": "ref_postcss_preset_mantine",
       "label": "postcss-preset-mantine",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L51"
+      "source_location": "L53"
     },
     {
       "id": "$graphify-root$_package_devdependencies_postcss_simple_vars",
-      "label": "postcss-simple-vars",
+      "label": "postcss-simple-vars@^7.0.1",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L52"
+      "source_location": "L54"
     },
     {
-      "id": "postcss_simple_vars",
+      "id": "ref_postcss_simple_vars",
       "label": "postcss-simple-vars",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L52"
+      "source_location": "L54"
     },
     {
       "id": "$graphify-root$_package_devdependencies_prettier",
-      "label": "prettier",
+      "label": "prettier@^3.9.6",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L53"
+      "source_location": "L55"
     },
     {
-      "id": "prettier",
+      "id": "ref_prettier",
       "label": "prettier",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L53"
+      "source_location": "L55"
     },
     {
       "id": "$graphify-root$_package_devdependencies_tailwindcss",
-      "label": "tailwindcss",
+      "label": "tailwindcss@^4.3.3",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L54"
+      "source_location": "L56"
     },
     {
-      "id": "tailwindcss",
+      "id": "ref_tailwindcss",
       "label": "tailwindcss",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L54"
+      "source_location": "L56"
     },
     {
       "id": "$graphify-root$_package_devdependencies_typescript",
-      "label": "typescript",
+      "label": "typescript@~6.0.2",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L55"
+      "source_location": "L57"
     },
     {
-      "id": "typescript",
+      "id": "ref_typescript",
       "label": "typescript",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L55"
+      "source_location": "L57"
     },
     {
       "id": "$graphify-root$_package_devdependencies_typescript_eslint",
-      "label": "typescript-eslint",
+      "label": "typescript-eslint@^8.65.0",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L56"
+      "source_location": "L58"
     },
     {
-      "id": "typescript_eslint",
+      "id": "ref_typescript_eslint",
       "label": "typescript-eslint",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L56"
+      "source_location": "L58"
     },
     {
       "id": "$graphify-root$_package_devdependencies_vite",
-      "label": "vite",
+      "label": "vite@^8.2.0",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L57"
+      "source_location": "L59"
     },
     {
-      "id": "vite",
+      "id": "ref_vite",
       "label": "vite",
       "file_type": "concept",
       "source_file": "package.json",
-      "source_location": "L57"
+      "source_location": "L59"
     },
     {
       "id": "$graphify-root$_package_lint_staged",
       "label": "lint-staged",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L59"
+      "source_location": "L61"
     },
     {
       "id": "$graphify-root$_package_lint_staged_ts_tsx",
       "label": "*.{ts,tsx}",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L60"
-    },
-    {
-      "id": "ref_eslint_fix",
-      "label": "eslint --fix",
-      "file_type": "concept",
-      "source_file": "package.json",
-      "source_location": "L60"
-    },
-    {
-      "id": "ref_prettier_write",
-      "label": "prettier --write",
-      "file_type": "concept",
-      "source_file": "package.json",
-      "source_location": "L60"
+      "source_location": "L62"
     },
     {
       "id": "$graphify-root$_package_lint_staged_css_json_md",
       "label": "*.{css,json,md}",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L64"
+      "source_location": "L66"
     }
   ],
   "edges": [
@@ -819,8 +833,8 @@
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_dependencies_mantine_core",
-      "target": "mantine_core",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_mantine_core",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
@@ -829,8 +843,17 @@
       "context": "import"
     },
     {
+      "source": "$graphify-root$_package_dependencies_mantine_core",
+      "target": "ref_mantine_core",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
       "source": "$graphify-root$_package_dependencies",
-      "target": "$graphify-root$_package_dependencies_mantine_form",
+      "target": "$graphify-root$_package_dependencies_mantine_dates",
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
@@ -838,14 +861,51 @@
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_dependencies_mantine_form",
-      "target": "mantine_form",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_mantine_dates",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
       "source_location": "L20",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_dependencies_mantine_dates",
+      "target": "ref_mantine_dates",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_package_dependencies",
+      "target": "$graphify-root$_package_dependencies_mantine_form",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_package_json",
+      "target": "ref_mantine_form",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L21",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_dependencies_mantine_form",
+      "target": "ref_mantine_form",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L21",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_dependencies",
@@ -853,18 +913,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_dependencies_mantine_hooks",
-      "target": "mantine_hooks",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_mantine_hooks",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_dependencies_mantine_hooks",
+      "target": "ref_mantine_hooks",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L22",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_dependencies",
@@ -872,18 +941,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_dependencies_mantine_notifications",
-      "target": "mantine_notifications",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_mantine_notifications",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_dependencies_mantine_notifications",
+      "target": "ref_mantine_notifications",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L23",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_dependencies",
@@ -891,18 +969,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_dependencies_reduxjs_toolkit",
-      "target": "reduxjs_toolkit",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_reduxjs_toolkit",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_dependencies_reduxjs_toolkit",
+      "target": "ref_reduxjs_toolkit",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L24",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_dependencies",
@@ -910,18 +997,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L24",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_dependencies_tabler_icons_react",
-      "target": "tabler_icons_react",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_tabler_icons_react",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L24",
+      "source_location": "L25",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_dependencies_tabler_icons_react",
+      "target": "ref_tabler_icons_react",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L25",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_dependencies",
@@ -929,18 +1025,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L25",
+      "source_location": "L26",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_dependencies_tailwindcss_vite",
-      "target": "tailwindcss_vite",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_tailwindcss_vite",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L25",
+      "source_location": "L26",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_dependencies_tailwindcss_vite",
+      "target": "ref_tailwindcss_vite",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L26",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_dependencies",
@@ -948,18 +1053,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L26",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_dependencies_axios",
-      "target": "axios",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_axios",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L26",
+      "source_location": "L27",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_dependencies_axios",
+      "target": "ref_axios",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L27",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_dependencies",
@@ -967,18 +1081,55 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L27",
+      "source_location": "L28",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_dependencies_clsx",
-      "target": "clsx",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_clsx",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L27",
+      "source_location": "L28",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_dependencies_clsx",
+      "target": "ref_clsx",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_package_dependencies",
+      "target": "$graphify-root$_package_dependencies_dayjs",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_package_json",
+      "target": "ref_dayjs",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L29",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_dependencies_dayjs",
+      "target": "ref_dayjs",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L29",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_dependencies",
@@ -986,18 +1137,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L28",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_dependencies_mantine_datatable",
-      "target": "mantine_datatable",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_mantine_datatable",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L28",
+      "source_location": "L30",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_dependencies_mantine_datatable",
+      "target": "ref_mantine_datatable",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L30",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_dependencies",
@@ -1005,18 +1165,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L29",
+      "source_location": "L31",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_dependencies_react",
-      "target": "react",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_react",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L29",
+      "source_location": "L31",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_dependencies_react",
+      "target": "ref_react",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L31",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_dependencies",
@@ -1024,18 +1193,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L30",
+      "source_location": "L32",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_dependencies_react_dom",
-      "target": "react_dom",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_react_dom",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L30",
+      "source_location": "L32",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_dependencies_react_dom",
+      "target": "ref_react_dom",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L32",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_dependencies",
@@ -1043,18 +1221,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L31",
+      "source_location": "L33",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_dependencies_react_redux",
-      "target": "react_redux",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_react_redux",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L31",
+      "source_location": "L33",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_dependencies_react_redux",
+      "target": "ref_react_redux",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L33",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_dependencies",
@@ -1062,18 +1249,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L32",
+      "source_location": "L34",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_dependencies_react_router_dom",
-      "target": "react_router_dom",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_react_router_dom",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L32",
+      "source_location": "L34",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_dependencies_react_router_dom",
+      "target": "ref_react_router_dom",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L34",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_json",
@@ -1081,7 +1277,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L34",
+      "source_location": "L36",
       "weight": 1.0
     },
     {
@@ -1090,18 +1286,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L35",
+      "source_location": "L37",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_devdependencies_eslint_js",
-      "target": "eslint_js",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_eslint_js",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L35",
+      "source_location": "L37",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_devdependencies_eslint_js",
+      "target": "ref_eslint_js",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L37",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_devdependencies",
@@ -1109,18 +1314,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L36",
+      "source_location": "L38",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_devdependencies_tailwindcss_postcss",
-      "target": "tailwindcss_postcss",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_tailwindcss_postcss",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L36",
+      "source_location": "L38",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_devdependencies_tailwindcss_postcss",
+      "target": "ref_tailwindcss_postcss",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L38",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_devdependencies",
@@ -1128,18 +1342,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L37",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_devdependencies_types_figlet",
-      "target": "types_figlet",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_types_figlet",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L37",
+      "source_location": "L39",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_devdependencies_types_figlet",
+      "target": "ref_types_figlet",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L39",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_devdependencies",
@@ -1147,18 +1370,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L38",
+      "source_location": "L40",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_devdependencies_types_node",
-      "target": "types_node",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_types_node",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L38",
+      "source_location": "L40",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_devdependencies_types_node",
+      "target": "ref_types_node",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L40",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_devdependencies",
@@ -1166,18 +1398,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L39",
+      "source_location": "L41",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_devdependencies_types_react",
-      "target": "types_react",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_types_react",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L39",
+      "source_location": "L41",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_devdependencies_types_react",
+      "target": "ref_types_react",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L41",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_devdependencies",
@@ -1185,18 +1426,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L40",
+      "source_location": "L42",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_devdependencies_types_react_dom",
-      "target": "types_react_dom",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_types_react_dom",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L40",
+      "source_location": "L42",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_devdependencies_types_react_dom",
+      "target": "ref_types_react_dom",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L42",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_devdependencies",
@@ -1204,18 +1454,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L41",
+      "source_location": "L43",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_devdependencies_vitejs_plugin_react",
-      "target": "vitejs_plugin_react",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_vitejs_plugin_react",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L41",
+      "source_location": "L43",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_devdependencies_vitejs_plugin_react",
+      "target": "ref_vitejs_plugin_react",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L43",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_devdependencies",
@@ -1223,18 +1482,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L42",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_devdependencies_eslint",
-      "target": "eslint",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_eslint",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L42",
+      "source_location": "L44",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_devdependencies_eslint",
+      "target": "ref_eslint",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L44",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_devdependencies",
@@ -1242,18 +1510,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L43",
+      "source_location": "L45",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_devdependencies_eslint_config_prettier",
-      "target": "eslint_config_prettier",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_eslint_config_prettier",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L43",
+      "source_location": "L45",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_devdependencies_eslint_config_prettier",
+      "target": "ref_eslint_config_prettier",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L45",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_devdependencies",
@@ -1261,18 +1538,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L44",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_devdependencies_eslint_plugin_react_hooks",
-      "target": "eslint_plugin_react_hooks",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_eslint_plugin_react_hooks",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L44",
+      "source_location": "L46",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_devdependencies_eslint_plugin_react_hooks",
+      "target": "ref_eslint_plugin_react_hooks",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L46",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_devdependencies",
@@ -1280,18 +1566,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L45",
+      "source_location": "L47",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_devdependencies_eslint_plugin_react_refresh",
-      "target": "eslint_plugin_react_refresh",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_eslint_plugin_react_refresh",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L45",
+      "source_location": "L47",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_devdependencies_eslint_plugin_react_refresh",
+      "target": "ref_eslint_plugin_react_refresh",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L47",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_devdependencies",
@@ -1299,18 +1594,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L46",
+      "source_location": "L48",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_devdependencies_figlet",
-      "target": "figlet",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_figlet",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L46",
+      "source_location": "L48",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_devdependencies_figlet",
+      "target": "ref_figlet",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L48",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_devdependencies",
@@ -1318,18 +1622,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L47",
+      "source_location": "L49",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_devdependencies_globals",
-      "target": "globals",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_globals",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L47",
+      "source_location": "L49",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_devdependencies_globals",
+      "target": "ref_globals",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L49",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_devdependencies",
@@ -1337,18 +1650,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L48",
+      "source_location": "L50",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_devdependencies_husky",
-      "target": "husky",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_husky",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L48",
+      "source_location": "L50",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_devdependencies_husky",
+      "target": "ref_husky",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L50",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_devdependencies",
@@ -1356,18 +1678,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L49",
+      "source_location": "L51",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_devdependencies_lint_staged",
-      "target": "lint_staged",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_lint_staged",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L49",
+      "source_location": "L51",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_devdependencies_lint_staged",
+      "target": "ref_lint_staged",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L51",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_devdependencies",
@@ -1375,18 +1706,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L50",
+      "source_location": "L52",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_devdependencies_postcss",
-      "target": "postcss",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_postcss",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L50",
+      "source_location": "L52",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_devdependencies_postcss",
+      "target": "ref_postcss",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L52",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_devdependencies",
@@ -1394,18 +1734,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L51",
+      "source_location": "L53",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_devdependencies_postcss_preset_mantine",
-      "target": "postcss_preset_mantine",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_postcss_preset_mantine",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L51",
+      "source_location": "L53",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_devdependencies_postcss_preset_mantine",
+      "target": "ref_postcss_preset_mantine",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L53",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_devdependencies",
@@ -1413,18 +1762,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L52",
+      "source_location": "L54",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_devdependencies_postcss_simple_vars",
-      "target": "postcss_simple_vars",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_postcss_simple_vars",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L52",
+      "source_location": "L54",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_devdependencies_postcss_simple_vars",
+      "target": "ref_postcss_simple_vars",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L54",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_devdependencies",
@@ -1432,18 +1790,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L53",
+      "source_location": "L55",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_devdependencies_prettier",
-      "target": "prettier",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_prettier",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L53",
+      "source_location": "L55",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_devdependencies_prettier",
+      "target": "ref_prettier",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L55",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_devdependencies",
@@ -1451,18 +1818,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L54",
+      "source_location": "L56",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_devdependencies_tailwindcss",
-      "target": "tailwindcss",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_tailwindcss",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L54",
+      "source_location": "L56",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_devdependencies_tailwindcss",
+      "target": "ref_tailwindcss",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L56",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_devdependencies",
@@ -1470,18 +1846,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L55",
+      "source_location": "L57",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_devdependencies_typescript",
-      "target": "typescript",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_typescript",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L55",
+      "source_location": "L57",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_devdependencies_typescript",
+      "target": "ref_typescript",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L57",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_devdependencies",
@@ -1489,18 +1874,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L56",
+      "source_location": "L58",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_devdependencies_typescript_eslint",
-      "target": "typescript_eslint",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_typescript_eslint",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L56",
+      "source_location": "L58",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_devdependencies_typescript_eslint",
+      "target": "ref_typescript_eslint",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L58",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_devdependencies",
@@ -1508,18 +1902,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L57",
+      "source_location": "L59",
       "weight": 1.0
     },
     {
-      "source": "$graphify-root$_package_devdependencies_vite",
-      "target": "vite",
+      "source": "$graphify-root$_package_json",
+      "target": "ref_vite",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L57",
+      "source_location": "L59",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "$graphify-root$_package_devdependencies_vite",
+      "target": "ref_vite",
+      "relation": "declares",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L59",
+      "weight": 1.0
     },
     {
       "source": "$graphify-root$_package_json",
@@ -1527,7 +1930,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L59",
+      "source_location": "L61",
       "weight": 1.0
     },
     {
@@ -1536,28 +1939,8 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L60",
+      "source_location": "L62",
       "weight": 1.0
-    },
-    {
-      "source": "$graphify-root$_package_lint_staged_ts_tsx",
-      "target": "ref_eslint_fix",
-      "relation": "extends",
-      "confidence": "EXTRACTED",
-      "source_file": "package.json",
-      "source_location": "L60",
-      "weight": 1.0,
-      "context": "import"
-    },
-    {
-      "source": "$graphify-root$_package_lint_staged_ts_tsx",
-      "target": "ref_prettier_write",
-      "relation": "extends",
-      "confidence": "EXTRACTED",
-      "source_file": "package.json",
-      "source_location": "L60",
-      "weight": 1.0,
-      "context": "import"
     },
     {
       "source": "$graphify-root$_package_lint_staged",
@@ -1565,18 +1948,8 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
-      "source_location": "L64",
+      "source_location": "L66",
       "weight": 1.0
-    },
-    {
-      "source": "$graphify-root$_package_lint_staged_css_json_md",
-      "target": "ref_prettier_write",
-      "relation": "extends",
-      "confidence": "EXTRACTED",
-      "source_file": "package.json",
-      "source_location": "L64",
-      "weight": 1.0,
-      "context": "import"
     }
   ]
 }

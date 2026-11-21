@@ -5,6 +5,7 @@ export const PAYMENT_LABELS: Record<SalePaymentMethod, string> = {
   cash: 'Cash',
   credit: 'Credit',
   cheque: 'Cheque',
+  split: 'Split',
 };
 
 export const customerName = (c?: Customer) =>

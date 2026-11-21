@@ -16,6 +16,7 @@ import {
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import {
   IconBox,
+  IconHistory,
   IconChevronDown,
   IconLayoutDashboard,
   IconLogout,
@@ -26,16 +27,23 @@ import {
   IconUser,
   IconUsers,
   IconCoin,
+  type Icon,
 } from '@tabler/icons-react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { logOut, logoutAdmin } from '@/store/authSlice/authSlice';
+import { logOut, logoutUser } from '@/store/authSlice/authSlice';
+import { useCan } from '@/utils/permissions';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { NotificationsBell } from '@/components/NotificationsBell';
+import { ActivityDrawer } from '@/components/ActivityDrawer';
 import { Wordmark } from '@/components/Wordmark';
 import { fullName, initials } from '@/utils/format';
 import devLogo from '../../assets/dev-logo.png';
 
-const NAV_SECTIONS = [
+type NavItem = { label: string; path: string; icon: Icon; permission?: string };
+
+// An item with a `permission` shows only to users who have it (or the super admin).
+const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
   {
     label: 'Overview',
     items: [{ label: 'Dashboard', path: '/app/dashboard', icon: IconLayoutDashboard }],
@@ -43,17 +51,22 @@ const NAV_SECTIONS = [
   {
     label: 'Directory',
     items: [
-      { label: 'Customers', path: '/app/customers', icon: IconUsers },
-      { label: 'Suppliers', path: '/app/suppliers', icon: IconTruckDelivery },
-      { label: 'Products', path: '/app/products', icon: IconBox },
+      { label: 'Customers', path: '/app/customers', icon: IconUsers, permission: 'customer:read' },
+      {
+        label: 'Suppliers',
+        path: '/app/suppliers',
+        icon: IconTruckDelivery,
+        permission: 'supplier:read',
+      },
+      { label: 'Products', path: '/app/products', icon: IconBox, permission: 'product:read' },
     ],
   },
   {
     label: 'Trading',
     items: [
-      { label: 'Sales', path: '/app/sales', icon: IconCoin },
-      { label: 'Orders', path: '/app/orders', icon: IconShoppingCart },
-      { label: 'Cheques', path: '/app/cheques', icon: IconReceipt2 },
+      { label: 'Sales', path: '/app/sales', icon: IconCoin, permission: 'sale:read' },
+      { label: 'Orders', path: '/app/orders', icon: IconShoppingCart, permission: 'order:read' },
+      { label: 'Cheques', path: '/app/cheques', icon: IconReceipt2, permission: 'cheque:read' },
     ],
   },
   {
@@ -64,10 +77,16 @@ const NAV_SECTIONS = [
 
 export const AppShell = () => {
   const [opened, { toggle, close }] = useDisclosure();
+  const [activityOpen, activity] = useDisclosure();
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
+  const can = useCan();
+  const sections = NAV_SECTIONS.map((s) => ({
+    ...s,
+    items: s.items.filter((i) => !i.permission || can(i.permission)),
+  })).filter((s) => s.items.length > 0);
   // Full navigation on desktop and in the mobile drawer; icon rail only on tablet.
   const wide = useMediaQuery('(min-width: 62em)', true);
   const mobile = useMediaQuery('(max-width: 47.99em)', false);
@@ -75,7 +94,7 @@ export const AppShell = () => {
 
   const handleLogout = async () => {
     try {
-      await dispatch(logoutAdmin()).unwrap();
+      await dispatch(logoutUser()).unwrap();
     } finally {
       dispatch(logOut());
       navigate('/login', { replace: true });
@@ -121,6 +140,7 @@ export const AppShell = () => {
             </Group>
             <Group gap="xs" wrap="nowrap">
               <ThemeToggle />
+              {user && <NotificationsBell />}
               {user && (
                 <Menu position="bottom-end">
                   <Menu.Target>
@@ -158,6 +178,9 @@ export const AppShell = () => {
                     >
                       Profile
                     </Menu.Item>
+                    <Menu.Item leftSection={<IconHistory size={16} />} onClick={activity.open}>
+                      My activity
+                    </Menu.Item>
                     <Menu.Item leftSection={<IconLogout size={16} />} onClick={handleLogout}>
                       Log out
                     </Menu.Item>
@@ -170,7 +193,7 @@ export const AppShell = () => {
         <MantineAppShell.Navbar p="sm" component="nav" aria-label="Main">
           <Box style={{ overflowY: 'auto', overflowX: 'hidden', flex: 1 }}>
             <Stack gap="md" py={4}>
-              {NAV_SECTIONS.map((section, index) => (
+              {sections.map((section, index) => (
                 <Stack key={section.label} gap={2}>
                   {!showLabels && index > 0 && <Divider mb={6} aria-hidden />}
                   {showLabels && (
@@ -252,6 +275,7 @@ export const AppShell = () => {
           </Box>
         </MantineAppShell.Main>
       </MantineAppShell>
+      <ActivityDrawer opened={activityOpen} onClose={activity.close} />
     </>
   );
 };

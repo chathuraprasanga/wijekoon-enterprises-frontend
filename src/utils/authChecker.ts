@@ -1,6 +1,6 @@
 import { redirect } from 'react-router-dom';
 import { store } from '@/store/store';
-import { getCurrentAdmin, logOut, tokenRefresh } from '@/store/authSlice/authSlice';
+import { getCurrentUser, logOut, tokenRefresh } from '@/store/authSlice/authSlice';
 
 const tryRehydrateSession = async () => {
   const { refreshToken } = store.getState().auth;
@@ -9,7 +9,7 @@ const tryRehydrateSession = async () => {
   }
   try {
     await store.dispatch(tokenRefresh()).unwrap();
-    await store.dispatch(getCurrentAdmin()).unwrap();
+    await store.dispatch(getCurrentUser()).unwrap();
     return true;
   } catch {
     store.dispatch(logOut());
@@ -17,18 +17,30 @@ const tryRehydrateSession = async () => {
   }
 };
 
+const CHANGE_PASSWORD_PATH = '/change-password-required';
+
+// A user still on a generated temporary password goes to the change-password screen first.
+const signedInDestination = () =>
+  store.getState().auth.user?.mustChangePassword ? CHANGE_PASSWORD_PATH : '/app/dashboard';
+
 export const AuthLoaderChecker = async () => {
-  const { user } = store.getState().auth;
-  if (user) {
-    return null;
+  if (!store.getState().auth.user && !(await tryRehydrateSession())) {
+    return redirect('/login');
   }
-  return (await tryRehydrateSession()) ? null : redirect('/login');
+  return store.getState().auth.user?.mustChangePassword ? redirect(CHANGE_PASSWORD_PATH) : null;
+};
+
+// For the change-password screen itself: needs a session, but never bounces to itself.
+export const requireSession = async () => {
+  if (!store.getState().auth.user && !(await tryRehydrateSession())) {
+    return redirect('/login');
+  }
+  return store.getState().auth.user?.mustChangePassword ? null : redirect('/app/dashboard');
 };
 
 export const redirectIfAuthenticated = async () => {
-  const { user } = store.getState().auth;
-  if (user) {
-    return redirect('/app/dashboard');
+  if (store.getState().auth.user || (await tryRehydrateSession())) {
+    return redirect(signedInDestination());
   }
-  return (await tryRehydrateSession()) ? redirect('/app/dashboard') : null;
+  return null;
 };

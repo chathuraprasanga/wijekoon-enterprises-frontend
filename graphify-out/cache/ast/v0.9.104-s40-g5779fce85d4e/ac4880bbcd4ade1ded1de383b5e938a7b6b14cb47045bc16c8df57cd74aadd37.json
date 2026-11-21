@@ -96,6 +96,62 @@
       "weight": 1.0
     }
   ],
+  "raw_calls": [
+    {
+      "caller_nid": "$graphify-root$_claude_skills_build_admin_panel_references_build_and_verify_backend_admin_module_skeleton",
+      "callee": "admin",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "admin",
+      "source_file": ".claude/skills/build-admin-panel/references/build-and-verify.md",
+      "source_location": "L30"
+    },
+    {
+      "caller_nid": "$graphify-root$_claude_skills_build_admin_panel_references_build_and_verify_frontend_skeleton",
+      "callee": "onSuccess",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "onSuccess",
+      "source_file": ".claude/skills/build-admin-panel/references/build-and-verify.md",
+      "source_location": "L43"
+    },
+    {
+      "caller_nid": "$graphify-root$_claude_skills_build_admin_panel_references_build_and_verify_frontend_skeleton",
+      "callee": "useState",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "useState",
+      "source_file": ".claude/skills/build-admin-panel/references/build-and-verify.md",
+      "source_location": "L46"
+    },
+    {
+      "caller_nid": "$graphify-root$_claude_skills_build_admin_panel_references_build_and_verify_frontend_skeleton",
+      "callee": "handleSubmit",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "handleSubmit",
+      "source_file": ".claude/skills/build-admin-panel/references/build-and-verify.md",
+      "source_location": "L48"
+    },
+    {
+      "caller_nid": "$graphify-root$_claude_skills_build_admin_panel_references_build_and_verify_gotchas",
+      "callee": "meta",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "meta",
+      "source_file": ".claude/skills/build-admin-panel/references/build-and-verify.md",
+      "source_location": "L59"
+    },
+    {
+      "caller_nid": "$graphify-root$_claude_skills_build_admin_panel_references_build_and_verify_verification_playbook",
+      "callee": "localhost",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "localhost",
+      "source_file": ".claude/skills/build-admin-panel/references/build-and-verify.md",
+      "source_location": "L176"
+    }
+  ],
   "input_tokens": 0,
   "output_tokens": 0
 }

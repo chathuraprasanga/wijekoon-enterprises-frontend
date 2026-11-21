@@ -8,7 +8,7 @@ import { SimpleGrid, Box } from '@mantine/core';
 import { Field } from '@/components/Field';
 import { LocationMap } from '@/components/LocationMap';
 import { StatusSection } from '@/components/StatusSection';
-import { ActiveBadge } from '@/components/StatusBadge';
+import { ActiveBadge, CustomerTypeBadge } from '@/components/StatusBadge';
 import { AddEditCustomerModal } from '@/pages/customers/AddEditCustomerModal';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
@@ -19,9 +19,20 @@ import {
 } from '@/store/customerSlice/customerSlice';
 import { useActiveToggle } from '@/hooks/useActiveToggle';
 import { formatDate, formatPhone, fullName, orDash } from '@/utils/format';
+import { useCan } from '@/utils/permissions';
 
 const SORT_MAP = { name: 'firstName' };
 const FILTERS = [
+  {
+    type: 'select' as const,
+    key: 'customerType',
+    label: 'Type',
+    placeholder: 'All types',
+    options: [
+      { value: 'HARDWARE_STORE', label: 'Hardware store' },
+      { value: 'INDIVIDUAL', label: 'Individual' },
+    ],
+  },
   {
     type: 'select' as const,
     key: 'status',
@@ -35,6 +46,7 @@ const FILTERS = [
 ];
 
 const CustomersPage = () => {
+  const can = useCan();
   const dispatch = useAppDispatch();
   const { items, total } = useAppSelector((s) => s.customer);
   const [form, setForm] = useState<{ customer: Customer | null } | null>(null);
@@ -72,25 +84,37 @@ const CustomersPage = () => {
       sortMap={SORT_MAP}
       load={({ page, limit, searchText, sortBy, sortType, filters }) =>
         dispatch(
-          fetchCustomers({ page, limit, searchText, status: filters.status, sortBy, sortType }),
+          fetchCustomers({
+            page,
+            limit,
+            searchText,
+            status: filters.status,
+            customerType: filters.customerType,
+            sortBy,
+            sortType,
+          }),
         ).unwrap()
       }
       createLabel="Add customer"
       emptyDescription="Add the people and shops you sell to. Their sales and cheques will show on their record."
       emptyIcon={<IconUsers size={20} />}
-      onCreate={() => setForm({ customer: null })}
+      onCreate={can('customer:create') ? () => setForm({ customer: null }) : undefined}
       onView={setView}
-      onEdit={(customer) => setForm({ customer })}
-      remove={{
-        title: 'Delete customer?',
-        describe: (c) => (
-          <>
-            This permanently removes <strong>{fullName(c)}</strong> and their contact details.
-          </>
-        ),
-        run: (c) => dispatch(deleteCustomer(c._id)).unwrap(),
-        done: 'Customer deleted.',
-      }}
+      onEdit={can('customer:update') ? (customer) => setForm({ customer }) : undefined}
+      remove={
+        can('customer:delete')
+          ? {
+              title: 'Delete customer?',
+              describe: (c) => (
+                <>
+                  This permanently removes <strong>{fullName(c)}</strong> and their contact details.
+                </>
+              ),
+              run: (c) => dispatch(deleteCustomer(c._id)).unwrap(),
+              done: 'Customer deleted.',
+            }
+          : undefined
+      }
       columns={[
         {
           key: 'name',
@@ -102,6 +126,13 @@ const CustomersPage = () => {
               {fullName(c)}
             </Anchor>
           ),
+        },
+        {
+          key: 'type',
+          header: 'Type',
+          badge: true,
+          hideBelow: 'md',
+          render: (c) => <CustomerTypeBadge type={c.customerType} />,
         },
         {
           key: 'phone',
@@ -140,7 +171,8 @@ const CustomersPage = () => {
             title={view ? fullName(view) : ''}
             subtitle={view ? `Customer · since ${formatDate(view.createdAt)}` : undefined}
             actions={
-              view && (
+              view &&
+              can('customer:update') && (
                 <Button
                   leftSection={<IconPencil size={16} aria-hidden />}
                   onClick={() => {
@@ -156,6 +188,9 @@ const CustomersPage = () => {
             {view && (
               <>
                 <SimpleGrid cols={{ base: 1, xs: 2 }} spacing="md" verticalSpacing="md">
+                  <Field label="Type">
+                    <CustomerTypeBadge type={view.customerType} />
+                  </Field>
                   <Field label="Mobile">
                     <span className="num">{formatPhone(view.phone)}</span>
                   </Field>
@@ -176,6 +211,7 @@ const CustomersPage = () => {
                         lat={view.location.lat}
                         lng={view.location.lng}
                         label={fullName(view)}
+                        customerType={view.customerType}
                       />
                     </Box>
                   </Box>
@@ -185,7 +221,7 @@ const CustomersPage = () => {
                   title="Active customer"
                   description="Inactive customers can't be picked on new sales."
                   checked={view.isActive}
-                  disabled={busyId === view._id}
+                  disabled={busyId === view._id || !can('customer:update')}
                   onChange={() => toggle(view)}
                 />
                 <Anchor

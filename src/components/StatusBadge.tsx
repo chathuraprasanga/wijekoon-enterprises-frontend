@@ -4,9 +4,11 @@ import {
   IconAlertTriangle,
   IconCalendar,
   IconCircleCheck,
+  IconBuildingStore,
   IconCircleMinus,
   IconClock,
   IconHourglass,
+  IconUser,
   type Icon,
 } from '@tabler/icons-react';
 
@@ -48,9 +50,20 @@ export const ActiveBadge = ({ active }: { active: boolean }) =>
     <StatusBadge tone="neutral" label="Inactive" icon={IconCircleMinus} />
   );
 
-export const PaidBadge = ({ paid }: { paid: boolean }) =>
-  paid ? (
+// Same hues as the map pins: amber storefront for hardware stores, forest person for individuals.
+// A missing type (records from before types existed) is a hardware store.
+export const CustomerTypeBadge = ({ type }: { type?: 'HARDWARE_STORE' | 'INDIVIDUAL' }) =>
+  type === 'INDIVIDUAL' ? (
+    <StatusBadge tone="accent" label="Individual" icon={IconUser} />
+  ) : (
+    <StatusBadge tone="warning" label="Hardware store" icon={IconBuildingStore} />
+  );
+
+export const SaleStatusBadge = ({ status }: { status: 'paid' | 'partially_paid' | 'not_paid' }) =>
+  status === 'paid' ? (
     <StatusBadge tone="success" label="Paid" icon={IconCircleCheck} />
+  ) : status === 'partially_paid' ? (
+    <StatusBadge tone="info" label="Partially paid" icon={IconClock} />
   ) : (
     <StatusBadge tone="warning" label="Not paid" icon={IconAlertTriangle} />
   );

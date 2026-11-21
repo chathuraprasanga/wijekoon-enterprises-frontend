@@ -79,10 +79,12 @@ const ProfilePage = () => {
             {initials(user)}
           </Avatar>
           <Stack gap={4} align="flex-start">
-            <Text fz={20} fw={600} lh={1.25}>
-              {fullName(user)}
-            </Text>
-            {user.isSuperAdmin && <StatusBadge tone="accent" label="Admin" />}
+            <Group gap="sm" wrap="wrap">
+              <Text fz={20} fw={600} lh={1.25}>
+                {fullName(user)}
+              </Text>
+              {user.isSuperAdmin && <StatusBadge tone="accent" label="Super admin" />}
+            </Group>
             <UnstyledButton
               onClick={() => setModal('avatar')}
               fz="sm"

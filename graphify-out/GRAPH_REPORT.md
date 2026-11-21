@@ -1,47 +1,40 @@
-# Graph Report - Frontend (2026-10-04)
+# Graph Report - Frontend (2026-11-21)
 
 ## Corpus Check
 
-- 77 files · ~77,421 words
+- 114 files · ~36,407 words
 - Verdict: corpus is large enough that graph structure adds value.
+- Unclassified: 10 file(s) not represented in the graph (top: (none) 7, .conf 2, .css 1)
 
 ## Summary
 
-- 477 nodes · 437 edges · 67 communities (43 shown, 24 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 7 edges (avg confidence: 0.79)
+- 641 nodes · 1908 edges · 36 communities (23 shown, 13 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 19 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
 
-- Built from commit: `8230dc31`
+- Built from commit: `9a4b1f6f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 
-- devDependencies
+- package.json
 - authSlice.ts
 - dependencies
 - compilerOptions
-- package.json
+- scripts
 - compilerOptions
-- FilterBar.tsx
-- /new-component slash command
+- react
+- main.tsx
 - index.html entry document
-- Folder conventions table
+- app
 - icons.svg (Icon Sprite Sheet)
 - .prettierrc.json
-- post-commit
 - client-log.util.ts
-- authChecker.ts
-- authStorage.ts
-- toNotify
-- ForgotPasswordForm.tsx
-- ResetPasswordForm.tsx
-- notifyConfig.tsx
-- Loader.tsx
-- post-checkout
-- hooks.ts
+- lint-staged
+- engines
 - vite-env.d.ts
 - tsconfig.json
 - Dev Environment Logo (X mark)
@@ -49,67 +42,52 @@
 - deploy.sh
 - bootstrap.sh
 - Type-aware ESLint config recommendation
-- DashboardPage.tsx
-- PageHeader.tsx
-- routes.tsx
-- apiBaseUrl.ts
-- identifier field accepts email or phone gotcha
-- resetToken short-lived, page-state-only gotcha
-- customers/index.tsx
-- orders/index.tsx
-- products/index.tsx
-- sales/index.tsx
-- suppliers/index.tsx
-- roleSlice.ts
-- productSlice.ts
-- customerSlice.ts
-- supplierSlice.ts
-- userSlice.ts
-- ProfilePage.tsx
+- CustomerDetailPage.tsx
+- eslint.config.js
+- AddEditRolePage.tsx
+- getErrorMessage
+- useAppDispatch
 - SKILL.md
 - Build pattern, gotchas, and verification playbook
 - Research checklist + standard scoping questions
-- AddEditCustomerModal.tsx
-- AddEditProductModal.tsx
-- AddEditUserModal.tsx
-- AddEditSupplierModal.tsx
-- permissionSlice.ts
-- permissionLabels.ts
-- AddEditRolePage.tsx
-- RolesPage.tsx
-- datePreview.ts
-- SettingsLayout.tsx
-- UsersPage.tsx
+- @mantine/core
 
 ## God Nodes (most connected - your core abstractions)
 
-1. `compilerOptions` - 19 edges
-2. `compilerOptions` - 15 edges
-3. `scripts` - 8 edges
-4. `/new-slice slash command` - 8 edges
-5. `icons.svg (Icon Sprite Sheet)` - 6 edges
-6. `Build pattern, gotchas, and verification playbook` - 5 edges
-7. `Research checklist + standard scoping questions` - 5 edges
-8. `FilterBar()` - 4 edges
-9. `Two-tier API layer (axiosInstance vs raw axios)` - 4 edges
-10. `AppShell()` - 3 edges
+1. `@mantine/core` - 56 edges
+2. `getErrorMessage()` - 54 edges
+3. `react` - 48 edges
+4. `useAppDispatch` - 45 edges
+5. `@tabler/icons-react` - 39 edges
+6. `toNotify()` - 33 edges
+7. `react-router-dom` - 31 edges
+8. `useAppSelector` - 29 edges
+9. `CustomerDetailPage()` - 24 edges
+10. `ListPage()` - 23 edges
 
 ## Surprising Connections (you probably didn't know these)
 
 - `/new-slice slash command` --semantically_similar_to--> `Presentational form components convention` [INFERRED] [semantically similar]
   .claude/commands/new-slice.md → CLAUDE.md
-- `/new-slice slash command` --references--> `ForgotPasswordPage()` [EXTRACTED]
-  .claude/commands/new-slice.md → src/pages/ForgotPasswordPage.tsx
-- `/new-slice slash command` --references--> `LoginPage()` [EXTRACTED]
-  .claude/commands/new-slice.md → src/pages/LoginPage.tsx
-- `/new-slice slash command` --references--> `getErrorMessage()` [EXTRACTED]
-  .claude/commands/new-slice.md → src/utils/getErrorMessage.ts
-- `/new-slice slash command` --references--> `authSlice` [EXTRACTED]
-  .claude/commands/new-slice.md → src/store/authSlice/authSlice.ts
+- `Presentational form components convention` --semantically_similar_to--> `/new-component slash command` [INFERRED] [semantically similar]
+  CLAUDE.md → .claude/commands/new-component.md
+- `/new-route slash command` --references--> `App()` [EXTRACTED]
+  .claude/commands/new-route.md → src/App.tsx
+- `PinInput uncontrolled-incompatibility gotcha` --references--> `OtpForm()` [EXTRACTED]
+  CLAUDE.md → src/components/OtpForm.tsx
+- `/new-hook slash command` --references--> `toNotify()` [EXTRACTED]
+  .claude/commands/new-hook.md → src/hooks/toNotify.tsx
 
 ## Import Cycles
 
-- None detected.
+- 3-file cycle: `src/interceptors/axiosInterceptor.ts -> src/store/store.ts -> src/store/supplierSlice/supplierSlice.ts -> src/interceptors/axiosInterceptor.ts`
+- 3-file cycle: `src/interceptors/axiosInterceptor.ts -> src/store/store.ts -> src/store/chequeSlice/chequeSlice.ts -> src/interceptors/axiosInterceptor.ts`
+- 3-file cycle: `src/interceptors/axiosInterceptor.ts -> src/store/store.ts -> src/store/customerSlice/customerSlice.ts -> src/interceptors/axiosInterceptor.ts`
+- 3-file cycle: `src/interceptors/axiosInterceptor.ts -> src/store/store.ts -> src/store/permissionSlice/permissionSlice.ts -> src/interceptors/axiosInterceptor.ts`
+- 3-file cycle: `src/interceptors/axiosInterceptor.ts -> src/store/store.ts -> src/store/productSlice/productSlice.ts -> src/interceptors/axiosInterceptor.ts`
+- 3-file cycle: `src/interceptors/axiosInterceptor.ts -> src/store/store.ts -> src/store/roleSlice/roleSlice.ts -> src/interceptors/axiosInterceptor.ts`
+- 3-file cycle: `src/interceptors/axiosInterceptor.ts -> src/store/store.ts -> src/store/saleSlice/saleSlice.ts -> src/interceptors/axiosInterceptor.ts`
+- 3-file cycle: `src/interceptors/axiosInterceptor.ts -> src/store/store.ts -> src/store/userSlice/userSlice.ts -> src/interceptors/axiosInterceptor.ts`
 
 ## Hyperedges (group relationships)
 
@@ -120,57 +98,57 @@
 - **Solid-fill brand/social platform logo icons (bluesky, discord, github, x)** — public_icons_svg_bluesky_icon, public_icons_svg_discord_icon, public_icons_svg_github_icon, public_icons_svg_x_icon [INFERRED 0.85]
 - **Feature-scaffolding slash command workflow** — claude_commands_new_component_command, claude_commands_new_hook_command, claude_commands_new_page_command, claude_commands_new_route_command, claude_commands_new_slice_command [INFERRED 0.85]
 
-## Communities (67 total, 24 thin omitted)
+## Communities (36 total, 13 thin omitted)
 
-### Community 0 - "devDependencies"
+### Community 0 - "package.json"
 
-Cohesion: 0.04
-Nodes (47): eslint, eslint-config-prettier, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, figlet, globals, husky (+39 more)
+Cohesion: 0.09
+Nodes (29): devDependencies, husky@^9.1.7, lint-staged@^16.4.0, postcss@^8.5.25, postcss-preset-mantine@^1.18.0, postcss-simple-vars@^7.0.1, prettier@^3.9.6, @types/figlet@^1.7.0 (+21 more)
 
 ### Community 1 - "authSlice.ts"
 
-Cohesion: 0.06
-Nodes (30): Access token kept in Redux memory only, never localStorage, Two-tier API layer (axiosInstance vs raw axios), /new-page slash command, /new-route slash command, /new-slice slash command, Two-zone routing architecture (logged-out vs protected), App(), axiosInstance (+22 more)
+Cohesion: 0.11
+Nodes (22): /new-page slash command, /new-route slash command, /new-slice slash command, axios@^1.19.0, axios, RetryableRequestConfig, Admin, authSlice (+14 more)
 
 ### Community 2 - "dependencies"
 
-Cohesion: 0.06
-Nodes (33): axios, clsx, dayjs, @mantine/core, mantine-datatable, @mantine/dates, @mantine/form, @mantine/hooks (+25 more)
+Cohesion: 0.09
+Nodes (22): dependencies, clsx@^2.1.1, dayjs@^1.11.23, @fontsource/ibm-plex-mono@^5.3.0, @fontsource/ibm-plex-sans@^5.3.0, leaflet@^1.9.4, @mantine/core@^9.5.0, @mantine/dates@^9.5.0 (+14 more)
 
 ### Community 3 - "compilerOptions"
 
-Cohesion: 0.08
-Nodes (24): DOM, src, vite/client, compilerOptions, allowArbitraryExtensions, allowImportingTsExtensions, erasableSyntaxOnly, jsx (+16 more)
+Cohesion: 0.10
+Nodes (20): compilerOptions, allowArbitraryExtensions, allowImportingTsExtensions, erasableSyntaxOnly, jsx, lib, module, moduleDetection (+12 more)
 
-### Community 4 - "package.json"
+### Community 4 - "scripts"
 
-Cohesion: 0.11
-Nodes (19): engines, node, lint-staged, *.{css,json,md}, *.{ts,tsx}, name, private, scripts (+11 more)
+Cohesion: 0.25
+Nodes (8): scripts, build, dev, format, format:check, lint, prepare, preview
 
 ### Community 5 - "compilerOptions"
 
-Cohesion: 0.10
-Nodes (19): node, vite.config.ts, compilerOptions, allowImportingTsExtensions, erasableSyntaxOnly, lib, module, moduleDetection (+11 more)
+Cohesion: 0.12
+Nodes (16): compilerOptions, allowImportingTsExtensions, erasableSyntaxOnly, lib, module, moduleDetection, noEmit, noFallthroughCasesInSwitch (+8 more)
 
-### Community 6 - "FilterBar.tsx"
+### Community 6 - "react"
 
-Cohesion: 0.27
-Nodes (9): defaultIconFor(), DraftState, DraftValue, emptyValueFor(), FilterBar(), FilterFieldConfig, Props, readDraftFromParams() (+1 more)
+Cohesion: 0.11
+Nodes (25): @mantine/hooks, react, ConfirmDialog(), Props, Column, Props, DeleteConfig, LoadParams (+17 more)
 
-### Community 7 - "/new-component slash command"
+### Community 7 - "main.tsx"
 
-Cohesion: 0.18
-Nodes (9): /new-component slash command, Presentational form components convention, PinInput uncontrolled-incompatibility gotcha, LoginForm(), LoginFormProps, LoginFormValues, OtpForm(), OtpFormProps (+1 more)
+Cohesion: 0.13
+Nodes (15): @fontsource/noto-sans-sinhala@^5.3.0, @fontsource/noto-sans-tamil@^5.3.0, react-redux@^9.3.0, @fontsource/noto-sans-sinhala, @fontsource/noto-sans-tamil, @mantine/dates, react-redux, App() (+7 more)
 
 ### Community 8 - "index.html entry document"
 
-Cohesion: 0.25
-Nodes (7): Centralized Mantine-only theming convention, app service (docker-compose.prod.yml), wijekoon-frontend:latest image, index.html entry document, Ubuntu Google Font, main.tsx entry (defaultColorScheme="auto"), theme
+Cohesion: 0.33
+Nodes (5): app service (docker-compose.prod.yml), wijekoon-frontend:latest image, index.html entry document, Ubuntu Google Font, main.tsx entry (defaultColorScheme="auto")
 
-### Community 9 - "Folder conventions table"
+### Community 9 - "app"
 
-Cohesion: 0.29
-Nodes (6): Folder conventions table, AppShell(), NAV_ITEMS, SETTINGS_ITEM, AppLayout(), AuthLayout (tried and removed)
+Cohesion: 0.20
+Nodes (9): build, container_name, image, ports, restart, context, dockerfile, services (+1 more)
 
 ### Community 10 - "icons.svg (Icon Sprite Sheet)"
 
@@ -182,70 +160,40 @@ Nodes (7): icons.svg (Icon Sprite Sheet), Bluesky Icon (social brand mark), Disc
 Cohesion: 0.33
 Nodes (5): printWidth, semi, singleQuote, tabWidth, trailingComma
 
-### Community 12 - "post-commit"
-
-Cohesion: 0.40
-Nodes (4): post-commit script, GRAPHIFY_CHANGED, GRAPHIFY_REBUILD_LOG, PYTHONHASHSEED
-
 ### Community 13 - "client-log.util.ts"
 
-Cohesion: 0.47
-Nodes (4): __dirname, logClientUp(), pkg, printClientBanner()
+Cohesion: 0.16
+Nodes (10): figlet@^1.11.4, vite@^8.2.0, @vitejs/plugin-react@^6.0.4, figlet, vite, @vitejs/plugin-react, __dirname, logClientUp() (+2 more)
 
-### Community 14 - "authChecker.ts"
+### Community 14 - "lint-staged"
 
-Cohesion: 0.70
-Nodes (4): One-auth-loader-on-parent-route pattern, AuthLoaderChecker(), redirectIfAuthenticated(), tryRehydrateSession()
+Cohesion: 0.67
+Nodes (3): lint-staged, *.{css,json,md}, *.{ts,tsx}
 
-### Community 15 - "authStorage.ts"
+### Community 32 - "CustomerDetailPage.tsx"
 
-Cohesion: 0.60
-Nodes (3): clearStoredRefreshToken(), getStoredRefreshToken(), persistRefreshToken()
+Cohesion: 0.08
+Nodes (59): DataTable(), ListPage(), DetailList(), Row, EmptyState(), Props, InlineAlert(), Props (+51 more)
 
-### Community 16 - "toNotify"
-
-Cohesion: 0.50
-Nodes (3): /new-hook slash command, toNotify-only notification convention, toNotify()
-
-### Community 19 - "notifyConfig.tsx"
-
-Cohesion: 0.50
-Nodes (3): NOTIFY_VISUALS, NotifyType, NotifyVisual
-
-### Community 21 - "post-checkout"
-
-Cohesion: 0.50
-Nodes (3): post-checkout script, GRAPHIFY_REBUILD_LOG, PYTHONHASHSEED
-
-### Community 47 - "roleSlice.ts"
+### Community 40 - "eslint.config.js"
 
 Cohesion: 0.13
-Nodes (14): createRole, deleteRole, fetchRoleById, fetchRoles, initialState, PagedRolesParams, PagedRolesResponse, Permission (+6 more)
+Nodes (14): eslint@^10.8.0, eslint-config-prettier@^10.1.8, @eslint/js@^10.0.1, eslint-plugin-react-hooks@^7.1.1, eslint-plugin-react-refresh@^0.5.3, globals@^17.7.0, typescript-eslint@^8.65.0, eslint (+6 more)
 
-### Community 48 - "productSlice.ts"
+### Community 47 - "AddEditRolePage.tsx"
 
-Cohesion: 0.15
-Nodes (12): createProduct, deleteProduct, fetchProducts, initialState, PagedProductsParams, PagedProductsResponse, Product, PRODUCT_UNITS (+4 more)
+Cohesion: 0.11
+Nodes (29): DetailDialog(), AddEditRolePage(), findPermission(), RoleFormValues, FILTERS, groupPermissionsByModule(), RolesPage(), fetchPermissions (+21 more)
 
-### Community 49 - "customerSlice.ts"
+### Community 48 - "getErrorMessage"
 
-Cohesion: 0.18
-Nodes (10): createCustomer, Customer, customerSlice, CustomerState, deleteCustomer, fetchCustomers, initialState, PagedCustomersParams (+2 more)
+Cohesion: 0.06
+Nodes (73): @reduxjs/toolkit@^2.12.0, @reduxjs/toolkit, Field(), LocationMap(), Props, StatusSection(), useActiveToggle(), AddEditCustomerModal() (+65 more)
 
-### Community 50 - "supplierSlice.ts"
+### Community 52 - "useAppDispatch"
 
-Cohesion: 0.18
-Nodes (10): createSupplier, deleteSupplier, fetchSuppliers, initialState, PagedSuppliersParams, PagedSuppliersResponse, Supplier, supplierSlice (+2 more)
-
-### Community 51 - "userSlice.ts"
-
-Cohesion: 0.18
-Nodes (10): createUser, deleteUser, fetchUsers, initialState, PagedUsersParams, PagedUsersResponse, updateUser, User (+2 more)
-
-### Community 52 - "ProfilePage.tsx"
-
-Cohesion: 0.22
-Nodes (6): AVATAR_SEEDS, AvatarPickerModal(), avatarUrl(), ModalProps, PasswordFormValues, ProfileFormValues
+Cohesion: 0.10
+Nodes (47): /new-hook slash command, @mantine/notifications@^9.5.0, @mantine/form, @mantine/notifications, FormModal(), icon(), NOTIFY_VISUALS, NotifyType (+39 more)
 
 ### Community 53 - "SKILL.md"
 
@@ -262,72 +210,32 @@ Nodes (5): Backend admin-module skeleton, Build pattern, gotchas, and verificati
 Cohesion: 0.33
 Nodes (5): Finding and evaluating sibling reference templates, Research checklist + standard scoping questions, Standard scoping questions to ask (via AskUserQuestion), What to read in the backend, What to read in the frontend/mobile app
 
-### Community 56 - "AddEditCustomerModal.tsx"
+### Community 65 - "@mantine/core"
 
-Cohesion: 0.33
-Nodes (3): CustomerFormValues, FormProps, Props
-
-### Community 57 - "AddEditProductModal.tsx"
-
-Cohesion: 0.33
-Nodes (3): FormProps, ProductFormValues, Props
-
-### Community 58 - "AddEditUserModal.tsx"
-
-Cohesion: 0.33
-Nodes (3): FormProps, Props, UserFormValues
-
-### Community 59 - "AddEditSupplierModal.tsx"
-
-Cohesion: 0.33
-Nodes (3): FormProps, Props, SupplierFormValues
-
-### Community 60 - "permissionSlice.ts"
-
-Cohesion: 0.33
-Nodes (5): fetchPermissions, initialState, Permission, permissionSlice, PermissionState
-
-### Community 61 - "permissionLabels.ts"
-
-Cohesion: 0.50
-Nodes (4): formatModuleLabel(), formatPermissionKey(), PERMISSION_ACTION_LABELS, PERMISSION_ACTION_ORDER
-
-### Community 62 - "AddEditRolePage.tsx"
-
-Cohesion: 0.67
-Nodes (3): AddEditRolePage(), findPermission(), RoleFormValues
-
-### Community 63 - "RolesPage.tsx"
-
-Cohesion: 0.67
-Nodes (3): FILTER_FIELDS, groupPermissionsByModule(), RolesPage()
-
-### Community 64 - "datePreview.ts"
-
-Cohesion: 0.83
-Nodes (3): datePreview(), formatTime(), isSameDay()
+Cohesion: 0.06
+Nodes (64): /new-component slash command, Folder conventions table, @mantine/core, react-router-dom, @tabler/icons-react, AppShell(), NAV_SECTIONS, AuthFormShell() (+56 more)
 
 ## Knowledge Gaps
 
-- **253 isolated node(s):** `NAV_ITEMS`, `SETTINGS_ITEM`, `STAT_CARDS`, `FILTER_FIELDS`, `AVATAR_SEEDS` (+248 more)
-  These have ≤1 connection - possible missing edges or undocumented components.
-- **24 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **8 isolated node(s):** `/new-hook slash command`, `App Branding / Logo Identity`, `Dev Environment Logo (X mark)`, `Type-aware ESLint config recommendation`, `React + TypeScript + Vite template doc` (+3 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 237 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **13 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `devDependencies` connect `devDependencies` to `package.json`?**
-  _High betweenness centrality (0.031) - this node is a cross-community bridge._
-- **Why does `dependencies` connect `dependencies` to `package.json`?**
-  _High betweenness centrality (0.023) - this node is a cross-community bridge._
-- **Why does `/new-slice slash command` connect `authSlice.ts` to `/new-component slash command`?**
-  _High betweenness centrality (0.007) - this node is a cross-community bridge._
-- **What connects `NAV_ITEMS`, `SETTINGS_ITEM`, `STAT_CARDS` to the rest of the system?**
-  _253 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `devDependencies` be split into smaller, more focused modules?**
-  _Cohesion score 0.0425531914893617 - nodes in this community are weakly interconnected._
+- **Why does `@mantine/core` connect `@mantine/core` to `package.json`, `CustomerDetailPage.tsx`, `dependencies`, `react`, `main.tsx`, `AddEditRolePage.tsx`, `getErrorMessage`, `useAppDispatch`?**
+  _High betweenness centrality (0.097) - this node is a cross-community bridge._
+- **What connects `/new-hook slash command`, `App Branding / Logo Identity`, `Dev Environment Logo (X mark)` to the rest of the system?**
+  _8 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `package.json` be split into smaller, more focused modules?**
+  _Cohesion score 0.09425287356321839 - nodes in this community are weakly interconnected._
+- **Why does `react` connect `react` to `package.json`, `@mantine/core`, `dependencies`, `CustomerDetailPage.tsx`, `main.tsx`, `AddEditRolePage.tsx`, `getErrorMessage`, `useAppDispatch`?**
+  _High betweenness centrality (0.071) - this node is a cross-community bridge._
 - **Should `authSlice.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.05689900426742532 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.11491935483870967 - nodes in this community are weakly interconnected._
+- **Why does `@tabler/icons-react` connect `@mantine/core` to `package.json`, `CustomerDetailPage.tsx`, `dependencies`, `react`, `AddEditRolePage.tsx`, `getErrorMessage`, `useAppDispatch`?**
+  _High betweenness centrality (0.051) - this node is a cross-community bridge._
 - **Should `dependencies` be split into smaller, more focused modules?**
-  _Cohesion score 0.06060606060606061 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.09090909090909091 - nodes in this community are weakly interconnected._

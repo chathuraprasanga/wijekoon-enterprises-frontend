@@ -2,8 +2,12 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { axiosInstance } from '@/interceptors/axiosInterceptor';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 
-export type SalePaymentMethod = 'cash' | 'credit' | 'cheque';
-export type SaleStatus = 'paid' | 'not_paid';
+export type SalePartMethod = 'cash' | 'credit' | 'cheque';
+// 'split' = paid several ways (see Sale.payments)
+export type SalePaymentMethod = SalePartMethod | 'split';
+export type SaleStatus = 'paid' | 'partially_paid' | 'not_paid';
+
+export type SalePayment = { method: SalePartMethod; amount: number };
 
 export type SaleLineItem = {
   product: string;
@@ -30,8 +34,22 @@ export type Sale = {
   netTotal: number;
   status: SaleStatus;
   paymentMethod: SalePaymentMethod;
+  /** Empty/missing on sales saved before split payments existed. */
+  payments?: SalePayment[];
   createdAt: string;
   updatedAt: string;
+};
+
+/** What the server accepts; it recomputes line totals, the net total, payment method and status. */
+export type SaleInput = {
+  customer: string;
+  salesDate: string;
+  lineItems: Omit<SaleLineItem, 'lineTotal'>[];
+  discount: number;
+  tax: number;
+  shipping: number;
+  otherExpenses: number;
+  payments: SalePayment[];
 };
 
 export type PagedSalesParams = {
@@ -61,6 +79,43 @@ export const fetchSales = createAsyncThunk(
   async (params: PagedSalesParams, { rejectWithValue }) => {
     try {
       const { data } = await axiosInstance.get<PagedSalesResponse>('/sales/paged', { params });
+      return data;
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error));
+    }
+  },
+);
+
+export const fetchSaleById = createAsyncThunk(
+  'sale/fetchOne',
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const { data } = await axiosInstance.get<Sale>(`/sales/${id}`);
+      return data;
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error));
+    }
+  },
+);
+
+export const createSale = createAsyncThunk(
+  'sale/create',
+  async (payload: SaleInput, { rejectWithValue }) => {
+    try {
+      const { data } = await axiosInstance.post<Sale>('/sales', payload);
+      return data;
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error));
+    }
+  },
+);
+
+export const updateSale = createAsyncThunk(
+  'sale/update',
+  async (payload: SaleInput & { _id: string }, { rejectWithValue }) => {
+    try {
+      const { _id, ...body } = payload;
+      const { data } = await axiosInstance.patch<Sale>(`/sales/${_id}`, body);
       return data;
     } catch (error) {
       return rejectWithValue(getErrorMessage(error));

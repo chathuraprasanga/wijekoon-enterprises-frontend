@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
-  ActionIcon,
   Anchor,
   Avatar,
   Box,
@@ -21,7 +20,12 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { EmptyState } from '@/components/EmptyState';
 import { InlineAlert } from '@/components/InlineAlert';
 import { DataTable } from '@/components/data/DataTable';
-import { ActiveBadge, ChequeStatusBadge, PaidBadge } from '@/components/StatusBadge';
+import {
+  ActiveBadge,
+  ChequeStatusBadge,
+  CustomerTypeBadge,
+  SaleStatusBadge,
+} from '@/components/StatusBadge';
 import { AddEditCustomerModal } from '@/pages/customers/AddEditCustomerModal';
 import { axiosInstance } from '@/interceptors/axiosInterceptor';
 import { useAppDispatch } from '@/store/hooks';
@@ -32,8 +36,12 @@ import { useLookup } from '@/hooks/useLookup';
 import { toNotify } from '@/hooks/toNotify';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 import { formatDate, formatLkr, formatPhone, fullName, initials } from '@/utils/format';
+import { useCan } from '@/utils/permissions';
 
 const CustomerDetailPage = () => {
+  const can = useCan();
+  const canSales = can('sale:read');
+  const canCheques = can('cheque:read');
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -51,10 +59,16 @@ const CustomerDetailPage = () => {
   useEffect(() => {
     let live = true;
     const params = { page: 1, limit: 5, customer: id };
+    // Sales and cheques are separate permissions: skip what this user can't read.
+    const none = Promise.resolve({ data: { data: [] } });
     Promise.all([
       axiosInstance.get<Customer>(`/customers/${id}`),
-      axiosInstance.get<{ data: Sale[] }>('/sales/paged', { params }),
-      axiosInstance.get<{ data: Cheque[] }>('/cheques/paged', { params }),
+      canSales
+        ? axiosInstance.get<{ data: Sale[] }>('/sales/paged', { params })
+        : (none as Promise<{ data: { data: Sale[] } }>),
+      canCheques
+        ? axiosInstance.get<{ data: Cheque[] }>('/cheques/paged', { params })
+        : (none as Promise<{ data: { data: Cheque[] } }>),
     ])
       .then(([c, s, ch]) => {
         if (!live) return;
@@ -67,7 +81,7 @@ const CustomerDetailPage = () => {
     return () => {
       live = false;
     };
-  }, [id, nonce]);
+  }, [id, nonce, canSales, canCheques]);
 
   const handleDelete = async () => {
     if (!customer) return;
@@ -99,26 +113,30 @@ const CustomerDetailPage = () => {
         action={
           customer && (
             <Group gap="xs" wrap="nowrap">
-              <Button
-                variant="default"
-                leftSection={<IconPencil size={16} aria-hidden />}
-                onClick={() => setEditing(true)}
-              >
-                Edit
-              </Button>
-              <Button
-                variant="default"
-                leftSection={<IconTrash size={16} aria-hidden />}
-                styles={{
-                  root: {
-                    borderColor: 'var(--ldg-danger-border)',
-                    color: 'var(--ldg-danger-text)',
-                  },
-                }}
-                onClick={() => setConfirmDelete(true)}
-              >
-                Delete
-              </Button>
+              {can('customer:update') && (
+                <Button
+                  variant="default"
+                  leftSection={<IconPencil size={16} aria-hidden />}
+                  onClick={() => setEditing(true)}
+                >
+                  Edit
+                </Button>
+              )}
+              {can('customer:delete') && (
+                <Button
+                  variant="default"
+                  leftSection={<IconTrash size={16} aria-hidden />}
+                  styles={{
+                    root: {
+                      borderColor: 'var(--ldg-danger-border)',
+                      color: 'var(--ldg-danger-text)',
+                    },
+                  }}
+                  onClick={() => setConfirmDelete(true)}
+                >
+                  Delete
+                </Button>
+              )}
             </Group>
           )
         }
@@ -148,19 +166,7 @@ const CustomerDetailPage = () => {
       {loading && !customer && <Skeleton h={260} />}
       {customer && (
         <SimpleGrid cols={{ base: 1, md: 3 }} spacing="md" style={{ alignItems: 'start' }}>
-          <SectionCard
-            title="Contact information"
-            action={
-              <ActionIcon
-                variant="subtle"
-                c="var(--ldg-accent-text)"
-                aria-label="Edit customer"
-                onClick={() => setEditing(true)}
-              >
-                <IconPencil size={18} />
-              </ActionIcon>
-            }
-          >
+          <SectionCard title="Contact information">
             <Group gap="md" wrap="nowrap" mb="md">
               <Avatar size={52} radius="xl" color="forest" aria-hidden>
                 {initials(customer)}
@@ -182,6 +188,7 @@ const CustomerDetailPage = () => {
                   },
                   { label: 'Email', value: customer.email },
                   { label: 'Address', value: customer.address },
+                  { label: 'Type', value: <CustomerTypeBadge type={customer.customerType} /> },
                   { label: 'Status', value: <ActiveBadge active={customer.isActive} /> },
                 ],
               ]}
@@ -194,116 +201,127 @@ const CustomerDetailPage = () => {
                 <Text className="num" mb={6}>
                   {customer.location.lat.toFixed(5)}, {customer.location.lng.toFixed(5)}
                 </Text>
-                <LocationMap lat={customer.location.lat} lng={customer.location.lng} label={name} />
+                <LocationMap
+                  lat={customer.location.lat}
+                  lng={customer.location.lng}
+                  label={name}
+                  customerType={customer.customerType}
+                />
               </Box>
             )}
           </SectionCard>
           <Stack gap="md" style={{ gridColumn: 'span 2' }}>
-            <SectionCard
-              title="Recent sales"
-              action={
-                <Anchor component={Link} to="/app/sales" size="sm" fw={500}>
-                  View all →
-                </Anchor>
-              }
-              flush
-            >
-              {sales.length === 0 ? (
-                <EmptyState
-                  title="No sales yet"
-                  description="Sales for this customer appear here."
-                />
-              ) : (
-                <DataTable
-                  caption="Recent sales"
-                  records={sales}
-                  rowKey={(s) => s._id}
-                  columns={[
-                    {
-                      key: 'salesId',
-                      header: 'Sale ID',
-                      primary: true,
-                      render: (s) => (
-                        <span className="mono" style={{ color: 'var(--ldg-accent-text)' }}>
-                          {s.salesId}
-                        </span>
-                      ),
-                    },
-                    {
-                      key: 'date',
-                      header: 'Date',
-                      render: (s) => <span className="num">{formatDate(s.salesDate)}</span>,
-                    },
-                    {
-                      key: 'total',
-                      header: 'Total',
-                      align: 'right',
-                      render: (s) => formatLkr(s.netTotal),
-                    },
-                    {
-                      key: 'status',
-                      header: 'Status',
-                      badge: true,
-                      render: (s) => <PaidBadge paid={s.status === 'paid'} />,
-                    },
-                  ]}
-                />
-              )}
-            </SectionCard>
-            <SectionCard
-              title="Recent cheques"
-              action={
-                <Anchor component={Link} to="/app/cheques" size="sm" fw={500}>
-                  View all →
-                </Anchor>
-              }
-              flush
-            >
-              {cheques.length === 0 ? (
-                <EmptyState
-                  title="No cheques yet"
-                  description="Cheques from this customer appear here."
-                />
-              ) : (
-                <DataTable
-                  caption="Recent cheques"
-                  records={cheques}
-                  rowKey={(c) => c._id}
-                  columns={[
-                    {
-                      key: 'no',
-                      header: 'Cheque no.',
-                      primary: true,
-                      render: (c) => <span className="mono">{c.chequeNumber}</span>,
-                    },
-                    {
-                      key: 'sale',
-                      header: 'Sale',
-                      render: (c) => (
-                        <span className="mono">{salesLookup.byId.get(c.sale)?.salesId ?? '—'}</span>
-                      ),
-                    },
-                    {
-                      key: 'deposit',
-                      header: 'Deposit date',
-                      render: (c) => <span className="num">{formatDate(c.depositDate)}</span>,
-                    },
-                    {
-                      key: 'amount',
-                      header: 'Amount',
-                      align: 'right',
-                      render: (c) => formatLkr(c.amount),
-                    },
-                    {
-                      key: 'state',
-                      header: 'Status',
-                      badge: true,
-                      render: (c) => <ChequeStatusBadge depositDate={c.depositDate} />,
-                    },
-                  ]}
-                />
-              )}
-            </SectionCard>
+            {can('sale:read') && (
+              <SectionCard
+                title="Recent sales"
+                action={
+                  <Anchor component={Link} to="/app/sales" size="sm" fw={500}>
+                    View all →
+                  </Anchor>
+                }
+                flush
+              >
+                {sales.length === 0 ? (
+                  <EmptyState
+                    title="No sales yet"
+                    description="Sales for this customer appear here."
+                  />
+                ) : (
+                  <DataTable
+                    caption="Recent sales"
+                    records={sales}
+                    rowKey={(s) => s._id}
+                    columns={[
+                      {
+                        key: 'salesId',
+                        header: 'Sale ID',
+                        primary: true,
+                        render: (s) => (
+                          <span className="mono" style={{ color: 'var(--ldg-accent-text)' }}>
+                            {s.salesId}
+                          </span>
+                        ),
+                      },
+                      {
+                        key: 'date',
+                        header: 'Date',
+                        render: (s) => <span className="num">{formatDate(s.salesDate)}</span>,
+                      },
+                      {
+                        key: 'total',
+                        header: 'Total',
+                        align: 'right',
+                        render: (s) => formatLkr(s.netTotal),
+                      },
+                      {
+                        key: 'status',
+                        header: 'Status',
+                        badge: true,
+                        render: (s) => <SaleStatusBadge status={s.status} />,
+                      },
+                    ]}
+                  />
+                )}
+              </SectionCard>
+            )}
+            {can('cheque:read') && (
+              <SectionCard
+                title="Recent cheques"
+                action={
+                  <Anchor component={Link} to="/app/cheques" size="sm" fw={500}>
+                    View all →
+                  </Anchor>
+                }
+                flush
+              >
+                {cheques.length === 0 ? (
+                  <EmptyState
+                    title="No cheques yet"
+                    description="Cheques from this customer appear here."
+                  />
+                ) : (
+                  <DataTable
+                    caption="Recent cheques"
+                    records={cheques}
+                    rowKey={(c) => c._id}
+                    columns={[
+                      {
+                        key: 'no',
+                        header: 'Cheque no.',
+                        primary: true,
+                        render: (c) => <span className="mono">{c.chequeNumber}</span>,
+                      },
+                      {
+                        key: 'sale',
+                        header: 'Sale',
+                        render: (c) => (
+                          <span className="mono">
+                            {salesLookup.byId.get(c.sale)?.salesId ?? '—'}
+                          </span>
+                        ),
+                      },
+                      {
+                        key: 'deposit',
+                        header: 'Deposit date',
+                        render: (c) => <span className="num">{formatDate(c.depositDate)}</span>,
+                      },
+                      {
+                        key: 'amount',
+                        header: 'Amount',
+                        align: 'right',
+                        render: (c) => formatLkr(c.amount),
+                      },
+                      {
+                        key: 'state',
+                        header: 'Status',
+                        badge: true,
+                        render: (c) => <ChequeStatusBadge depositDate={c.depositDate} />,
+                      },
+                    ]}
+                  />
+                )}
+              </SectionCard>
+            )}
           </Stack>
         </SimpleGrid>
       )}

@@ -7,7 +7,10 @@
       "node_kind": "page",
       "source_file": ".claude/skills/build-admin-panel/SKILL.md",
       "source_location": "L1",
-      "frontmatter": { "name": "build-admin-panel", "description": "&gt;-" }
+      "frontmatter": {
+        "name": "build-admin-panel",
+        "description": "This skill should be used when the user asks to build, add, or scope an admin panel, admin dashboard, backoffice, or CMS for an existing app or platform, e.g. &quot;build an admin panel for this app&quot;, &quot;we need a dashboard to manage users and orders&quot;, &quot;add a backoffice for the backend&quot;, &quot;create an admin panel like we did for X&quot;, or &quot;research this app so we can scope an admin panel&quot;. Also applies when asked to research an app&#x27;s frontend/ mobile + backend codeb"
+      }
     },
     {
       "id": "$graphify-root$_claude_skills_build_admin_panel_skill_phase_1_research_the_target_app_first",
@@ -129,6 +132,35 @@
       "source_file": ".claude/skills/build-admin-panel/SKILL.md",
       "source_location": "L156",
       "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "$graphify-root$_claude_skills_build_admin_panel_skill_phase_1_research_the_target_app_first",
+      "callee": "ownerId",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "ownerId",
+      "source_file": ".claude/skills/build-admin-panel/SKILL.md",
+      "source_location": "L35"
+    },
+    {
+      "caller_nid": "$graphify-root$_claude_skills_build_admin_panel_skill_phase_2_surface_scope_decisions_before_building",
+      "callee": "AskUserQuestion",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "AskUserQuestion",
+      "source_file": ".claude/skills/build-admin-panel/SKILL.md",
+      "source_location": "L56"
+    },
+    {
+      "caller_nid": "$graphify-root$_claude_skills_build_admin_panel_skill_phase_3_design_the_plan",
+      "callee": "admin",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "admin",
+      "source_file": ".claude/skills/build-admin-panel/SKILL.md",
+      "source_location": "L90"
     }
   ],
   "input_tokens": 0,

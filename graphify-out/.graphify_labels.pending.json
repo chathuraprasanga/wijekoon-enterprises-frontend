@@ -1,0 +1,18 @@
+{
+  "0": "package.json",
+  "1": "authSlice.ts",
+  "2": "dependencies",
+  "4": "scripts",
+  "6": "react",
+  "7": "main.tsx",
+  "9": "app",
+  "13": "client-log.util.ts",
+  "14": "lint-staged",
+  "15": "engines",
+  "32": "CustomerDetailPage.tsx",
+  "40": "eslint.config.js",
+  "47": "AddEditRolePage.tsx",
+  "48": "getErrorMessage",
+  "52": "useAppDispatch",
+  "65": "@mantine/core"
+}

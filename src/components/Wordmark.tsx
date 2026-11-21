@@ -1,34 +1,21 @@
-import { Box, Group, Text } from '@mantine/core';
+import { useComputedColorScheme } from '@mantine/core';
+import logoDark from '@/assets/brand/logo-dark.svg';
+import logoLight from '@/assets/brand/logo-light.svg';
+import logoWhite from '@/assets/brand/logo-white.svg';
 
-type Props = { inverse?: boolean };
+const LOGO_ASPECT = 5127 / 998; // viewBox of the horizontal logo SVGs
 
-// Text wordmark; swap for the logo asset when one is supplied.
-export const Wordmark = ({ inverse }: Props) => (
-  <Group gap="sm" wrap="nowrap">
-    <Box
-      w={30}
-      h={30}
-      fw={600}
-      fz={16}
-      aria-hidden
-      style={{
-        display: 'grid',
-        placeItems: 'center',
-        borderRadius: 6,
-        flexShrink: 0,
-        background: inverse ? '#ffffff' : 'var(--ldg-accent)',
-        color: inverse ? '#0f5c4f' : 'var(--ldg-on-accent)',
-      }}
-    >
-      W
-    </Box>
-    <Box lh={1.2}>
-      <Text fw={600} fz={13} lts="0.1em" c={inverse ? '#ffffff' : undefined}>
-        WIJEKOON
-      </Text>
-      <Text fz={10} lts="0.2em" c={inverse ? 'rgba(255,255,255,0.72)' : 'dimmed'}>
-        ENTERPRISES
-      </Text>
-    </Box>
-  </Group>
-);
+type Props = { inverse?: boolean; height?: number };
+
+// inverse = on the dark-green brand panel (always white); otherwise follows light/dark mode.
+export const Wordmark = ({ inverse, height = 24 }: Props) => {
+  const scheme = useComputedColorScheme('light');
+  const src = inverse ? logoWhite : scheme === 'dark' ? logoDark : logoLight;
+  return (
+    <img
+      src={src}
+      alt="Wijekoon Enterprises"
+      style={{ display: 'block', height, width: height * LOGO_ASPECT, flexShrink: 0 }}
+    />
+  );
+};

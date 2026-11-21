@@ -9,21 +9,29 @@ import {
   wasRefreshTokenRemembered,
 } from '@/utils/authStorage';
 
-export type Admin = {
+export type AuthPermission = { module: string; action: string; key?: string };
+export type AuthRole = { _id?: string; name: string; permissions: AuthPermission[] };
+
+// The signed-in user (same account type as the tablet app). A super admin passes every permission
+// check; everyone else is limited to what their roles grant (see utils/permissions.ts).
+export type AuthUser = {
   _id: string;
   firstName: string;
   lastName: string | null;
   email: string;
   phone: string;
   avatar: string | null;
+  roles: AuthRole[];
   isSuperAdmin: boolean;
+  /** A generated temporary password is still in use: only change-password works until it's changed. */
+  mustChangePassword?: boolean;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
 };
 
 type AuthState = {
-  user: Admin | null;
+  user: AuthUser | null;
   accessToken: string | null;
   refreshToken: string | null;
 };
@@ -43,10 +51,10 @@ export const login = createAsyncThunk(
     try {
       const { identifier, password, rememberMe } = payload;
       const { data } = await axios.post<{
-        admin: Admin;
+        user: AuthUser;
         accessToken: string;
         refreshToken: string;
-      }>(`${API_BASE_URL}/auth/admin/login`, { identifier, password });
+      }>(`${API_BASE_URL}/auth/user/login`, { identifier, password });
       return { ...data, rememberMe };
     } catch (error) {
       if (isAxiosError(error) && error.response?.status === 401) {
@@ -64,7 +72,7 @@ export const forgotPassword = createAsyncThunk(
   async (payload: { identifier: string }, { rejectWithValue }) => {
     try {
       const { data } = await axios.post<{ message: string }>(
-        `${API_BASE_URL}/auth/admin/forgot-password`,
+        `${API_BASE_URL}/auth/user/forgot-password`,
         payload,
       );
       return data;
@@ -79,7 +87,7 @@ export const resendOtp = createAsyncThunk(
   async (payload: { identifier: string }, { rejectWithValue }) => {
     try {
       const { data } = await axios.post<{ message: string }>(
-        `${API_BASE_URL}/auth/admin/resend-otp`,
+        `${API_BASE_URL}/auth/user/resend-otp`,
         payload,
       );
       return data;
@@ -94,7 +102,7 @@ export const verifyOtp = createAsyncThunk(
   async (payload: { identifier: string; code: string }, { rejectWithValue }) => {
     try {
       const { data } = await axios.post<{ message: string; resetToken: string }>(
-        `${API_BASE_URL}/auth/admin/verify-otp`,
+        `${API_BASE_URL}/auth/user/verify-otp`,
         payload,
       );
       return data;
@@ -112,7 +120,7 @@ export const resetPassword = createAsyncThunk(
   ) => {
     try {
       const { data } = await axios.post<{ message: string }>(
-        `${API_BASE_URL}/auth/admin/reset-password`,
+        `${API_BASE_URL}/auth/user/reset-password`,
         payload,
       );
       return data;
@@ -128,7 +136,7 @@ export const tokenRefresh = createAsyncThunk(
     try {
       const { auth } = getState() as { auth: AuthState };
       const { data } = await axios.post<{ accessToken: string; refreshToken: string }>(
-        `${API_BASE_URL}/auth/admin/refresh`,
+        `${API_BASE_URL}/auth/user/refresh`,
         { refreshToken: auth.refreshToken },
       );
       return data;
@@ -140,12 +148,12 @@ export const tokenRefresh = createAsyncThunk(
 
 // Uses plain axios with a manual Authorization header (not axiosInstance) to avoid a
 // circular import: axiosInstance's interceptor imports the store, which imports this slice.
-export const getCurrentAdmin = createAsyncThunk(
-  'auth/getCurrentAdmin',
+export const getCurrentUser = createAsyncThunk(
+  'auth/getCurrentUser',
   async (_: void, { getState, rejectWithValue }) => {
     try {
       const { auth } = getState() as { auth: AuthState };
-      const { data } = await axios.get<Admin>(`${API_BASE_URL}/auth/admin/me`, {
+      const { data } = await axios.get<AuthUser>(`${API_BASE_URL}/users/me`, {
         headers: { Authorization: `Bearer ${auth.accessToken}` },
       });
       return data;
@@ -158,12 +166,12 @@ export const getCurrentAdmin = createAsyncThunk(
 export const updateProfile = createAsyncThunk(
   'auth/updateProfile',
   async (
-    payload: Pick<Admin, 'firstName' | 'lastName' | 'email' | 'phone' | 'avatar'>,
+    payload: Pick<AuthUser, 'firstName' | 'lastName' | 'email' | 'phone' | 'avatar'>,
     { getState, rejectWithValue },
   ) => {
     try {
       const { auth } = getState() as { auth: AuthState };
-      const { data } = await axios.patch<Admin>(`${API_BASE_URL}/auth/admin/me`, payload, {
+      const { data } = await axios.patch<AuthUser>(`${API_BASE_URL}/users/me`, payload, {
         headers: { Authorization: `Bearer ${auth.accessToken}` },
       });
       return data;
@@ -182,7 +190,7 @@ export const changePassword = createAsyncThunk(
     try {
       const { auth } = getState() as { auth: AuthState };
       const { data } = await axios.post<{ message: string }>(
-        `${API_BASE_URL}/auth/admin/change-password`,
+        `${API_BASE_URL}/auth/user/change-password`,
         payload,
         { headers: { Authorization: `Bearer ${auth.accessToken}` } },
       );
@@ -193,13 +201,13 @@ export const changePassword = createAsyncThunk(
   },
 );
 
-export const logoutAdmin = createAsyncThunk(
+export const logoutUser = createAsyncThunk(
   'auth/logout',
   async (_: void, { getState, rejectWithValue }) => {
     try {
       const { auth } = getState() as { auth: AuthState };
       const { data } = await axios.post<{ message: string }>(
-        `${API_BASE_URL}/auth/admin/logout`,
+        `${API_BASE_URL}/auth/user/logout`,
         null,
         { headers: { Authorization: `Bearer ${auth.accessToken}` } },
       );
@@ -223,7 +231,7 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(login.fulfilled, (state, action) => {
-      state.user = action.payload.admin;
+      state.user = action.payload.user;
       state.accessToken = action.payload.accessToken;
       state.refreshToken = action.payload.refreshToken;
       persistRefreshToken(action.payload.refreshToken, action.payload.rememberMe);
@@ -233,7 +241,7 @@ const authSlice = createSlice({
       state.refreshToken = action.payload.refreshToken;
       persistRefreshToken(action.payload.refreshToken, wasRefreshTokenRemembered());
     });
-    builder.addCase(getCurrentAdmin.fulfilled, (state, action) => {
+    builder.addCase(getCurrentUser.fulfilled, (state, action) => {
       state.user = action.payload;
     });
     builder.addCase(updateProfile.fulfilled, (state, action) => {

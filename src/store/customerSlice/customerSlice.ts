@@ -8,8 +8,16 @@ export type CustomerLocation = {
   h3index: string;
 };
 
+export type CustomerType = 'INDIVIDUAL' | 'HARDWARE_STORE';
+
+export const CUSTOMER_TYPE_LABELS: Record<CustomerType, string> = {
+  HARDWARE_STORE: 'Hardware store',
+  INDIVIDUAL: 'Individual',
+};
+
 export type Customer = {
   _id: string;
+  customerType?: CustomerType; // missing on records created before types existed = HARDWARE_STORE
   firstName: string;
   lastName: string | null;
   email: string | null;
@@ -26,6 +34,7 @@ export type PagedCustomersParams = {
   limit?: number;
   searchText?: string;
   status?: string;
+  customerType?: string;
   sortBy?: string;
   sortType?: string;
 };
@@ -71,7 +80,10 @@ export const fetchCustomers = createAsyncThunk(
 export const createCustomer = createAsyncThunk(
   'customer/create',
   async (
-    payload: Pick<Customer, 'firstName' | 'lastName' | 'email' | 'phone' | 'address'>,
+    payload: Pick<
+      Customer,
+      'firstName' | 'lastName' | 'email' | 'phone' | 'address' | 'customerType'
+    > & { location: Pick<CustomerLocation, 'lat' | 'lng'> | null },
     { rejectWithValue },
   ) => {
     try {
@@ -86,8 +98,13 @@ export const createCustomer = createAsyncThunk(
 export const updateCustomer = createAsyncThunk(
   'customer/update',
   async (
-    payload: Pick<Customer, '_id' | 'firstName' | 'lastName' | 'email' | 'phone' | 'address'> & {
+    payload: Pick<
+      Customer,
+      '_id' | 'firstName' | 'lastName' | 'email' | 'phone' | 'address' | 'customerType'
+    > & {
       isActive?: boolean;
+      /** Omit to leave untouched, null to clear; the server derives h3index. */
+      location?: Pick<CustomerLocation, 'lat' | 'lng'> | null;
     },
     { rejectWithValue },
   ) => {

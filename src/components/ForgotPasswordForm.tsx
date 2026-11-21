@@ -35,7 +35,7 @@ export const ForgotPasswordForm = ({ onSubmit, loading }: ForgotPasswordFormProp
         autoFocus
         autoComplete="username"
         disabled={loading}
-        placeholder="ruwan@wijekoon.lk or 077 123 4567"
+        placeholder="Enter your email or phone number"
         leftSection={<IconUser size={16} aria-hidden />}
         {...form.getInputProps('identifier')}
       />

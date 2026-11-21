@@ -18,8 +18,10 @@ import {
 import { fetchSuppliers } from '@/store/supplierSlice/supplierSlice';
 import { useActiveToggle } from '@/hooks/useActiveToggle';
 import { formatLkr, formatSize } from '@/utils/format';
+import { useCan } from '@/utils/permissions';
 
 const ProductsPage = () => {
+  const can = useCan();
   const dispatch = useAppDispatch();
   const { items, total } = useAppSelector((s) => s.product);
   const suppliers = useAppSelector((s) => s.supplier.items);
@@ -99,19 +101,23 @@ const ProductsPage = () => {
       createLabel="Add product"
       emptyDescription="Add what you stock, with a buying and selling price for each."
       emptyIcon={<IconBox size={20} />}
-      onCreate={() => setForm({ product: null })}
+      onCreate={can('product:create') ? () => setForm({ product: null }) : undefined}
       onView={setView}
-      onEdit={(product) => setForm({ product })}
-      remove={{
-        title: 'Delete product?',
-        describe: (p) => (
-          <>
-            This permanently removes <strong>{p.name}</strong> ({p.sku}) from the catalogue.
-          </>
-        ),
-        run: (p) => dispatch(deleteProduct(p._id)).unwrap(),
-        done: 'Product deleted.',
-      }}
+      onEdit={can('product:update') ? (product) => setForm({ product }) : undefined}
+      remove={
+        can('product:delete')
+          ? {
+              title: 'Delete product?',
+              describe: (p) => (
+                <>
+                  This permanently removes <strong>{p.name}</strong> ({p.sku}) from the catalogue.
+                </>
+              ),
+              run: (p) => dispatch(deleteProduct(p._id)).unwrap(),
+              done: 'Product deleted.',
+            }
+          : undefined
+      }
       columns={[
         {
           key: 'name',
@@ -177,7 +183,8 @@ const ProductsPage = () => {
               ) : undefined
             }
             actions={
-              view && (
+              view &&
+              can('product:update') && (
                 <Button
                   leftSection={<IconPencil size={16} aria-hidden />}
                   onClick={() => {
@@ -214,7 +221,7 @@ const ProductsPage = () => {
                   title="Available for sale"
                   description="Inactive products can't be added to new sales."
                   checked={view.isActive}
-                  disabled={busyId === view._id}
+                  disabled={busyId === view._id || !can('product:update')}
                   onChange={() => toggle(view)}
                 />
               </>

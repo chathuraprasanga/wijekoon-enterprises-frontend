@@ -18,7 +18,7 @@ const icon = (Icon: typeof IconCircleCheck, token: string) => (
 // Every toast dismisses after 5 seconds, except errors, which stay until dismissed.
 export const NOTIFY_VISUALS: Record<NotifyType, NotifyVisual> = {
   SUCCESS: { icon: icon(IconCircleCheck, 'success'), autoClose: 5000 },
-  ERROR: { icon: icon(IconAlertCircle, 'danger'), autoClose: false },
+  ERROR: { icon: icon(IconAlertCircle, 'danger'), autoClose: 8000 },
   WARNING: { icon: icon(IconAlertTriangle, 'warning'), autoClose: 5000 },
   INFO: { icon: icon(IconInfoCircle, 'info'), autoClose: 5000 },
   LOADING: { icon: icon(IconInfoCircle, 'info'), autoClose: false },

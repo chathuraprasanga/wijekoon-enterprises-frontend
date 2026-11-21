@@ -1,6 +1,6 @@
 import { IconMail, IconPhone } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
-import { MultiSelect, TextInput } from '@mantine/core';
+import { MultiSelect, Textarea, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { FormModal } from '@/components/FormModal';
 import { useErrorSummary } from '@/hooks/useErrorSummary';
@@ -138,7 +138,14 @@ const AddEditUserForm = ({ user, onClose }: FormProps) => {
         leftSection={<IconMail size={16} aria-hidden />}
         {...form.getInputProps('email')}
       />
-      <TextInput label="Address" placeholder="Enter address" {...form.getInputProps('address')} />
+      <Textarea
+        label="Address"
+        placeholder="Enter address"
+        autosize
+        minRows={2}
+        maxRows={4}
+        {...form.getInputProps('address')}
+      />
       <MultiSelect
         label="Roles"
         withAsterisk

@@ -16,7 +16,7 @@ export const AuthSplitLayout = () => (
         justifyContent: 'space-between',
       }}
     >
-      <Wordmark inverse />
+      <Wordmark inverse height={30} />
       <Stack gap="sm" maw={460}>
         <Title order={1} fz={30} lh={1.25} c="#ffffff">
           Every sale, cheque and supplier, kept exactly.

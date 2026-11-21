@@ -23,7 +23,8 @@ axiosInstance.interceptors.response.use(
     const originalRequest = error.config as RetryableRequestConfig | undefined;
     const status = error.response?.status;
 
-    if ((status !== 401 && status !== 403) || !originalRequest || originalRequest._retry) {
+    // 401 = expired token: refresh once and retry. 403 = this user lacks permission: not retryable.
+    if (status !== 401 || !originalRequest || originalRequest._retry) {
       return Promise.reject(error);
     }
     originalRequest._retry = true;

@@ -9,10 +9,12 @@ import { type Cheque, deleteCheque, fetchCheques } from '@/store/chequeSlice/che
 import type { Customer } from '@/store/customerSlice/customerSlice';
 import type { Sale } from '@/store/saleSlice/saleSlice';
 import { useLookup } from '@/hooks/useLookup';
-import { customerName } from '@/pages/sales/saleLabels';
+import { CustomerLabel } from '@/components/CustomerLabel';
 import { formatDate, formatLkr } from '@/utils/format';
+import { useCan } from '@/utils/permissions';
 
 const ChequesPage = () => {
+  const can = useCan();
   const dispatch = useAppDispatch();
   const { items, total } = useAppSelector((s) => s.cheque);
   const customers = useLookup<Customer>('customers');
@@ -40,19 +42,23 @@ const ChequesPage = () => {
       createLabel="Add cheque"
       emptyDescription="Add the post-dated cheques you receive. They are listed by deposit date."
       emptyIcon={<IconReceipt2 size={20} />}
-      onCreate={() => setForm({ cheque: null })}
-      onEdit={(cheque) => setForm({ cheque })}
-      remove={{
-        title: 'Delete cheque?',
-        describe: (c) => (
-          <>
-            This permanently removes cheque <strong className="mono">{c.chequeNumber}</strong> for{' '}
-            <strong>{formatLkr(c.amount)}</strong>.
-          </>
-        ),
-        run: (c) => dispatch(deleteCheque(c._id)).unwrap(),
-        done: 'Cheque deleted.',
-      }}
+      onCreate={can('cheque:create') ? () => setForm({ cheque: null }) : undefined}
+      onEdit={can('cheque:update') ? (cheque) => setForm({ cheque }) : undefined}
+      remove={
+        can('cheque:delete')
+          ? {
+              title: 'Delete cheque?',
+              describe: (c) => (
+                <>
+                  This permanently removes cheque <strong className="mono">{c.chequeNumber}</strong>{' '}
+                  for <strong>{formatLkr(c.amount)}</strong>.
+                </>
+              ),
+              run: (c) => dispatch(deleteCheque(c._id)).unwrap(),
+              done: 'Cheque deleted.',
+            }
+          : undefined
+      }
       columns={[
         {
           key: 'chequeNumber',
@@ -64,7 +70,7 @@ const ChequesPage = () => {
         {
           key: 'customer',
           header: 'Customer',
-          render: (c) => customerName(customers.byId.get(c.customer)),
+          render: (c) => <CustomerLabel customer={customers.byId.get(c.customer)} />,
         },
         {
           key: 'sale',

@@ -29,6 +29,7 @@ import { EmptyState } from '@/components/EmptyState';
 import { InlineAlert } from '@/components/InlineAlert';
 import { DataTable, type Column } from '@/components/data/DataTable';
 import { ListToolbar, type FilterField } from '@/components/data/ListToolbar';
+import { filterKeys } from '@/components/data/filterKeys';
 import { PAGE_SIZES, useListQuery, type SortDir } from '@/hooks/useListQuery';
 import { toNotify } from '@/hooks/toNotify';
 
@@ -104,7 +105,7 @@ export const ListPage = <T,>({
   children,
 }: Props<T>) => {
   const { query, setPage, setSize, setSort, applyFilters, clear, hasFilters } = useListQuery({
-    filterKeys: filters.map((f) => f.key),
+    filterKeys: filters.flatMap(filterKeys),
     defaultSort,
     sortableKeys: columns.filter((c) => c.sortable).map((c) => c.key),
   });

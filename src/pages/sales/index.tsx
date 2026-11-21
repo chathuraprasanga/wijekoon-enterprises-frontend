@@ -1,12 +1,11 @@
 import { IconCoin } from '@tabler/icons-react';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Anchor, Box, Stack, Table, Text } from '@mantine/core';
+import { Link, useNavigate } from 'react-router-dom';
+import { Anchor, Box, Group, Stack, Table, Text } from '@mantine/core';
 import { ListPage } from '@/components/data/ListPage';
 import { DetailDialog } from '@/components/DetailDialog';
 import { DetailList } from '@/components/DetailList';
-import { InlineAlert } from '@/components/InlineAlert';
-import { PaidBadge, StatusBadge } from '@/components/StatusBadge';
+import { SaleStatusBadge, StatusBadge } from '@/components/StatusBadge';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { type Sale, deleteSale, fetchSales } from '@/store/saleSlice/saleSlice';
 import type { Customer } from '@/store/customerSlice/customerSlice';
@@ -15,6 +14,8 @@ import { Field } from '@/components/Field';
 import { useLookup } from '@/hooks/useLookup';
 import { formatDate, formatLkr } from '@/utils/format';
 import { customerName, PAYMENT_LABELS } from './saleLabels';
+import { CustomerLabel } from '@/components/CustomerLabel';
+import { useCan } from '@/utils/permissions';
 
 const FILTERS = [
   {
@@ -24,12 +25,15 @@ const FILTERS = [
     placeholder: 'All statuses',
     options: [
       { value: 'paid', label: 'Paid' },
+      { value: 'partially_paid', label: 'Partially paid' },
       { value: 'not_paid', label: 'Not paid' },
     ],
   },
 ];
 
 const SalesPage = () => {
+  const can = useCan();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { items, total } = useAppSelector((s) => s.sale);
   const customers = useLookup<Customer>('customers');
@@ -37,13 +41,13 @@ const SalesPage = () => {
 
   const cheques = useLookup<Cheque>('cheques');
   const nameOf = (id: string) => customerName(customers.byId.get(id));
-  const relatedCheque = view ? cheques.items.find((c) => c.sale === view._id) : undefined;
+  const relatedCheques = view ? cheques.items.filter((c) => c.sale === view._id) : [];
 
   return (
     <>
       <ListPage<Sale>
         title="Sales"
-        description="Read-only here. Sales are recorded in the sales app and appear within a minute."
+        description="Record and review sales. Sales made in the sales app appear here too."
         entity={{ singular: 'sale', plural: 'sales' }}
         searchPlaceholder="Search by sale ID"
         filters={FILTERS}
@@ -57,20 +61,27 @@ const SalesPage = () => {
             fetchSales({ page, limit, searchText, status: filters.status, sortBy, sortType }),
           ).unwrap()
         }
-        emptyDescription="Sales appear here once they are recorded in the sales app."
+        emptyDescription="Create a sale, or record one in the sales app."
+        createLabel="Create sale"
+        onCreate={can('sale:create') ? () => navigate('/app/sales/new') : undefined}
+        onEdit={can('sale:update') ? (s) => navigate(`/app/sales/${s._id}/edit`) : undefined}
         emptyIcon={<IconCoin size={20} />}
         onView={setView}
-        remove={{
-          title: 'Delete sale?',
-          describe: (s) => (
-            <>
-              This permanently removes sale <strong className="mono">{s.salesId}</strong>. Cheques
-              linked to it stay on file.
-            </>
-          ),
-          run: (s) => dispatch(deleteSale(s._id)).unwrap(),
-          done: 'Sale deleted.',
-        }}
+        remove={
+          can('sale:delete')
+            ? {
+                title: 'Delete sale?',
+                describe: (s) => (
+                  <>
+                    This permanently removes sale <strong className="mono">{s.salesId}</strong>.
+                    Cheques linked to it stay on file.
+                  </>
+                ),
+                run: (s) => dispatch(deleteSale(s._id)).unwrap(),
+                done: 'Sale deleted.',
+              }
+            : undefined
+        }
         columns={[
           {
             key: 'salesId',
@@ -89,7 +100,11 @@ const SalesPage = () => {
             sortable: true,
             render: (s) => <span className="num">{formatDate(s.salesDate)}</span>,
           },
-          { key: 'customer', header: 'Customer', render: (s) => nameOf(s.customer) },
+          {
+            key: 'customer',
+            header: 'Customer',
+            render: (s) => <CustomerLabel customer={customers.byId.get(s.customer)} />,
+          },
           {
             key: 'payment',
             header: 'Payment',
@@ -108,7 +123,7 @@ const SalesPage = () => {
             header: 'Status',
             sortable: true,
             badge: true,
-            render: (s) => <PaidBadge paid={s.status === 'paid'} />,
+            render: (s) => <SaleStatusBadge status={s.status} />,
           },
         ]}
       >
@@ -121,30 +136,49 @@ const SalesPage = () => {
           >
             {view && (
               <>
-                <Box mb="md">
-                  <InlineAlert tone="info" title="Read-only here">
-                    Sales are recorded in the sales app. You can view or delete a sale from this
-                    screen.
-                  </InlineAlert>
-                </Box>
                 <Stack gap="md">
                   <Field label="Payment method">{PAYMENT_LABELS[view.paymentMethod]}</Field>
+                  {view.payments && view.payments.length > 1 && (
+                    <Field label="Payments">
+                      <Stack gap={2} mt={4}>
+                        {view.payments.map((p) => (
+                          <Group key={p.method} justify="space-between" wrap="nowrap">
+                            <Text size="sm">{PAYMENT_LABELS[p.method]}</Text>
+                            <Text size="sm" className="num">
+                              {formatLkr(p.amount)}
+                            </Text>
+                          </Group>
+                        ))}
+                      </Stack>
+                    </Field>
+                  )}
                   <Field label="Status">
                     <Box mt={4}>
-                      <PaidBadge paid={view.status === 'paid'} />
+                      <SaleStatusBadge status={view.status} />
                     </Box>
                   </Field>
-                  <Field label="Customer">{nameOf(view.customer)}</Field>
-                  {relatedCheque && (
-                    <Field label="Related cheque">
-                      <Anchor
-                        component={Link}
-                        to="/app/cheques"
-                        className="mono"
-                        style={{ color: 'var(--ldg-accent-text)' }}
-                      >
-                        {relatedCheque.chequeNumber}
-                      </Anchor>
+                  <Field label="Customer">
+                    <CustomerLabel customer={customers.byId.get(view.customer)} />
+                  </Field>
+                  {relatedCheques.length > 0 && (
+                    <Field label={relatedCheques.length > 1 ? 'Related cheques' : 'Related cheque'}>
+                      <Stack gap={2} mt={4}>
+                        {relatedCheques.map((c) => (
+                          <Group key={c._id} justify="space-between" wrap="nowrap">
+                            <Anchor
+                              component={Link}
+                              to="/app/cheques"
+                              className="mono"
+                              style={{ color: 'var(--ldg-accent-text)' }}
+                            >
+                              {c.chequeNumber}
+                            </Anchor>
+                            <Text size="sm" className="num">
+                              {formatLkr(c.amount)}
+                            </Text>
+                          </Group>
+                        ))}
+                      </Stack>
                     </Field>
                   )}
                 </Stack>

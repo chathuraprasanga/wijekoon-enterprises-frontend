@@ -1,6 +1,6 @@
 import { IconMail, IconPhone } from '@tabler/icons-react';
 import { useState } from 'react';
-import { SimpleGrid, TextInput } from '@mantine/core';
+import { SimpleGrid, Textarea, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { FormModal } from '@/components/FormModal';
 import { useErrorSummary } from '@/hooks/useErrorSummary';
@@ -124,7 +124,14 @@ const AddEditSupplierForm = ({ supplier, onClose }: FormProps) => {
           {...form.getInputProps('email')}
         />
       </SimpleGrid>
-      <TextInput label="Address" placeholder="Enter address" {...form.getInputProps('address')} />
+      <Textarea
+        label="Address"
+        placeholder="Enter address"
+        autosize
+        minRows={2}
+        maxRows={4}
+        {...form.getInputProps('address')}
+      />
       <TextInput
         label="Cheque issued name"
         placeholder="e.g. Ceylon Grain Mills (Pvt) Ltd"

@@ -17,6 +17,7 @@ import {
 } from '@/store/supplierSlice/supplierSlice';
 import { useActiveToggle } from '@/hooks/useActiveToggle';
 import { formatDate, formatPhone, orDash } from '@/utils/format';
+import { useCan } from '@/utils/permissions';
 
 const FILTERS = [
   {
@@ -32,6 +33,7 @@ const FILTERS = [
 ];
 
 const SuppliersPage = () => {
+  const can = useCan();
   const dispatch = useAppDispatch();
   const { items, total } = useAppSelector((s) => s.supplier);
   const [form, setForm] = useState<{ supplier: Supplier | null } | null>(null);
@@ -74,20 +76,24 @@ const SuppliersPage = () => {
       createLabel="Add supplier"
       emptyDescription="Add the mills and importers you buy from. You'll be able to link products to them."
       emptyIcon={<IconTruckDelivery size={20} />}
-      onCreate={() => setForm({ supplier: null })}
+      onCreate={can('supplier:create') ? () => setForm({ supplier: null }) : undefined}
       onView={setView}
-      onEdit={(supplier) => setForm({ supplier })}
-      remove={{
-        title: 'Delete supplier?',
-        describe: (s) => (
-          <>
-            This permanently removes <strong>{s.name}</strong> and their contact details. Products
-            linked to this supplier stay on file.
-          </>
-        ),
-        run: (s) => dispatch(deleteSupplier(s._id)).unwrap(),
-        done: 'Supplier deleted.',
-      }}
+      onEdit={can('supplier:update') ? (supplier) => setForm({ supplier }) : undefined}
+      remove={
+        can('supplier:delete')
+          ? {
+              title: 'Delete supplier?',
+              describe: (s) => (
+                <>
+                  This permanently removes <strong>{s.name}</strong> and their contact details.
+                  Products linked to this supplier stay on file.
+                </>
+              ),
+              run: (s) => dispatch(deleteSupplier(s._id)).unwrap(),
+              done: 'Supplier deleted.',
+            }
+          : undefined
+      }
       columns={[
         {
           key: 'name',
@@ -133,7 +139,8 @@ const SuppliersPage = () => {
             title={view?.name ?? ''}
             subtitle={view ? `Supplier · since ${formatDate(view.createdAt)}` : undefined}
             actions={
-              view && (
+              view &&
+              can('supplier:update') && (
                 <Button
                   leftSection={<IconPencil size={16} aria-hidden />}
                   onClick={() => {
@@ -163,7 +170,7 @@ const SuppliersPage = () => {
                   title="Active supplier"
                   description="Inactive suppliers can't be picked on new products."
                   checked={view.isActive}
-                  disabled={busyId === view._id}
+                  disabled={busyId === view._id || !can('supplier:update')}
                   onChange={() => toggle(view)}
                 />
               </>

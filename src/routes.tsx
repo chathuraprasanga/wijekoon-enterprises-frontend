@@ -1,7 +1,10 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { AuthSplitLayout } from '@/layouts/AuthSplitLayout';
 import { AppLayout } from '@/layouts/AppLayout';
-import { AuthLoaderChecker, redirectIfAuthenticated } from '@/utils/authChecker';
+import { AuthLoaderChecker, redirectIfAuthenticated, requireSession } from '@/utils/authChecker';
+import { SystemGate } from '@/components/SystemGate';
+import CreateSuperAdminPage from '@/pages/CreateSuperAdminPage';
+import ChangePasswordRequiredPage from '@/pages/ChangePasswordRequiredPage';
 import LoginPage from '@/pages/LoginPage';
 import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
 import VerifyOtpPage from '@/pages/VerifyOtpPage';
@@ -13,13 +16,16 @@ import SuppliersPage from '@/pages/suppliers';
 import ProductsPage from '@/pages/products';
 import OrdersPage from '@/pages/orders';
 import SalesPage from '@/pages/sales';
+import AddEditSalePage from '@/pages/sales/AddEditSalePage';
 import ChequesPage from '@/pages/cheques';
 import { SettingsLayout } from '@/layouts/SettingsLayout';
 import ProfilePage from '@/pages/settings/ProfilePage';
 import UsersPage from '@/pages/settings/UsersPage';
 import RolesPage from '@/pages/settings/RolesPage';
+import AuditLogsPage from '@/pages/settings/AuditLogsPage';
 import AddEditRolePage from '@/pages/settings/AddEditRolePage';
 import { Loader } from '@/components/Loader';
+import { RequireAccess } from '@/components/RequireAccess';
 import NotFoundPage from '@/pages/errors/NotFoundPage';
 import AppNotFound from '@/pages/errors/AppNotFound';
 import ForbiddenPage from '@/pages/errors/ForbiddenPage';
@@ -27,8 +33,21 @@ import RouteErrorPage from '@/pages/errors/RouteErrorPage';
 
 export const router = createBrowserRouter([
   {
+    element: <SystemGate />,
     errorElement: <RouteErrorPage />,
     children: [
+      {
+        // Public first-time setup; the server only honours it while no Super Admin exists.
+        element: <AuthSplitLayout />,
+        hydrateFallbackElement: <Loader />,
+        children: [{ path: '/create-super-admin', element: <CreateSuperAdminPage /> }],
+      },
+      {
+        element: <AuthSplitLayout />,
+        loader: requireSession,
+        hydrateFallbackElement: <Loader />,
+        children: [{ path: '/change-password-required', element: <ChangePasswordRequiredPage /> }],
+      },
       {
         element: <AuthSplitLayout />,
         loader: redirectIfAuthenticated,
@@ -48,15 +67,94 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <Navigate to="dashboard" replace /> },
           { path: 'dashboard', element: <DashboardPage /> },
-          { path: 'customers', element: <CustomersPage /> },
-          { path: 'customers/:id', element: <CustomerDetailPage /> },
-          { path: 'suppliers', element: <SuppliersPage /> },
-          { path: 'products', element: <ProductsPage /> },
-          { path: 'orders', element: <OrdersPage /> },
-          { path: 'sales', element: <SalesPage /> },
-          { path: 'cheques', element: <ChequesPage /> },
-          { path: 'settings/roles/add-edit', element: <AddEditRolePage /> },
-          { path: 'settings/roles/add-edit/:id', element: <AddEditRolePage /> },
+          {
+            path: 'customers',
+            element: (
+              <RequireAccess permission="customer:read" section="Customers">
+                <CustomersPage />
+              </RequireAccess>
+            ),
+          },
+          {
+            path: 'customers/:id',
+            element: (
+              <RequireAccess permission="customer:read" section="Customers">
+                <CustomerDetailPage />
+              </RequireAccess>
+            ),
+          },
+          {
+            path: 'suppliers',
+            element: (
+              <RequireAccess permission="supplier:read" section="Suppliers">
+                <SuppliersPage />
+              </RequireAccess>
+            ),
+          },
+          {
+            path: 'products',
+            element: (
+              <RequireAccess permission="product:read" section="Products">
+                <ProductsPage />
+              </RequireAccess>
+            ),
+          },
+          {
+            path: 'orders',
+            element: (
+              <RequireAccess permission="order:read" section="Orders">
+                <OrdersPage />
+              </RequireAccess>
+            ),
+          },
+          {
+            path: 'sales',
+            element: (
+              <RequireAccess permission="sale:read" section="Sales">
+                <SalesPage />
+              </RequireAccess>
+            ),
+          },
+          {
+            path: 'sales/new',
+            element: (
+              <RequireAccess permission="sale:create" section="Sales">
+                <AddEditSalePage />
+              </RequireAccess>
+            ),
+          },
+          {
+            path: 'sales/:id/edit',
+            element: (
+              <RequireAccess permission="sale:update" section="Sales">
+                <AddEditSalePage key="edit" />
+              </RequireAccess>
+            ),
+          },
+          {
+            path: 'cheques',
+            element: (
+              <RequireAccess permission="cheque:read" section="Cheques">
+                <ChequesPage />
+              </RequireAccess>
+            ),
+          },
+          {
+            path: 'settings/roles/add-edit',
+            element: (
+              <RequireAccess superAdmin section="Roles">
+                <AddEditRolePage />
+              </RequireAccess>
+            ),
+          },
+          {
+            path: 'settings/roles/add-edit/:id',
+            element: (
+              <RequireAccess superAdmin section="Roles">
+                <AddEditRolePage />
+              </RequireAccess>
+            ),
+          },
           { path: 'forbidden', element: <ForbiddenPage /> },
           { path: '*', element: <AppNotFound /> },
           {
@@ -65,8 +163,30 @@ export const router = createBrowserRouter([
             children: [
               { index: true, element: <Navigate to="profile" replace /> },
               { path: 'profile', element: <ProfilePage /> },
-              { path: 'users', element: <UsersPage /> },
-              { path: 'roles', element: <RolesPage /> },
+              {
+                path: 'users',
+                element: (
+                  <RequireAccess superAdmin section="Users">
+                    <UsersPage />
+                  </RequireAccess>
+                ),
+              },
+              {
+                path: 'roles',
+                element: (
+                  <RequireAccess superAdmin section="Roles">
+                    <RolesPage />
+                  </RequireAccess>
+                ),
+              },
+              {
+                path: 'audit-logs',
+                element: (
+                  <RequireAccess permission="audit-log:read" section="Audit logs">
+                    <AuditLogsPage />
+                  </RequireAccess>
+                ),
+              },
             ],
           },
         ],
