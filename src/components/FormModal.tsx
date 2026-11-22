@@ -1,5 +1,5 @@
 import { useState, type FormEventHandler, type ReactNode } from 'react';
-import { Box, Button, Drawer, Group, Stack } from '@mantine/core';
+import { Box, Button, Group, Stack } from '@mantine/core';
 import { InlineAlert } from '@/components/InlineAlert';
 import { ResponsiveModal } from '@/components/ResponsiveModal';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
@@ -16,8 +16,6 @@ type Props = {
   /** True when the form has unsaved edits; closing then asks before discarding. */
   dirty?: boolean;
   size?: 'sm' | 'md' | 'lg';
-  /** Drawer for forms with six or more fields; modal for up to five. */
-  as?: 'modal' | 'drawer';
   onSubmit: FormEventHandler<HTMLFormElement>;
   onClose: () => void;
   children: ReactNode;
@@ -42,7 +40,7 @@ const Footer = ({
   </Group>
 );
 
-// Modal for forms of up to five fields. Footer: Cancel left of the primary action, right-aligned.
+// Modal for forms (size sm/md/lg for more fields). Footer: Cancel left of the primary action, right-aligned.
 export const FormModal = ({
   opened,
   title,
@@ -52,7 +50,6 @@ export const FormModal = ({
   dirty,
   errorLabels = [],
   size = 'sm',
-  as = 'modal',
   onSubmit,
   onClose,
   children,
@@ -79,50 +76,25 @@ export const FormModal = ({
 
   return (
     <>
-      {as === 'drawer' ? (
-        <Drawer
-          opened={opened}
-          onClose={requestClose}
-          title={title}
-          size={480}
-          closeOnClickOutside={!loading}
-          closeOnEscape={!loading}
-        >
-          <form
-            onSubmit={onSubmit}
-            noValidate
-            style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-          >
-            <Box p={20} style={{ flex: 1, overflowY: 'auto' }}>
-              <Stack gap="md">
-                {banner}
-                {children}
-              </Stack>
-            </Box>
-            <Footer loading={loading} submitLabel={submitLabel} onCancel={requestClose} />
-          </form>
-        </Drawer>
-      ) : (
-        <ResponsiveModal
-          opened={opened}
-          onClose={requestClose}
-          title={title}
-          subtitle={subject}
-          width={size === 'sm' ? 520 : size === 'md' ? 600 : 680}
-          closeOnClickOutside={!loading}
-          closeOnEscape={!loading}
-        >
-          <form onSubmit={onSubmit} noValidate>
-            <Box px={20} py={16}>
-              <Stack gap="md">
-                {banner}
-                {children}
-              </Stack>
-            </Box>
-            <Footer loading={loading} submitLabel={submitLabel} onCancel={requestClose} />
-          </form>
-        </ResponsiveModal>
-      )}
+      <ResponsiveModal
+        opened={opened}
+        onClose={requestClose}
+        title={title}
+        subtitle={subject}
+        width={size === 'sm' ? 520 : size === 'md' ? 600 : 680}
+        closeOnClickOutside={!loading}
+        closeOnEscape={!loading}
+      >
+        <form onSubmit={onSubmit} noValidate>
+          <Box px={20} py={16}>
+            <Stack gap="md">
+              {banner}
+              {children}
+            </Stack>
+          </Box>
+          <Footer loading={loading} submitLabel={submitLabel} onCancel={requestClose} />
+        </form>
+      </ResponsiveModal>
       <ConfirmDialog
         opened={discardOpen}
         title="Discard unsaved changes?"

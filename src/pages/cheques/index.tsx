@@ -1,8 +1,12 @@
 import { IconReceipt2 } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { Button, Group, Text } from '@mantine/core';
+import { toNotify } from '@/hooks/toNotify';
+import { bankDisplay, branchDisplay } from '@/utils/bankData';
 import { ListPage } from '@/components/data/ListPage';
-import { ChequeStatusBadge } from '@/components/StatusBadge';
+import { ChequeLifecycleBadge, ChequeStatusBadge } from '@/components/StatusBadge';
+import { ChequeDetailDialog } from '@/pages/cheques/ChequeDetailDialog';
 import { AddEditChequeModal } from '@/pages/cheques/AddEditChequeModal';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { type Cheque, deleteCheque, fetchCheques } from '@/store/chequeSlice/chequeSlice';
@@ -11,6 +15,7 @@ import type { Sale } from '@/store/saleSlice/saleSlice';
 import { useLookup } from '@/hooks/useLookup';
 import { CustomerLabel } from '@/components/CustomerLabel';
 import { formatDate, formatLkr } from '@/utils/format';
+import { customerName } from '@/pages/sales/saleLabels';
 import { useCan } from '@/utils/permissions';
 
 const ChequesPage = () => {
@@ -21,6 +26,7 @@ const ChequesPage = () => {
   const sales = useLookup<Sale>('sales');
   // The dashboard's "Add cheque" lands here with the form already open.
   const location = useLocation();
+  const [view, setView] = useState<Cheque | null>(null);
   const [form, setForm] = useState<{ cheque: Cheque | null } | null>(
     (location.state as { create?: boolean } | null)?.create ? { cheque: null } : null,
   );
@@ -39,10 +45,31 @@ const ChequesPage = () => {
       load={({ page, limit, searchText, sortBy, sortType }) =>
         dispatch(fetchCheques({ page, limit, searchText, sortBy, sortType })).unwrap()
       }
+      extraActions={
+        <>
+          <Button
+            variant="default"
+            onClick={() =>
+              toNotify('Coming soon', 'Deposit cheques to the bank is not available yet.', 'INFO')
+            }
+          >
+            Deposit cheques
+          </Button>
+          <Button
+            variant="default"
+            onClick={() =>
+              toNotify('Coming soon', 'Creating our own cheques is not available yet.', 'INFO')
+            }
+          >
+            Create cheque
+          </Button>
+        </>
+      }
       createLabel="Add cheque"
       emptyDescription="Add the post-dated cheques you receive. They are listed by deposit date."
       emptyIcon={<IconReceipt2 size={20} />}
       onCreate={can('cheque:create') ? () => setForm({ cheque: null }) : undefined}
+      onView={setView}
       onEdit={can('cheque:update') ? (cheque) => setForm({ cheque }) : undefined}
       remove={
         can('cheque:delete')
@@ -82,9 +109,12 @@ const ChequesPage = () => {
           header: 'Bank / branch',
           hideBelow: 'md',
           render: (c) => (
-            <span className="mono">
-              {c.bankCode} / {c.branchCode}
-            </span>
+            <>
+              <Text size="sm">{bankDisplay(c.bankCode)}</Text>
+              <Text size="xs" c="dimmed">
+                {branchDisplay(c.bankCode, c.branchCode)}
+              </Text>
+            </>
           ),
         },
         {
@@ -101,22 +131,43 @@ const ChequesPage = () => {
           render: (c) => <span className="num">{formatDate(c.depositDate)}</span>,
         },
         {
+          key: 'clearing',
+          header: 'Expected clearing',
+          hideBelow: 'md',
+          render: (c) => <span className="num">{formatDate(c.expectedClearingDate)}</span>,
+        },
+        {
           key: 'state',
           header: 'Status',
           badge: true,
-          render: (c) => <ChequeStatusBadge depositDate={c.depositDate} />,
+          render: (c) => (
+            <Group gap={4} wrap="wrap">
+              <ChequeLifecycleBadge status={c.status} />
+              {(c.status ?? 'RECEIVED') === 'RECEIVED' && (
+                <ChequeStatusBadge depositDate={c.depositDate} />
+              )}
+            </Group>
+          ),
         },
       ]}
     >
       {({ reload }) => (
-        <AddEditChequeModal
-          opened={!!form}
-          cheque={form?.cheque ?? null}
-          onClose={() => {
-            setForm(null);
-            reload();
-          }}
-        />
+        <>
+          <AddEditChequeModal
+            opened={!!form}
+            cheque={form?.cheque ?? null}
+            onClose={() => {
+              setForm(null);
+              reload();
+            }}
+          />
+          <ChequeDetailDialog
+            cheque={view}
+            customerName={customerName(customers.byId.get(view?.customer ?? ''))}
+            onClose={() => setView(null)}
+            onChanged={reload}
+          />
+        </>
       )}
     </ListPage>
   );

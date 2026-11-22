@@ -73,10 +73,14 @@ type Props<T> = {
   /** Inside another page (e.g. a Settings tab): no page header of its own. */
   embedded?: boolean;
   onCreate?: () => void;
+  /** Adds a Refresh button next to the primary action; reloads without resetting filters or page. */
+  refreshable?: boolean;
+  /** Extra buttons in the page header, after the primary action. */
+  extraActions?: ReactNode;
   onView?: (record: T) => void;
   onEdit?: (record: T) => void;
   remove?: DeleteConfig<T>;
-  /** Overlays (forms, drawers) that may need to refresh the list. */
+  /** Overlays (forms, dialogs) that may need to refresh the list. */
   children?: (ctx: { reload: () => void }) => ReactNode;
 };
 
@@ -99,6 +103,8 @@ export const ListPage = <T,>({
   emptyIcon,
   embedded,
   onCreate,
+  extraActions,
+  refreshable,
   onView,
   onEdit,
   remove,
@@ -173,29 +179,36 @@ export const ListPage = <T,>({
   const from = total === 0 ? 0 : (query.page - 1) * query.size + 1;
   const to = Math.min(total, query.page * query.size);
   const noResults = !loading && !error && records.length === 0;
+  const headerActions = (
+    <Group gap="xs" wrap="nowrap">
+      {refreshable && (
+        <Button
+          variant="default"
+          leftSection={<IconRefresh size={16} aria-hidden />}
+          loading={loading}
+          onClick={reload}
+        >
+          Refresh
+        </Button>
+      )}
+      {onCreate && (
+        <Button leftSection={<IconPlus size={16} aria-hidden />} onClick={onCreate}>
+          {createLabel}
+        </Button>
+      )}
+      {extraActions}
+    </Group>
+  );
 
   return (
     <>
       {embedded ? (
-        onCreate &&
-        slot &&
-        createPortal(
-          <Button leftSection={<IconPlus size={16} aria-hidden />} onClick={onCreate}>
-            {createLabel}
-          </Button>,
-          slot,
-        )
+        (onCreate || refreshable || extraActions) && slot && createPortal(headerActions, slot)
       ) : (
         <PageHeader
           title={title}
           description={description}
-          action={
-            onCreate && (
-              <Button leftSection={<IconPlus size={16} aria-hidden />} onClick={onCreate}>
-                {createLabel}
-              </Button>
-            )
-          }
+          action={onCreate || refreshable || extraActions ? headerActions : undefined}
         />
       )}
       <Box

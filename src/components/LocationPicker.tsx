@@ -198,7 +198,7 @@ export const LocationPicker = ({ value, onChange, customerType = 'HARDWARE_STORE
           overflow: 'hidden',
           border: '1px solid var(--ldg-border)',
           position: 'relative',
-          zIndex: 0, // keep Leaflet's panes below drawers and popovers
+          zIndex: 0, // keep Leaflet's panes below modals and popovers
         }}
       >
         <MapContainer

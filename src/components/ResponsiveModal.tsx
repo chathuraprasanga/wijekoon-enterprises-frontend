@@ -1,6 +1,5 @@
 import type { ComponentProps, ReactNode } from 'react';
 import { Modal, Stack, Text } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
 
 type Props = Omit<ComponentProps<typeof Modal>, 'title'> & {
   title: ReactNode;
@@ -9,10 +8,8 @@ type Props = Omit<ComponentProps<typeof Modal>, 'title'> & {
   width?: number;
 };
 
-// Centered dialog on desktop; a bottom sheet with rounded top corners on phones.
+// Always a centered dialog (never a side/bottom sheet); full width minus margins on phones.
 export const ResponsiveModal = ({ title, subtitle, width = 520, children, ...rest }: Props) => {
-  const sheet = useMediaQuery('(max-width: 47.99em)');
-
   return (
     <Modal
       {...rest}
@@ -31,13 +28,9 @@ export const ResponsiveModal = ({ title, subtitle, width = 520, children, ...res
           title
         )
       }
-      centered={!sheet}
-      transitionProps={{ transition: sheet ? 'slide-up' : 'fade', duration: 200 }}
+      centered
+      transitionProps={{ transition: 'fade', duration: 200 }}
       styles={{
-        inner: sheet ? { alignItems: 'flex-end', padding: 0 } : undefined,
-        content: sheet
-          ? { width: '100%', maxWidth: '100%', borderRadius: '12px 12px 0 0', maxHeight: '92dvh' }
-          : undefined,
         close: { color: 'var(--ldg-accent-text)' },
       }}
     >

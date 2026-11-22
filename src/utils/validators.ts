@@ -21,3 +21,9 @@ export const optionalEmail = (value: string) =>
 
 export const password = (value: string) =>
   value.length >= 8 ? null : 'Password must be at least 8 characters.';
+
+// Banking identifiers stay strings so leading zeros survive.
+export const accountNumber = (value: string) =>
+  /^[A-Za-z0-9-]{4,34}$/.test(value.trim())
+    ? null
+    : 'Account number must be 4–34 letters, digits or dashes.';

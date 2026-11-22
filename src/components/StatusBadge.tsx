@@ -59,6 +59,22 @@ export const CustomerTypeBadge = ({ type }: { type?: 'HARDWARE_STORE' | 'INDIVID
     <StatusBadge tone="warning" label="Hardware store" icon={IconBuildingStore} />
   );
 
+// Customer cheque lifecycle (RECEIVED -> DEPOSITED | TRANSFERRED -> CLEARED, auto after the clearing date; RETURNED any time, then DEPOSITED again).
+export const ChequeLifecycleBadge = ({ status }: { status?: string }) => {
+  switch (status) {
+    case 'DEPOSITED':
+      return <StatusBadge tone="accent" label="Deposited" icon={IconClock} />;
+    case 'TRANSFERRED':
+      return <StatusBadge tone="info" label="Transferred" icon={IconHourglass} />;
+    case 'CLEARED':
+      return <StatusBadge tone="success" label="Cleared" icon={IconCircleCheck} />;
+    case 'RETURNED':
+      return <StatusBadge tone="danger" label="Returned" icon={IconAlertCircle} />;
+    default:
+      return <StatusBadge tone="warning" label="Received" icon={IconCalendar} />;
+  }
+};
+
 export const SaleStatusBadge = ({ status }: { status: 'paid' | 'partially_paid' | 'not_paid' }) =>
   status === 'paid' ? (
     <StatusBadge tone="success" label="Paid" icon={IconCircleCheck} />

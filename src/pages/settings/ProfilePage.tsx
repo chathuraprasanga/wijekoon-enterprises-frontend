@@ -191,19 +191,19 @@ const EditProfileModal = ({ opened, onClose }: ModalProps) => {
       <SimpleGrid cols={{ base: 1, xs: 2 }}>
         <TextInput
           label="First name"
-          placeholder="e.g. Ruwan"
+          placeholder="Enter first name"
           withAsterisk
           {...form.getInputProps('firstName')}
         />
         <TextInput
           label="Last name"
-          placeholder="e.g. Wijekoon"
+          placeholder="Enter last name"
           {...form.getInputProps('lastName')}
         />
       </SimpleGrid>
       <TextInput
         label="Email"
-        placeholder="name@example.lk"
+        placeholder="Enter email address"
         withAsterisk
         type="email"
         autoComplete="email"
@@ -215,7 +215,7 @@ const EditProfileModal = ({ opened, onClose }: ModalProps) => {
         withAsterisk
         inputMode="tel"
         autoComplete="tel"
-        placeholder="077 123 4567"
+        placeholder="Enter phone number"
         description="Sri Lankan mobile, 07X XXXXXXX."
         leftSection={<IconPhone size={16} aria-hidden />}
         {...form.getInputProps('phone')}

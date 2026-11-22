@@ -5,7 +5,6 @@ import {
   Button,
   Checkbox,
   createTheme,
-  Drawer,
   Input,
   Menu,
   Modal,
@@ -136,13 +135,13 @@ export const theme = createTheme({
     }),
     TextInput: TextInput.extend({ defaultProps: control }),
     PasswordInput: PasswordInput.extend({ defaultProps: control }),
-    NumberInput: NumberInput.extend({ defaultProps: { size: 'sm' } }),
-    Textarea: Textarea.extend({ defaultProps: { size: 'sm' } }),
+    NumberInput: NumberInput.extend({ defaultProps: control }),
+    Textarea: Textarea.extend({ defaultProps: control }),
     Select: Select.extend({
-      defaultProps: { size: 'sm', allowDeselect: false, checkIconPosition: 'right' },
+      defaultProps: { ...control, allowDeselect: false, checkIconPosition: 'right' },
     }),
-    MultiSelect: MultiSelect.extend({ defaultProps: { size: 'sm', checkIconPosition: 'right' } }),
-    DateInput: DateInput.extend({ defaultProps: { size: 'sm', valueFormat: 'DD MMM YYYY' } }),
+    MultiSelect: MultiSelect.extend({ defaultProps: { ...control, checkIconPosition: 'right' } }),
+    DateInput: DateInput.extend({ defaultProps: { ...control, valueFormat: 'DD MMM YYYY' } }),
     Checkbox: Checkbox.extend({ styles: { input: { borderColor: 'var(--ldg-border-input)' } } }),
     Switch: Switch.extend({ styles: { track: { borderColor: 'var(--ldg-border-input)' } } }),
     Pagination: Pagination.extend({ defaultProps: { size: 'sm', radius: 'sm', withEdges: false } }),
@@ -176,23 +175,6 @@ export const theme = createTheme({
         },
         title: { fontSize: 16, fontWeight: 600 },
         body: { padding: 0 },
-      },
-    }),
-    Drawer: Drawer.extend({
-      defaultProps: {
-        position: 'right',
-        shadow: 'lg',
-        overlayProps: { backgroundOpacity: 0.5, blur: 0, color: '#1f1d1a' },
-        transitionProps: { duration: 200 },
-      },
-      styles: {
-        content: {
-          background: 'var(--ldg-surface-raised)',
-          borderLeft: '1px solid var(--ldg-border)',
-        },
-        header: { padding: '16px 20px', borderBottom: '1px solid var(--ldg-border)' },
-        title: { fontSize: 20, fontWeight: 600 },
-        body: { padding: 0, height: 'calc(100% - 66px)' },
       },
     }),
     Notification: Notification.extend({
@@ -275,7 +257,7 @@ const shared = {
 
 export const cssVariablesResolver: CSSVariablesResolver = () => ({
   variables: {
-    // z-index order: content 0 · app 100 · modal/drawer 200 · popovers 300 · toasts 400 · skip link 9999
+    // z-index order: content 0 · app 100 · modal 200 · popovers 300 · toasts 400 · skip link 9999
     '--mantine-z-index-app': '100',
     '--mantine-z-index-modal': '200',
     '--mantine-z-index-popover': '300',

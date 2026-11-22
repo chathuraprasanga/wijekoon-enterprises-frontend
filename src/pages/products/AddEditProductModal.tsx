@@ -157,7 +157,7 @@ const AddEditProductForm = ({ product, onClose }: FormProps) => {
       <SimpleGrid cols={{ base: 1, xs: 2 }}>
         <NumberInput
           label="Size"
-          placeholder="e.g. 5"
+          placeholder="Enter size"
           withAsterisk
           min={0}
           {...form.getInputProps('size')}

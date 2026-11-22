@@ -12,6 +12,7 @@ import { type Role, deleteRole, fetchRoles, updateRole } from '@/store/roleSlice
 import { useActiveToggle } from '@/hooks/useActiveToggle';
 import { PERMISSION_ACTION_LABELS, formatModuleLabel } from '@/utils/permissionLabels';
 import { formatDate } from '@/utils/format';
+import { useCan } from '@/utils/permissions';
 
 const groupPermissionsByModule = (rolePermissions: Role['permissions']) => {
   const groups: Record<string, string[]> = {};
@@ -37,6 +38,7 @@ const FILTERS = [
 ];
 
 const RolesPage = () => {
+  const can = useCan();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { items, total } = useAppSelector((s) => s.role);
@@ -88,20 +90,24 @@ const RolesPage = () => {
         ).unwrap()
       }
       createLabel="New role"
-      onCreate={() => navigate(editPath())}
+      onCreate={can('role:create') ? () => navigate(editPath()) : undefined}
       onView={setView}
-      onEdit={(role) => navigate(editPath(role._id))}
-      remove={{
-        title: 'Delete role?',
-        describe: (r) => (
-          <>
-            This permanently removes the <strong>{r.name}</strong> role. Users who hold it lose its
-            permissions.
-          </>
-        ),
-        run: (r) => dispatch(deleteRole(r._id)).unwrap(),
-        done: 'Role deleted.',
-      }}
+      onEdit={can('role:update') ? (role) => navigate(editPath(role._id)) : undefined}
+      remove={
+        can('role:delete')
+          ? {
+              title: 'Delete role?',
+              describe: (r) => (
+                <>
+                  This permanently removes the <strong>{r.name}</strong> role. Users who hold it
+                  lose its permissions.
+                </>
+              ),
+              run: (r) => dispatch(deleteRole(r._id)).unwrap(),
+              done: 'Role deleted.',
+            }
+          : undefined
+      }
       columns={[
         {
           key: 'name',
@@ -126,7 +132,8 @@ const RolesPage = () => {
           title={view?.name ?? ''}
           subtitle={view ? `Role · since ${formatDate(view.createdAt)}` : undefined}
           actions={
-            view && (
+            view &&
+            can('role:update') && (
               <Button
                 leftSection={<IconPencil size={16} aria-hidden />}
                 onClick={() => navigate(editPath(view._id))}
@@ -165,7 +172,7 @@ const RolesPage = () => {
                 title="Active role"
                 description="Inactive roles can't be given to users."
                 checked={view.isActive}
-                disabled={busyId === view._id}
+                disabled={busyId === view._id || !can('role:update')}
                 onChange={() => toggle(view)}
               />
             </>

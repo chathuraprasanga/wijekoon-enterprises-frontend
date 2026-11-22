@@ -6,7 +6,7 @@ import { getErrorMessage } from '@/utils/getErrorMessage';
 // clobbers a paged list's state.
 // ponytail: first 100 records only, swap for async search selects past that.
 export const useLookup = <T extends { _id: string }>(
-  path: 'customers' | 'products' | 'sales' | 'cheques',
+  path: 'customers' | 'products' | 'sales' | 'cheques' | 'suppliers' | 'banks',
 ) => {
   const [items, setItems] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);

@@ -13,6 +13,7 @@ import { createRole, fetchRoleById, updateRole } from '@/store/roleSlice/roleSli
 import { fetchPermissions } from '@/store/permissionSlice/permissionSlice';
 import type { Permission } from '@/store/permissionSlice/permissionSlice';
 import { toNotify } from '@/hooks/toNotify';
+import { hasPermission } from '@/utils/permissions';
 import { required } from '@/utils/validators';
 import {
   PERMISSION_ACTION_LABELS,
@@ -30,7 +31,11 @@ const AddEditRolePage = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const selected = useAppSelector((state) => state.role.selected);
-  const permissions = useAppSelector((state) => state.permission.items);
+  const me = useAppSelector((state) => state.auth.user);
+  // You can only hand out what you hold yourself (the super admin holds everything).
+  const permissions = useAppSelector((state) => state.permission.items).filter((p) =>
+    hasPermission(me, `${p.module}:${p.action}`),
+  );
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const stacked = useMediaQuery('(max-width: 47.99em)');
@@ -137,7 +142,7 @@ const AddEditRolePage = () => {
               label="Role name"
               withAsterisk
               maw={420}
-              placeholder="e.g. Cashier"
+              placeholder="Enter role name"
               {...form.getInputProps('name')}
             />
           </SectionCard>

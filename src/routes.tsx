@@ -18,11 +18,17 @@ import OrdersPage from '@/pages/orders';
 import SalesPage from '@/pages/sales';
 import AddEditSalePage from '@/pages/sales/AddEditSalePage';
 import ChequesPage from '@/pages/cheques';
+import AddEditOrderPage from '@/pages/orders/AddEditOrderPage';
+import OrderDetailPage from '@/pages/orders/OrderDetailPage';
 import { SettingsLayout } from '@/layouts/SettingsLayout';
 import ProfilePage from '@/pages/settings/ProfilePage';
 import UsersPage from '@/pages/settings/UsersPage';
 import RolesPage from '@/pages/settings/RolesPage';
 import AuditLogsPage from '@/pages/settings/AuditLogsPage';
+import NotificationsAdminPage from '@/pages/settings/NotificationsAdminPage';
+import BanksPage from '@/pages/settings/BanksPage';
+import BusinessRulesPage from '@/pages/settings/BusinessRulesPage';
+import BankDetailPage from '@/pages/settings/BankDetailPage';
 import AddEditRolePage from '@/pages/settings/AddEditRolePage';
 import { Loader } from '@/components/Loader';
 import { RequireAccess } from '@/components/RequireAccess';
@@ -108,6 +114,30 @@ export const router = createBrowserRouter([
             ),
           },
           {
+            path: 'orders/new',
+            element: (
+              <RequireAccess permission="order:create" section="Orders">
+                <AddEditOrderPage />
+              </RequireAccess>
+            ),
+          },
+          {
+            path: 'orders/:id',
+            element: (
+              <RequireAccess permission="order:read" section="Orders">
+                <OrderDetailPage />
+              </RequireAccess>
+            ),
+          },
+          {
+            path: 'orders/:id/edit',
+            element: (
+              <RequireAccess permission="order:update" section="Orders">
+                <AddEditOrderPage key="edit" />
+              </RequireAccess>
+            ),
+          },
+          {
             path: 'sales',
             element: (
               <RequireAccess permission="sale:read" section="Sales">
@@ -142,7 +172,7 @@ export const router = createBrowserRouter([
           {
             path: 'settings/roles/add-edit',
             element: (
-              <RequireAccess superAdmin section="Roles">
+              <RequireAccess permission="role:create" section="Roles">
                 <AddEditRolePage />
               </RequireAccess>
             ),
@@ -150,8 +180,16 @@ export const router = createBrowserRouter([
           {
             path: 'settings/roles/add-edit/:id',
             element: (
-              <RequireAccess superAdmin section="Roles">
+              <RequireAccess permission="role:update" section="Roles">
                 <AddEditRolePage />
+              </RequireAccess>
+            ),
+          },
+          {
+            path: 'settings/banks/:id',
+            element: (
+              <RequireAccess permission="bank:read" section="Banks">
+                <BankDetailPage />
               </RequireAccess>
             ),
           },
@@ -166,7 +204,7 @@ export const router = createBrowserRouter([
               {
                 path: 'users',
                 element: (
-                  <RequireAccess superAdmin section="Users">
+                  <RequireAccess permission="user:read" section="Users">
                     <UsersPage />
                   </RequireAccess>
                 ),
@@ -174,8 +212,24 @@ export const router = createBrowserRouter([
               {
                 path: 'roles',
                 element: (
-                  <RequireAccess superAdmin section="Roles">
+                  <RequireAccess permission="role:read" section="Roles">
                     <RolesPage />
+                  </RequireAccess>
+                ),
+              },
+              {
+                path: 'banks',
+                element: (
+                  <RequireAccess permission="bank:read" section="Banks">
+                    <BanksPage />
+                  </RequireAccess>
+                ),
+              },
+              {
+                path: 'rules',
+                element: (
+                  <RequireAccess permission="business-rule:read" section="Business rules">
+                    <BusinessRulesPage />
                   </RequireAccess>
                 ),
               },
@@ -184,6 +238,14 @@ export const router = createBrowserRouter([
                 element: (
                   <RequireAccess permission="audit-log:read" section="Audit logs">
                     <AuditLogsPage />
+                  </RequireAccess>
+                ),
+              },
+              {
+                path: 'notifications',
+                element: (
+                  <RequireAccess superAdminOnly section="Notifications">
+                    <NotificationsAdminPage />
                   </RequireAccess>
                 ),
               },

@@ -9,6 +9,7 @@ import { type User, createUser, updateUser } from '@/store/userSlice/userSlice';
 import { fetchRoles } from '@/store/roleSlice/roleSlice';
 import { email, phone, required, digitsOnly } from '@/utils/validators';
 import { toNotify } from '@/hooks/toNotify';
+import { hasPermission } from '@/utils/permissions';
 
 type UserFormValues = {
   firstName: string;
@@ -36,7 +37,11 @@ type FormProps = {
 const AddEditUserForm = ({ user, onClose }: FormProps) => {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
-  const roles = useAppSelector((state) => state.role.items);
+  const me = useAppSelector((state) => state.auth.user);
+  // Offer only roles whose permissions you hold yourself (plus roles the user already has).
+  const roles = useAppSelector((state) => state.role.items).filter(
+    (r) => user?.roles.includes(r._id) || r.permissions.every((p) => hasPermission(me, p.key)),
+  );
 
   useEffect(() => {
     dispatch(fetchRoles({ page: 1, limit: 100 }));
@@ -124,7 +129,7 @@ const AddEditUserForm = ({ user, onClose }: FormProps) => {
         withAsterisk
         inputMode="tel"
         autoComplete="tel"
-        placeholder="077 123 4567"
+        placeholder="Enter phone number"
         description="Sri Lankan mobile, 07X XXXXXXX."
         leftSection={<IconPhone size={16} aria-hidden />}
         {...form.getInputProps('phone')}
@@ -132,7 +137,7 @@ const AddEditUserForm = ({ user, onClose }: FormProps) => {
       <TextInput
         label="Email"
         withAsterisk
-        placeholder="name@example.lk"
+        placeholder="Enter email address"
         type="email"
         autoComplete="email"
         leftSection={<IconMail size={16} aria-hidden />}

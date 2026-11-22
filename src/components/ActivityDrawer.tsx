@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Alert, Anchor, Box, Button, Drawer, Group, Loader, Stack, Text } from '@mantine/core';
+import { Alert, Anchor, Box, Button, Group, Loader, Stack, Text } from '@mantine/core';
 import { EmptyState } from '@/components/EmptyState';
 import { axiosInstance } from '@/interceptors/axiosInterceptor';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 import { formatDateTime } from '@/utils/format';
 import { timeAgo } from '@/utils/timeAgo';
+import { SideDrawer } from '@/components/SideDrawer';
 
 type Entry = { _id: string; action: string; description: string; createdAt: string };
 type Paged = { data: Entry[]; page: number; totalPages: number; total: number };
@@ -50,7 +51,7 @@ const Panel = () => {
   }, []);
 
   return (
-    <Box p={20} style={{ height: '100%', overflowY: 'auto' }}>
+    <Box p={20}>
       <Stack gap={0}>
         {error && (
           <Alert color="red" mb="sm">
@@ -91,14 +92,7 @@ const Panel = () => {
 type Props = { opened: boolean; onClose: () => void };
 
 export const ActivityDrawer = ({ opened, onClose }: Props) => (
-  <Drawer
-    opened={opened}
-    onClose={onClose}
-    position="right"
-    size={440}
-    styles={{ content: { maxWidth: '100%' } }}
-    title="My activity"
-  >
+  <SideDrawer opened={opened} onClose={onClose} title="My activity">
     <Panel />
-  </Drawer>
+  </SideDrawer>
 );

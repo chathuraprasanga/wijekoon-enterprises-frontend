@@ -5,7 +5,6 @@ import {
   Anchor,
   Box,
   Button,
-  Drawer,
   Group,
   Indicator,
   Loader,
@@ -16,6 +15,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { IconArrowLeft, IconBell } from '@tabler/icons-react';
 import { EmptyState } from '@/components/EmptyState';
+import { SideDrawer } from '@/components/SideDrawer';
 import { axiosInstance } from '@/interceptors/axiosInterceptor';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 import { formatDateTime } from '@/utils/format';
@@ -27,7 +27,7 @@ type Paged = { data: Notice[]; page: number; totalPages: number; unreadCount: nu
 const POLL_MS = 60_000;
 const PAGE = 10;
 
-// Bell with an unread badge (refreshed every minute) and a drawer: paged list, open one to read it,
+// Bell with an unread badge (refreshed every minute) and a side drawer: paged list, open one to read it,
 // "Mark all read".
 export const NotificationsBell = () => {
   const [opened, { open, close }] = useDisclosure();
@@ -100,7 +100,13 @@ export const NotificationsBell = () => {
 
   return (
     <>
-      <Indicator label={unread > 99 ? '99+' : unread} disabled={unread === 0} size={16} color="red">
+      <Indicator
+        label={unread > 99 ? '99+' : unread}
+        disabled={unread === 0}
+        size={16}
+        offset={7}
+        color="red"
+      >
         <ActionIcon
           variant="subtle"
           size="lg"
@@ -110,15 +116,8 @@ export const NotificationsBell = () => {
           <IconBell size={20} aria-hidden />
         </ActionIcon>
       </Indicator>
-      <Drawer
-        opened={opened}
-        onClose={close}
-        position="right"
-        size={440}
-        title="Notifications"
-        styles={{ content: { maxWidth: '100%' } }}
-      >
-        <Box p={20} style={{ height: '100%', overflowY: 'auto' }}>
+      <SideDrawer opened={opened} onClose={close} title="Notifications">
+        <Box p={20}>
           {current ? (
             <Stack gap="sm">
               <Button
@@ -205,7 +204,7 @@ export const NotificationsBell = () => {
             </Stack>
           )}
         </Box>
-      </Drawer>
+      </SideDrawer>
     </>
   );
 };

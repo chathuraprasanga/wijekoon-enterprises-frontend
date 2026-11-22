@@ -54,7 +54,7 @@ Every thunk's catch block returns `rejectWithValue(getErrorMessage(error))` (`sr
 - `src/theme/index.ts` holds the Mantine theme (component defaults/styles) and a `cssVariablesResolver` that maps Mantine's own colour variables onto the tokens, so un-extended Mantine components follow the system too. Keep Mantine's colour-scheme handling (`defaultColorScheme="auto"`); don't switch colours manually per file.
 - Fonts are self-hosted via `@fontsource` (IBM Plex Sans/Mono, Noto Sans Sinhala/Tamil), imported in `main.tsx`.
 - Data display: money `formatLkr`, dates `formatDate`, phones `formatPhone`, empty value `—` (`src/utils/format.ts`). Numbers/IDs use the `.num` / `.mono` classes. Validation rules are shared in `src/utils/validators.ts`.
-- Lists: build with `ListPage` (`src/components/data/`) — URL-synced search/filter/sort/page/size, loading/empty/error states, row actions, delete confirmation. Overlays: `FormModal` (≤5 fields, `as="drawer"` for 6+), `DetailDrawer`, `ConfirmDialog`. Status is always `StatusBadge` (colour + icon + text). Toasts only through `toNotify` (de-duplicated).
+- Lists: build with `ListPage` (`src/components/data/`) — URL-synced search/filter/sort/page/size, loading/empty/error states, row actions, delete confirmation. Overlays are always centered modals — never drawers or side sheets: `FormModal` (`size` sm/md/lg for more fields), `DetailDialog`, `ActivityModal`, `ConfirmDialog`. Status is always `StatusBadge` (colour + icon + text). Toasts only through `toNotify` (de-duplicated).
 
 ## Folder conventions
 

@@ -11,6 +11,12 @@ export type Cheque = {
   branchCode: string;
   chequeNumber: string;
   amount: number;
+  /** Lifecycle; rows from before it existed read as RECEIVED. */
+  status?: 'RECEIVED' | 'DEPOSITED' | 'TRANSFERRED' | 'CLEARED' | 'RETURNED';
+  transferable?: boolean;
+  expectedClearingDate?: string;
+  depositLimitOverridden?: boolean;
+  statusHistory?: { status: string; at: string; byName?: string; note?: string }[];
   createdAt: string;
   updatedAt: string;
 };
@@ -18,7 +24,7 @@ export type Cheque = {
 export type ChequeInput = Pick<
   Cheque,
   'customer' | 'sale' | 'depositDate' | 'bankCode' | 'branchCode' | 'chequeNumber' | 'amount'
->;
+> & { overrideDepositLimit?: boolean };
 
 export type PagedChequesParams = {
   page?: number;
@@ -85,6 +91,20 @@ export const updateCheque = createAsyncThunk(
   },
 );
 
+/// Deposit / clear / bounce / cancel a customer cheque (transfers go through the supplier payment).
+export const setChequeStatus = createAsyncThunk(
+  'cheque/status',
+  async (p: { id: string; status: string; note?: string }, { rejectWithValue }) => {
+    try {
+      const { id, ...body } = p;
+      const { data } = await axiosInstance.post<Cheque>(`/cheques/${id}/status`, body);
+      return data;
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error));
+    }
+  },
+);
+
 export const deleteCheque = createAsyncThunk(
   'cheque/delete',
   async (id: string, { rejectWithValue }) => {
@@ -108,6 +128,9 @@ const chequeSlice = createSlice({
       state.limit = payload.limit;
       state.total = payload.total;
       state.totalPages = payload.totalPages;
+    });
+    builder.addCase(setChequeStatus.fulfilled, (state, { payload }) => {
+      state.items = state.items.map((i) => (i._id === payload._id ? payload : i));
     });
     builder.addCase(updateCheque.fulfilled, (state, { payload }) => {
       state.items = state.items.map((i) => (i._id === payload._id ? payload : i));

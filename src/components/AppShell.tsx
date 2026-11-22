@@ -87,7 +87,7 @@ export const AppShell = () => {
     ...s,
     items: s.items.filter((i) => !i.permission || can(i.permission)),
   })).filter((s) => s.items.length > 0);
-  // Full navigation on desktop and in the mobile drawer; icon rail only on tablet.
+  // Full navigation on desktop and in the mobile menu; icon rail only on tablet.
   const wide = useMediaQuery('(min-width: 62em)', true);
   const mobile = useMediaQuery('(max-width: 47.99em)', false);
   const showLabels = wide || mobile;

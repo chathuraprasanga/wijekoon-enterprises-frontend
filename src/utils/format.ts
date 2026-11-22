@@ -63,3 +63,11 @@ export const formatCountdown = (seconds: number) =>
 /** 5 KG -> 5 kg, 750 ML -> 750 ml, 100 PCS -> 100 pcs (litres keep the capital L). */
 export const formatSize = (size: number, unit: string) =>
   `${size} ${unit === 'L' ? 'L' : unit.toLowerCase()}`;
+
+/** Date input value -> `YYYY-MM-DD` in local time ('' when empty). */
+export const toYmd = (v: unknown) => {
+  if (!v) return '';
+  if (typeof v === 'string') return v.slice(0, 10);
+  const d = v as Date;
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};

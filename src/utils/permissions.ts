@@ -15,5 +15,3 @@ export const useCan = () => {
   const user = useAppSelector((s) => s.auth.user);
   return (key: string) => hasPermission(user, key);
 };
-
-export const useIsSuperAdmin = () => useAppSelector((s) => !!s.auth.user?.isSuperAdmin);

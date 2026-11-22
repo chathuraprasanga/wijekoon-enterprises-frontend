@@ -4,7 +4,7 @@ import { orDash } from '@/utils/format';
 
 type Row = { label: string; value: ReactNode };
 
-// Label/value pairs for drawers and detail cards; groups are separated by hairlines.
+// Label/value pairs for detail dialogs and cards; groups are separated by hairlines.
 export const DetailList = ({ groups, stacked }: { groups: Row[][]; stacked?: boolean }) => (
   <Stack gap="md">
     {groups.map((rows, i) => (

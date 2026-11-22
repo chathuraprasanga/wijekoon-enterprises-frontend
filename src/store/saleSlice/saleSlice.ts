@@ -34,6 +34,8 @@ export type Sale = {
   netTotal: number;
   status: SaleStatus;
   paymentMethod: SalePaymentMethod;
+  notes?: string;
+  dueDate?: string;
   /** Empty/missing on sales saved before split payments existed. */
   payments?: SalePayment[];
   createdAt: string;
@@ -50,6 +52,8 @@ export type SaleInput = {
   shipping: number;
   otherExpenses: number;
   payments: SalePayment[];
+  notes?: string;
+  dueDate?: string;
 };
 
 export type PagedSalesParams = {

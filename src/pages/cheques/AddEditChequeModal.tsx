@@ -1,8 +1,6 @@
 import { useMediaQuery } from '@mantine/hooks';
 import { useState } from 'react';
 import { NumberInput, Select, SimpleGrid, TextInput } from '@mantine/core';
-import { IconCalendar } from '@tabler/icons-react';
-import { DateInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { FormModal } from '@/components/FormModal';
 import { useErrorSummary } from '@/hooks/useErrorSummary';
@@ -13,7 +11,9 @@ import type { Sale } from '@/store/saleSlice/saleSlice';
 import { useLookup } from '@/hooks/useLookup';
 import { toNotify } from '@/hooks/toNotify';
 import { customerName } from '@/pages/sales/saleLabels';
-import { formatLkr } from '@/utils/format';
+import { formatLkr, toYmd } from '@/utils/format';
+import { BankBranchSelect } from '@/components/BankBranchSelect';
+import { DepositDateInput } from '@/components/DepositDateInput';
 
 type Values = {
   customer: string | null;
@@ -42,7 +42,7 @@ const ChequeForm = ({ cheque, onClose }: Omit<Props, 'opened'>) => {
     initialValues: {
       customer: cheque?.customer ?? null,
       sale: cheque?.sale ?? null,
-      depositDate: cheque?.depositDate.slice(0, 10) ?? null,
+      depositDate: cheque?.depositDate.slice(0, 10) ?? toYmd(new Date()),
       bankCode: cheque?.bankCode ?? '',
       branchCode: cheque?.branchCode ?? '',
       chequeNumber: cheque?.chequeNumber ?? '',
@@ -52,8 +52,8 @@ const ChequeForm = ({ cheque, onClose }: Omit<Props, 'opened'>) => {
       customer: (v) => (v ? null : 'Select a customer'),
       sale: (v) => (v ? null : 'Select the related sale'),
       depositDate: (v) => (v ? null : 'Deposit date is required'),
-      bankCode: (v) => (/^\d{4}$/.test(v) ? null : 'Bank code is 4 digits'),
-      branchCode: (v) => (/^\d{3}$/.test(v) ? null : 'Branch code is 3 digits'),
+      bankCode: (v) => (v ? null : 'Select a bank'),
+      branchCode: (v) => (v ? null : 'Select a branch'),
       chequeNumber: (v) => (/^\d{6}$/.test(v) ? null : 'Cheque number is 6 digits'),
       amount: (v) => (typeof v === 'number' && v > 0 ? null : 'Enter an amount above 0'),
     },
@@ -94,8 +94,8 @@ const ChequeForm = ({ cheque, onClose }: Omit<Props, 'opened'>) => {
     customer: 'Customer',
     sale: 'Related sale',
     chequeNumber: 'Cheque number',
-    bankCode: 'Bank code',
-    branchCode: 'Branch code',
+    bankCode: 'Bank',
+    branchCode: 'Branch',
     amount: 'Amount',
     depositDate: 'Deposit date',
   });
@@ -151,32 +151,19 @@ const ChequeForm = ({ cheque, onClose }: Omit<Props, 'opened'>) => {
         label="Cheque number"
         withAsterisk
         styles={mono}
-        placeholder="004217"
+        placeholder="Enter 6-digit cheque number"
         description="6 digits, printed at the bottom of the cheque."
         inputMode="numeric"
         maxLength={6}
         {...form.getInputProps('chequeNumber')}
       />
       <SimpleGrid cols={{ base: 1, xs: 2 }}>
-        <TextInput
-          label="Bank code"
-          withAsterisk
-          styles={mono}
-          placeholder="7056"
-          description="4 digits"
-          inputMode="numeric"
-          maxLength={4}
-          {...form.getInputProps('bankCode')}
-        />
-        <TextInput
-          label="Branch code"
-          withAsterisk
-          styles={mono}
-          placeholder="045"
-          description="3 digits"
-          inputMode="numeric"
-          maxLength={3}
-          {...form.getInputProps('branchCode')}
+        <BankBranchSelect
+          bankCode={form.values.bankCode}
+          branchCode={form.values.branchCode}
+          bankError={form.errors.bankCode}
+          branchError={form.errors.branchCode}
+          onChange={(v) => form.setValues({ bankCode: v.bankCode, branchCode: v.branchCode })}
         />
       </SimpleGrid>
       <NumberInput
@@ -190,13 +177,12 @@ const ChequeForm = ({ cheque, onClose }: Omit<Props, 'opened'>) => {
         thousandSeparator=","
         {...form.getInputProps('amount')}
       />
-      <DateInput
-        label="Deposit date"
-        popoverProps={{ withinPortal: false }}
-        placeholder="Select a date"
-        withAsterisk
-        leftSection={<IconCalendar size={16} aria-hidden />}
-        {...form.getInputProps('depositDate')}
+      <DepositDateInput
+        inModal
+        value={form.values.depositDate}
+        error={form.errors.depositDate}
+        allowOverride={false}
+        onChange={(d) => form.setFieldValue('depositDate', d ? toYmd(d) : '')}
       />
     </FormModal>
   );

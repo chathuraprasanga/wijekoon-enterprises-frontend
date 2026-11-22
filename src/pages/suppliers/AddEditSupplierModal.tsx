@@ -111,7 +111,7 @@ const AddEditSupplierForm = ({ supplier, onClose }: FormProps) => {
           withAsterisk
           inputMode="tel"
           autoComplete="tel"
-          placeholder="077 345 1120"
+          placeholder="Enter phone number"
           leftSection={<IconPhone size={16} aria-hidden />}
           {...form.getInputProps('phone')}
         />
@@ -119,7 +119,7 @@ const AddEditSupplierForm = ({ supplier, onClose }: FormProps) => {
           label="Email"
           type="email"
           autoComplete="email"
-          placeholder="accounts@supplier.lk"
+          placeholder="Enter email address"
           leftSection={<IconMail size={16} aria-hidden />}
           {...form.getInputProps('email')}
         />

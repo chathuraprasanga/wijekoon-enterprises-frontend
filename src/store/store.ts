@@ -8,6 +8,8 @@ import supplierReducer from '@/store/supplierSlice/supplierSlice';
 import productReducer from '@/store/productSlice/productSlice';
 import saleReducer from '@/store/saleSlice/saleSlice';
 import chequeReducer from '@/store/chequeSlice/chequeSlice';
+import bankReducer from '@/store/bankSlice/bankSlice';
+import orderReducer from '@/store/orderSlice/orderSlice';
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +22,8 @@ export const store = configureStore({
     product: productReducer,
     sale: saleReducer,
     cheque: chequeReducer,
+    bank: bankReducer,
+    order: orderReducer,
   },
 });
 

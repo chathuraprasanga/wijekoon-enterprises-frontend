@@ -21,10 +21,12 @@ import { fetchRoles } from '@/store/roleSlice/roleSlice';
 import { toNotify } from '@/hooks/toNotify';
 import { useActiveToggle } from '@/hooks/useActiveToggle';
 import { formatPhone, fullName } from '@/utils/format';
+import { useCan } from '@/utils/permissions';
 
 const SORT_MAP = { name: 'firstName' };
 
 const UsersPage = () => {
+  const can = useCan();
   const dispatch = useAppDispatch();
   const { items, total } = useAppSelector((s) => s.user);
   const roles = useAppSelector((s) => s.role.items);
@@ -33,6 +35,7 @@ const UsersPage = () => {
   const [toReset, setToReset] = useState<User | null>(null);
   const [resetting, setResetting] = useState(false);
 
+  // The role list needs role:read (or user:create/update); without it names show as a dash.
   useEffect(() => {
     dispatch(fetchRoles({ page: 1, limit: 100 }));
   }, [dispatch]);
@@ -111,20 +114,24 @@ const UsersPage = () => {
         ).unwrap()
       }
       createLabel="Add user"
-      onCreate={() => setForm({ user: null })}
+      onCreate={can('user:create') ? () => setForm({ user: null }) : undefined}
       onView={setView}
-      onEdit={(user) => setForm({ user })}
-      remove={{
-        title: 'Delete user?',
-        describe: (u) => (
-          <>
-            This permanently removes <strong>{fullName(u)}</strong> and their access. This cannot be
-            undone.
-          </>
-        ),
-        run: (u) => dispatch(deleteUser(u._id)).unwrap(),
-        done: 'User deleted.',
-      }}
+      onEdit={can('user:update') ? (user) => setForm({ user }) : undefined}
+      remove={
+        can('user:delete')
+          ? {
+              title: 'Delete user?',
+              describe: (u) => (
+                <>
+                  This permanently removes <strong>{fullName(u)}</strong> and their access. This
+                  cannot be undone.
+                </>
+              ),
+              run: (u) => dispatch(deleteUser(u._id)).unwrap(),
+              done: 'User deleted.',
+            }
+          : undefined
+      }
       columns={[
         {
           key: 'name',
@@ -177,7 +184,8 @@ const UsersPage = () => {
             title={view ? fullName(view) : ''}
             subtitle="User account"
             actions={
-              view && (
+              view &&
+              can('user:update') && (
                 <Button
                   leftSection={<IconPencil size={16} aria-hidden />}
                   onClick={() => {
@@ -214,24 +222,26 @@ const UsersPage = () => {
                   title="Active account"
                   description="Inactive users can't sign in."
                   checked={view.isActive}
-                  disabled={busyId === view._id}
+                  disabled={busyId === view._id || !can('user:update')}
                   onChange={() => toggle(view)}
                 />
-                <Box mt="lg">
-                  <Text className="eyebrow" mb={6}>
-                    PASSWORD
-                  </Text>
-                  <Button
-                    variant="default"
-                    leftSection={<IconKey size={16} aria-hidden />}
-                    onClick={() => setToReset(view)}
-                  >
-                    Reset password
-                  </Button>
-                  <Text size="sm" c="dimmed" mt={6}>
-                    Emails a new password to this user.
-                  </Text>
-                </Box>
+                {can('user:update') && (
+                  <Box mt="lg">
+                    <Text className="eyebrow" mb={6}>
+                      PASSWORD
+                    </Text>
+                    <Button
+                      variant="default"
+                      leftSection={<IconKey size={16} aria-hidden />}
+                      onClick={() => setToReset(view)}
+                    >
+                      Reset password
+                    </Button>
+                    <Text size="sm" c="dimmed" mt={6}>
+                      Emails a new password to this user.
+                    </Text>
+                  </Box>
+                )}
               </>
             )}
           </DetailDialog>

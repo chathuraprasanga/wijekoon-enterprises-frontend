@@ -127,7 +127,7 @@ const CreateSuperAdminPage = () => {
       <TextInput
         {...touch}
         label="Email address"
-        placeholder="name@example.lk"
+        placeholder="Enter email address"
         withAsterisk
         type="email"
         autoComplete="email"
@@ -139,7 +139,7 @@ const CreateSuperAdminPage = () => {
       <TextInput
         {...touch}
         label="Mobile number"
-        placeholder="077 123 4567"
+        placeholder="Enter phone number"
         withAsterisk
         inputMode="tel"
         autoComplete="tel"

@@ -160,6 +160,16 @@ const SalesPage = () => {
                   <Field label="Customer">
                     <CustomerLabel customer={customers.byId.get(view.customer)} />
                   </Field>
+                  {view.dueDate && (
+                    <Field label="Payment due date">{formatDate(view.dueDate)}</Field>
+                  )}
+                  {view.notes && (
+                    <Field label="Notes">
+                      <Text size="sm" style={{ whiteSpace: 'pre-wrap' }}>
+                        {view.notes}
+                      </Text>
+                    </Field>
+                  )}
                   {relatedCheques.length > 0 && (
                     <Field label={relatedCheques.length > 1 ? 'Related cheques' : 'Related cheque'}>
                       <Stack gap={2} mt={4}>

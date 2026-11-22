@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { toNotify } from '@/hooks/toNotify';
 
-// Shared activate/deactivate flow for drawers: busy flag, toasts, and a callback with the new state.
+// Shared activate/deactivate flow for detail dialogs: busy flag, toasts, and a callback with the new state.
 export const useActiveToggle = <T extends { _id: string; isActive: boolean }>(
   label: string,
   update: (record: T) => Promise<{ isActive: boolean }>,

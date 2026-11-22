@@ -12,10 +12,14 @@ import {
   Stack,
   Stepper,
   Text,
+  Textarea,
   TextInput,
 } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { IconAlertTriangle, IconPlus, IconTrash } from '@tabler/icons-react';
+import { BankBranchSelect } from '@/components/BankBranchSelect';
+import { DepositDateInput } from '@/components/DepositDateInput';
+import { useBusinessRules, ymdPlusDays } from '@/hooks/useBusinessRules';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { EmptyState } from '@/components/EmptyState';
 import { InlineAlert } from '@/components/InlineAlert';
@@ -43,7 +47,7 @@ import type { Customer } from '@/store/customerSlice/customerSlice';
 import type { Product } from '@/store/productSlice/productSlice';
 import { axiosInstance } from '@/interceptors/axiosInterceptor';
 import { getErrorMessage } from '@/utils/getErrorMessage';
-import { formatLkr, formatSize } from '@/utils/format';
+import { formatLkr, formatSize, toYmd } from '@/utils/format';
 import { useCan } from '@/utils/permissions';
 import { customerName } from './saleLabels';
 
@@ -57,6 +61,7 @@ type ChequeRow = {
   branch: string;
   number: string;
   deposit: Date | null;
+  override?: boolean;
   saved?: boolean;
 };
 
@@ -77,7 +82,7 @@ const newCheque = (): ChequeRow => ({
   bank: '',
   branch: '',
   number: '',
-  deposit: null,
+  deposit: new Date(),
 });
 
 // Discount and tax are typed per line as percentages; the server stores amounts.
@@ -108,12 +113,18 @@ const AddEditSalePage = () => {
   const [editing, setEditing] = useState<Sale | null>(null);
   const [customer, setCustomer] = useState<string | null>(null);
   const [date, setDate] = useState<Date | null>(new Date());
+  const [notes, setNotes] = useState('');
+  const rules = useBusinessRules();
+  // Payment due date (only when part is on credit): sale date + the configured days until edited.
+  const [dueEdited, setDueEdited] = useState<string | null>(null);
   const [lines, setLines] = useState<Line[]>(() => [newLine()]);
   const [discount, setDiscount] = useState<Num>('');
   const [tax, setTax] = useState<Num>('');
   const [shipping, setShipping] = useState<Num>('');
   const [other, setOther] = useState<Num>('');
-  const [credit, setCredit] = useState<Num>('');
+  const [cash, setCash] = useState<Num>('');
+  // Until cash is typed it defaults to everything the cheques do not cover (a fully paid sale).
+  const [cashEdited, setCashEdited] = useState(false);
   const [cheques, setCheques] = useState<ChequeRow[]>([]);
   const [dirty, setDirty] = useState(false);
   const [step, setStep] = useState(0);
@@ -143,6 +154,8 @@ const AddEditSalePage = () => {
         setEditing(sale);
         setCustomer(sale.customer);
         setDate(new Date(sale.salesDate));
+        setDueEdited(sale.dueDate ? sale.dueDate.slice(0, 10) : null);
+        setNotes(sale.notes ?? '');
         setLines(
           sale.lineItems.map((li) => {
             const base = li.productPrice * li.quantity;
@@ -160,12 +173,13 @@ const AddEditSalePage = () => {
         setTax(money(sale.tax));
         setShipping(money(sale.shipping));
         setOther(money(sale.otherExpenses));
-        const creditPaid = sale.payments?.length
-          ? sale.payments.filter((p) => p.method === 'credit').reduce((s, p) => s + p.amount, 0)
-          : sale.paymentMethod === 'credit'
+        const cashPaid = sale.payments?.length
+          ? sale.payments.filter((p) => p.method === 'cash').reduce((s, p) => s + p.amount, 0)
+          : sale.paymentMethod === 'cash'
             ? sale.netTotal
             : 0;
-        setCredit(money(creditPaid));
+        setCash(money(cashPaid));
+        setCashEdited(true);
         setCheques(
           data.data.map((c) => ({
             key: nextKey++,
@@ -192,16 +206,20 @@ const AddEditSalePage = () => {
   const subtotal = lines.reduce((s, l) => s + lineTotal(l), 0);
   const net = round2(subtotal + n(shipping) + n(other) + n(tax) - n(discount));
   const chequeValue = round2(cheques.reduce((s, c) => s + n(c.amount), 0));
-  // Cash is whatever credit and cheques do not cover: never typed.
-  const cash = round2(Math.max(0, net - n(credit) - chequeValue));
-  const remaining = round2(net - (cash + n(credit) + chequeValue));
+  // Until cash is typed the whole total is credit (cash 0).
+  const cashValue = cashEdited ? n(cash) : 0;
+  // Credit is whatever cash and cheques do not cover: never typed.
+  const credit = round2(Math.max(0, net - cashValue - chequeValue));
+  const remaining = round2(net - (cashValue + chequeValue));
   // For now a cheque counts as paid like cash: no credit = paid, all credit = not paid.
-  const status = n(credit) <= 0 ? 'paid' : n(credit) >= net - 0.01 ? 'not_paid' : 'partially_paid';
+  const status = credit <= 0 ? 'paid' : credit >= net - 0.01 ? 'not_paid' : 'partially_paid';
   const parts: SalePayment[] = [
-    ...(cash > 0 ? [{ method: 'cash' as const, amount: cash }] : []),
-    ...(n(credit) > 0 ? [{ method: 'credit' as const, amount: n(credit) }] : []),
+    ...(cashValue > 0 ? [{ method: 'cash' as const, amount: cashValue }] : []),
+    ...(credit > 0 ? [{ method: 'credit' as const, amount: credit }] : []),
     ...(chequeValue > 0 ? [{ method: 'cheque' as const, amount: chequeValue }] : []),
   ];
+
+  const dueDate = dueEdited ?? ymdPlusDays(rules.saleDueDays, date ?? new Date());
 
   const picked = lines.filter((l) => l.product);
   const errors1: string[] = [];
@@ -223,13 +241,13 @@ const AddEditSalePage = () => {
     'Discount and tax are at most 100%',
   );
   err1(picked.length > 0 && net <= 0, 'The net total must be more than 0');
-  err2(remaining < -0.01, `Credit and cheques are ${formatLkr(-remaining)} over the net total`);
+  err2(remaining < -0.01, `Cash and cheques are ${formatLkr(-remaining)} over the net total`);
   cheques.forEach((c, i) => {
     const row = `Cheque ${i + 1}`;
     err2(n(c.amount) <= 0, `${row}: enter an amount`);
     err2(!c.deposit, `${row}: select a deposit date`);
-    err2(!/^\d{4}$/.test(c.bank), `${row}: bank code is 4 digits`);
-    err2(!/^\d{3}$/.test(c.branch), `${row}: branch code is 3 digits`);
+    err2(!c.bank, `${row}: select a bank`);
+    err2(!c.branch, `${row}: select a branch`);
     err2(!/^\d{6}$/.test(c.number), `${row}: cheque number is 6 digits`);
     err2(
       cheques
@@ -251,8 +269,8 @@ const AddEditSalePage = () => {
       (c, i) =>
         n(c.amount) > 0 &&
         c.deposit &&
-        /^\d{4}$/.test(c.bank) &&
-        /^\d{3}$/.test(c.branch) &&
+        !!c.bank &&
+        !!c.branch &&
         /^\d{6}$/.test(c.number) &&
         !cheques
           .slice(0, i)
@@ -313,6 +331,8 @@ const AddEditSalePage = () => {
         shipping: n(shipping),
         otherExpenses: n(other),
         payments: parts,
+        notes: notes.trim(),
+        ...(credit > 0 && { dueDate }),
       };
       created.current ??= id
         ? await dispatch(updateSale({ _id: id, ...body })).unwrap()
@@ -332,6 +352,7 @@ const AddEditSalePage = () => {
           branchCode: c.branch,
           chequeNumber: c.number,
           amount: n(c.amount),
+          ...(c.override && { overrideDepositLimit: true }),
         };
         if (c.id) await dispatch(updateCheque({ _id: c.id, ...payload })).unwrap();
         else await dispatch(createCheque(payload)).unwrap();
@@ -488,6 +509,19 @@ const AddEditSalePage = () => {
                       }}
                     />
                   </SimpleGrid>
+                  <Textarea
+                    mt="md"
+                    label="Notes"
+                    autosize
+                    minRows={2}
+                    maxRows={5}
+                    maxLength={500}
+                    value={notes}
+                    onChange={(e) => {
+                      setNotes(e.currentTarget.value);
+                      touch();
+                    }}
+                  />
                 </SectionCard>
 
                 <SectionCard
@@ -668,7 +702,7 @@ const AddEditSalePage = () => {
             {step === 1 && (
               <SectionCard
                 title="Payment"
-                subtitle="Cash is whatever credit and cheques do not cover."
+                subtitle="Credit is whatever cash and cheques do not cover."
                 action={
                   <Button
                     variant="default"
@@ -695,24 +729,38 @@ const AddEditSalePage = () => {
                   <SimpleGrid cols={{ base: 1, sm: 2 }}>
                     <NumberInput
                       label="Cash"
-                      description="Calculated from the rest"
-                      placeholder="Calculated automatically"
-                      {...moneyInput}
-                      value={cash}
-                      disabled
-                    />
-                    <NumberInput
-                      label="Credit"
                       placeholder="0.00"
                       {...moneyInput}
-                      value={credit}
+                      value={cashEdited ? cash : ''}
                       error={showErr2(remaining < -0.01)}
                       onChange={(v) => {
-                        setCredit(v === '' ? '' : Number(v));
+                        setCash(v === '' ? '' : Number(v));
+                        setCashEdited(true);
                         touch();
                       }}
                     />
+                    <NumberInput
+                      label="Credit"
+                      description="Calculated from the rest"
+                      placeholder="Calculated automatically"
+                      {...moneyInput}
+                      value={credit}
+                      disabled
+                    />
                   </SimpleGrid>
+                  {credit > 0 && (
+                    <DateInput
+                      label="Payment due date"
+                      description={`Sale date + ${rules.saleDueDays} days unless you change it`}
+                      placeholder="Select date"
+                      value={dueDate}
+                      minDate={date ?? undefined}
+                      onChange={(v) => {
+                        setDueEdited(v ? toYmd(v) : null);
+                        touch();
+                      }}
+                    />
+                  )}
                   {cheques.map((c, i) => (
                     <Box
                       key={c.key}
@@ -745,31 +793,20 @@ const AddEditSalePage = () => {
                           error={showErr2(n(c.amount) <= 0)}
                           onChange={(v) => setChq(c.key, { amount: v === '' ? '' : Number(v) })}
                         />
-                        <DateInput
-                          label="Deposit date"
-                          placeholder="Select date"
+                        <DepositDateInput
                           value={c.deposit}
                           error={showErr2(!c.deposit)}
-                          onChange={(v) => setChq(c.key, { deposit: v ? new Date(v) : null })}
+                          override={!!c.override}
+                          onOverrideChange={(o) => setChq(c.key, { override: o })}
+                          onChange={(v) => setChq(c.key, { deposit: v })}
                         />
-                        <TextInput
-                          label="Bank code"
-                          placeholder="4 digits"
-                          maxLength={4}
-                          value={c.bank}
-                          error={showErr2(!/^\d{4}$/.test(c.bank)) && 'Must be 4 digits'}
-                          onChange={(e) =>
-                            setChq(c.key, { bank: e.currentTarget.value.replace(/\D/g, '') })
-                          }
-                        />
-                        <TextInput
-                          label="Branch code"
-                          placeholder="3 digits"
-                          maxLength={3}
-                          value={c.branch}
-                          error={showErr2(!/^\d{3}$/.test(c.branch)) && 'Must be 3 digits'}
-                          onChange={(e) =>
-                            setChq(c.key, { branch: e.currentTarget.value.replace(/\D/g, '') })
+                        <BankBranchSelect
+                          bankCode={c.bank}
+                          branchCode={c.branch}
+                          bankError={showErr2(!c.bank) && 'Select a bank'}
+                          branchError={showErr2(!c.branch) && 'Select a branch'}
+                          onChange={(v) =>
+                            setChq(c.key, { bank: v.bankCode, branch: v.branchCode })
                           }
                         />
                         <TextInput
