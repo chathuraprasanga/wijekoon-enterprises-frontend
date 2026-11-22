@@ -1,3 +1,4 @@
+import { useMediaQuery } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { NumberInput, Select, SimpleGrid, Switch, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -44,6 +45,8 @@ type FormProps = {
 
 const AddEditProductForm = ({ product, onClose }: FormProps) => {
   const dispatch = useAppDispatch();
+  // A focused text input pops the phone keyboard, which resizes the sheet and makes the dropdown blink.
+  const phone = useMediaQuery('(max-width: 47.99em)');
   const [loading, setLoading] = useState(false);
   const suppliers = useAppSelector((state) => state.supplier.items);
 
@@ -164,7 +167,7 @@ const AddEditProductForm = ({ product, onClose }: FormProps) => {
           withAsterisk
           placeholder="Select unit"
           data={PRODUCT_UNITS.map((u) => ({ value: u, label: u === 'L' ? 'L' : u.toLowerCase() }))}
-          comboboxProps={{ withinPortal: true }}
+          comboboxProps={{ withinPortal: false }}
           {...form.getInputProps('unit')}
         />
       </SimpleGrid>
@@ -189,8 +192,8 @@ const AddEditProductForm = ({ product, onClose }: FormProps) => {
         withAsterisk
         placeholder="Select supplier"
         data={suppliers.map((supplier) => ({ value: supplier._id, label: supplier.name }))}
-        searchable
-        comboboxProps={{ withinPortal: true }}
+        searchable={!phone}
+        comboboxProps={{ withinPortal: false }}
         {...form.getInputProps('supplier')}
       />
       {product && (

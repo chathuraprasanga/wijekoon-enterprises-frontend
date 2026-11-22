@@ -156,7 +156,7 @@ const AddEditUserForm = ({ user, onClose }: FormProps) => {
         comboboxProps={{
           position: 'top',
           middlewares: { flip: true, shift: true },
-          withinPortal: true,
+          withinPortal: false,
         }}
         {...form.getInputProps('roles')}
       />

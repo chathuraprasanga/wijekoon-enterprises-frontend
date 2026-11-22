@@ -1,3 +1,4 @@
+import { useMediaQuery } from '@mantine/hooks';
 import { useState } from 'react';
 import { NumberInput, Select, SimpleGrid, TextInput } from '@mantine/core';
 import { IconCalendar } from '@tabler/icons-react';
@@ -31,6 +32,8 @@ export const AddEditChequeModal = ({ opened, cheque, onClose }: Props) =>
 
 const ChequeForm = ({ cheque, onClose }: Omit<Props, 'opened'>) => {
   const dispatch = useAppDispatch();
+  // A focused text input pops the phone keyboard, which resizes the sheet and makes the dropdown blink.
+  const phone = useMediaQuery('(max-width: 47.99em)');
   const customers = useLookup<Customer>('customers');
   const sales = useLookup<Sale>('sales');
   const [loading, setLoading] = useState(false);
@@ -112,7 +115,8 @@ const ChequeForm = ({ cheque, onClose }: Omit<Props, 'opened'>) => {
       <Select
         label="Customer"
         withAsterisk
-        searchable
+        searchable={!phone}
+        comboboxProps={{ withinPortal: false }}
         placeholder="Select customer"
         data={customers.items.map((c) => ({ value: c._id, label: customerName(c) }))}
         disabled={customers.loading}
@@ -125,7 +129,8 @@ const ChequeForm = ({ cheque, onClose }: Omit<Props, 'opened'>) => {
       <Select
         label="Related sale"
         withAsterisk
-        searchable
+        searchable={!phone}
+        comboboxProps={{ withinPortal: false }}
         placeholder={form.values.customer ? 'Select sale' : 'Select a customer first'}
         description="Only this customer's sales are listed."
         inputWrapperOrder={['label', 'input', 'description', 'error']}
@@ -187,6 +192,7 @@ const ChequeForm = ({ cheque, onClose }: Omit<Props, 'opened'>) => {
       />
       <DateInput
         label="Deposit date"
+        popoverProps={{ withinPortal: false }}
         placeholder="Select a date"
         withAsterisk
         leftSection={<IconCalendar size={16} aria-hidden />}
