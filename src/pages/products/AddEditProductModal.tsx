@@ -143,14 +143,14 @@ const AddEditProductForm = ({ product, onClose }: FormProps) => {
       <TextInput
         label="Product name"
         withAsterisk
-        placeholder="e.g. Samba Rice"
+        placeholder="Enter the product name"
         {...form.getInputProps('name')}
       />
       <TextInput
         label="SKU"
         withAsterisk
         styles={mono}
-        placeholder="WE-RC-005"
+        placeholder="Enter the SKU"
         description="Must be unique. Shown in monospace on sales."
         {...form.getInputProps('sku')}
       />

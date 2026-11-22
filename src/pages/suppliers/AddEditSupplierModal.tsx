@@ -102,7 +102,7 @@ const AddEditSupplierForm = ({ supplier, onClose }: FormProps) => {
       <TextInput
         label="Supplier name"
         withAsterisk
-        placeholder="e.g. Ceylon Grain Mills (Pvt) Ltd"
+        placeholder="Enter the supplier name"
         {...form.getInputProps('name')}
       />
       <SimpleGrid cols={{ base: 1, xs: 2 }}>
@@ -134,7 +134,7 @@ const AddEditSupplierForm = ({ supplier, onClose }: FormProps) => {
       />
       <TextInput
         label="Cheque issued name"
-        placeholder="e.g. Ceylon Grain Mills (Pvt) Ltd"
+        placeholder="Enter the cheque issued name"
         description="The payee name written on cheques you issue to this supplier."
         {...form.getInputProps('chequeIssuedName')}
       />
