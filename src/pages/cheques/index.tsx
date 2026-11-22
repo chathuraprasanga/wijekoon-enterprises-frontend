@@ -7,6 +7,9 @@ import { bankDisplay, branchDisplay } from '@/utils/bankData';
 import { ListPage } from '@/components/data/ListPage';
 import { ChequeLifecycleBadge, ChequeStatusBadge } from '@/components/StatusBadge';
 import { ChequeDetailDialog } from '@/pages/cheques/ChequeDetailDialog';
+import { IssuedChequeDialog } from '@/pages/cheques/IssuedChequeDialog';
+import { StatusBadge } from '@/components/StatusBadge';
+import { IconArrowDownLeft, IconArrowUpRight } from '@tabler/icons-react';
 import { AddEditChequeModal } from '@/pages/cheques/AddEditChequeModal';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { type Cheque, deleteCheque, fetchCheques } from '@/store/chequeSlice/chequeSlice';
@@ -17,6 +20,8 @@ import { CustomerLabel } from '@/components/CustomerLabel';
 import { formatDate, formatLkr } from '@/utils/format';
 import { customerName } from '@/pages/sales/saleLabels';
 import { useCan } from '@/utils/permissions';
+
+const isReceived = (c: Cheque) => c.kind !== 'issued';
 
 const ChequesPage = () => {
   const can = useCan();
@@ -34,7 +39,7 @@ const ChequesPage = () => {
   return (
     <ListPage<Cheque>
       title="Cheques"
-      description="Post-dated cheques on file. Soonest deposit date first."
+      description="Every cheque: ones we received from customers and ones we issued to suppliers."
       entity={{ singular: 'cheque', plural: 'cheques' }}
       searchPlaceholder="Search by cheque number"
       records={items}
@@ -43,7 +48,7 @@ const ChequesPage = () => {
       rowName={(c) => `cheque ${c.chequeNumber}`}
       defaultSort={{ key: 'depositDate', dir: 'asc' }}
       load={({ page, limit, searchText, sortBy, sortType }) =>
-        dispatch(fetchCheques({ page, limit, searchText, sortBy, sortType })).unwrap()
+        dispatch(fetchCheques({ page, limit, searchText, sortBy, sortType, type: 'all' })).unwrap()
       }
       extraActions={
         <>
@@ -71,6 +76,8 @@ const ChequesPage = () => {
       onCreate={can('cheque:create') ? () => setForm({ cheque: null }) : undefined}
       onView={setView}
       onEdit={can('cheque:update') ? (cheque) => setForm({ cheque }) : undefined}
+      rowCanEdit={isReceived}
+      rowCanRemove={isReceived}
       remove={
         can('cheque:delete')
           ? {
@@ -95,27 +102,54 @@ const ChequesPage = () => {
           render: (c) => <span className="mono">{c.chequeNumber}</span>,
         },
         {
+          key: 'kind',
+          header: 'Type',
+          render: (c) =>
+            c.kind === 'issued' ? (
+              <StatusBadge tone="info" label="Issued" icon={IconArrowUpRight} />
+            ) : (
+              <StatusBadge tone="accent" label="Received" icon={IconArrowDownLeft} />
+            ),
+        },
+        {
           key: 'customer',
-          header: 'Customer',
-          render: (c) => <CustomerLabel customer={customers.byId.get(c.customer)} />,
+          header: 'Customer / supplier',
+          render: (c) =>
+            c.kind === 'issued' ? (
+              <Text size="sm">{c.supplierName ?? '—'}</Text>
+            ) : (
+              <CustomerLabel customer={customers.byId.get(c.customer)} />
+            ),
         },
         {
           key: 'sale',
-          header: 'Sale',
-          render: (c) => <span className="mono">{sales.byId.get(c.sale)?.salesId ?? '—'}</span>,
+          header: 'Sale / order',
+          render: (c) => (
+            <span className="mono">
+              {c.kind === 'issued' ? (c.orderNo ?? '—') : (sales.byId.get(c.sale)?.salesId ?? '—')}
+            </span>
+          ),
         },
         {
           key: 'bank',
           header: 'Bank / branch',
           hideBelow: 'md',
-          render: (c) => (
-            <>
-              <Text size="sm">{bankDisplay(c.bankCode)}</Text>
-              <Text size="xs" c="dimmed">
-                {branchDisplay(c.bankCode, c.branchCode)}
-              </Text>
-            </>
-          ),
+          render: (c) =>
+            c.kind === 'issued' ? (
+              <>
+                <Text size="sm">{c.bankName ?? '—'}</Text>
+                <Text size="xs" c="dimmed">
+                  {c.branchName} · {c.accountNumber}
+                </Text>
+              </>
+            ) : (
+              <>
+                <Text size="sm">{bankDisplay(c.bankCode)}</Text>
+                <Text size="xs" c="dimmed">
+                  {branchDisplay(c.bankCode, c.branchCode)}
+                </Text>
+              </>
+            ),
         },
         {
           key: 'amount',
@@ -126,7 +160,7 @@ const ChequesPage = () => {
         },
         {
           key: 'depositDate',
-          header: 'Deposit date',
+          header: 'Cheque / deposit date',
           sortable: true,
           render: (c) => <span className="num">{formatDate(c.depositDate)}</span>,
         },
@@ -143,7 +177,7 @@ const ChequesPage = () => {
           render: (c) => (
             <Group gap={4} wrap="wrap">
               <ChequeLifecycleBadge status={c.status} />
-              {(c.status ?? 'RECEIVED') === 'RECEIVED' && (
+              {c.kind !== 'issued' && (c.status ?? 'RECEIVED') === 'RECEIVED' && (
                 <ChequeStatusBadge depositDate={c.depositDate} />
               )}
             </Group>
@@ -161,8 +195,12 @@ const ChequesPage = () => {
               reload();
             }}
           />
+          <IssuedChequeDialog
+            cheque={view?.kind === 'issued' ? view : null}
+            onClose={() => setView(null)}
+          />
           <ChequeDetailDialog
-            cheque={view}
+            cheque={view?.kind === 'issued' ? null : view}
             customerName={customerName(customers.byId.get(view?.customer ?? ''))}
             onClose={() => setView(null)}
             onChanged={reload}

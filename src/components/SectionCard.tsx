@@ -19,6 +19,7 @@ export const SectionCard = ({ title, subtitle, action, children, flush }: Props)
       border: '1px solid var(--ldg-border)',
       borderRadius: 8,
       overflow: 'hidden',
+      height: '100%',
     }}
   >
     <Group justify="space-between" align="flex-start" px="md" py="sm" wrap="nowrap" gap="md">

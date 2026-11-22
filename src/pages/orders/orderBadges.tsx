@@ -3,9 +3,6 @@ import {
   IconBan,
   IconCircleCheck,
   IconClock,
-  IconPackage,
-  IconPackageImport,
-  IconHourglass,
   IconArrowBackUp,
 } from '@tabler/icons-react';
 import { StatusBadge } from '@/components/StatusBadge';
@@ -24,16 +21,9 @@ export const OverdueBadge = () => (
   <StatusBadge tone="danger" label="Overdue" icon={IconAlertTriangle} />
 );
 
+/// Every order counts as received when placed, so only a cancelled one gets an order badge.
 export const OrderStatusBadge = ({ status }: { status: OrderStatus }) =>
-  status === 'received' ? (
-    <StatusBadge tone="success" label="Received" icon={IconPackage} />
-  ) : status === 'partially_received' ? (
-    <StatusBadge tone="info" label="Partly received" icon={IconPackageImport} />
-  ) : status === 'cancelled' ? (
-    <StatusBadge tone="neutral" label="Cancelled" icon={IconBan} />
-  ) : (
-    <StatusBadge tone="warning" label="Pending" icon={IconHourglass} />
-  );
+  status === 'cancelled' ? <StatusBadge tone="neutral" label="Cancelled" icon={IconBan} /> : null;
 
 export const PaymentRowStatusBadge = ({ status }: { status: PaymentStatus }) =>
   status === 'completed' ? (

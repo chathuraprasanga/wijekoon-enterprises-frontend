@@ -147,11 +147,10 @@ const AddEditOrderPage = () => {
   const touch = () => setDirty(true);
   const canPay = can('payment:create');
 
-  // Once money or goods have moved, only the header may change (the server enforces it too).
+  // Once money has moved, only the header may change (the server enforces it too).
   const locked =
     !!editing &&
     (editing.orderStatus === 'cancelled' ||
-      editing.lineItems.some((l) => l.receivedQuantity > 0) ||
       (editing.payments ?? []).some((p) => p.status === 'completed'));
 
   // Edit: load the order, then fill the form.
@@ -546,8 +545,8 @@ const AddEditOrderPage = () => {
             )}
             {locked && editing?.orderStatus !== 'cancelled' && (
               <InlineAlert tone="info" title="Items and prices are locked">
-                This order has payments or received goods. Reverse the payments to change items,
-                prices or the supplier; you can still update the reference, dates and notes.
+                This order has payments. Reverse the payments to change items, prices or the
+                supplier; you can still update the reference, dates and notes.
               </InlineAlert>
             )}
             {errors.length > 0 && (

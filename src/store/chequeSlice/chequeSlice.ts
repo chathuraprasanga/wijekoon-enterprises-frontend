@@ -4,6 +4,8 @@ import { getErrorMessage } from '@/utils/getErrorMessage';
 
 export type Cheque = {
   _id: string;
+  /** Only on the combined list: a cheque we received, or one we issued to a supplier. */
+  kind?: 'received' | 'issued';
   customer: string;
   sale: string;
   depositDate: string;
@@ -12,11 +14,21 @@ export type Cheque = {
   chequeNumber: string;
   amount: number;
   /** Lifecycle; rows from before it existed read as RECEIVED. */
-  status?: 'RECEIVED' | 'DEPOSITED' | 'TRANSFERRED' | 'CLEARED' | 'RETURNED';
+  status?: 'RECEIVED' | 'DEPOSITED' | 'TRANSFERRED' | 'CLEARED' | 'RETURNED' | 'ISSUED';
   transferable?: boolean;
   expectedClearingDate?: string;
   depositLimitOverridden?: boolean;
   statusHistory?: { status: string; at: string; byName?: string; note?: string }[];
+  /** Issued cheques only. */
+  supplier?: string;
+  supplierName?: string;
+  payee?: string;
+  order?: string;
+  orderNo?: string;
+  bankName?: string;
+  branchName?: string;
+  accountNumber?: string;
+  issuedDate?: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -32,6 +44,7 @@ export type PagedChequesParams = {
   searchText?: string;
   customer?: string;
   sale?: string;
+  type?: 'all';
   sortBy?: string;
   sortType?: string;
 };

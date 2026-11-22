@@ -31,7 +31,6 @@ const SORT_MAP = {
   total: 'netTotal',
   paid: 'paidAmount',
   payment: 'paymentStatus',
-  status: 'orderStatus',
 };
 
 const OrdersPage = () => {
@@ -78,12 +77,10 @@ const OrdersPage = () => {
     {
       type: 'select' as const,
       key: 'status',
-      label: 'Order status',
+      label: 'Order',
       placeholder: 'All',
       options: [
-        { value: 'pending', label: 'Pending' },
-        { value: 'partially_received', label: 'Partly received' },
-        { value: 'received', label: 'Received' },
+        { value: 'active', label: 'Active' },
         { value: 'cancelled', label: 'Cancelled' },
       ],
     },
@@ -208,15 +205,9 @@ const OrdersPage = () => {
               <Group gap={4} wrap="wrap">
                 <PaymentStatusBadge status={o.paymentStatus} />
                 {o.isOverdue && <OverdueBadge />}
+                <OrderStatusBadge status={o.orderStatus} />
               </Group>
             ),
-          },
-          {
-            key: 'status',
-            header: 'Order status',
-            sortable: true,
-            hideBelow: 'md',
-            render: (o) => <OrderStatusBadge status={o.orderStatus} />,
           },
           {
             key: 'by',
@@ -247,11 +238,6 @@ const OrdersPage = () => {
                   <PaymentStatusBadge status={view.paymentStatus} />
                   {view.isOverdue && <OverdueBadge />}
                 </Group>
-              </Field>
-              <Field label="Order status">
-                <Box mt={4}>
-                  <OrderStatusBadge status={view.orderStatus} />
-                </Box>
               </Field>
               <Field label="Supplier">{view.supplier?.name}</Field>
               <Field label="Supplier reference">{view.supplierRef}</Field>

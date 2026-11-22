@@ -68,6 +68,8 @@ export const ChequeLifecycleBadge = ({ status }: { status?: string }) => {
       return <StatusBadge tone="info" label="Transferred" icon={IconHourglass} />;
     case 'CLEARED':
       return <StatusBadge tone="success" label="Cleared" icon={IconCircleCheck} />;
+    case 'ISSUED':
+      return <StatusBadge tone="info" label="Issued" icon={IconHourglass} />;
     case 'RETURNED':
       return <StatusBadge tone="danger" label="Returned" icon={IconAlertCircle} />;
     default:

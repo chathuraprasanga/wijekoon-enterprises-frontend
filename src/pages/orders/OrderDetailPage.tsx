@@ -6,7 +6,6 @@ import {
   Button,
   Group,
   Menu,
-  NumberInput,
   SimpleGrid,
   Skeleton,
   Stack,
@@ -14,14 +13,7 @@ import {
   Text,
   Textarea,
 } from '@mantine/core';
-import {
-  IconCash,
-  IconDotsVertical,
-  IconPackageImport,
-  IconPencil,
-  IconTrash,
-  IconX,
-} from '@tabler/icons-react';
+import { IconCash, IconDotsVertical, IconPencil, IconTrash, IconX } from '@tabler/icons-react';
 import { PageHeader } from '@/components/PageHeader';
 import { SectionCard } from '@/components/SectionCard';
 import { DetailList } from '@/components/DetailList';
@@ -37,7 +29,6 @@ import {
   cancelOrder,
   deleteOrder,
   fetchOrderById,
-  receiveOrder,
   reversePayment,
   setChequeStatus,
 } from '@/store/orderSlice/orderSlice';
@@ -107,74 +98,6 @@ const ReasonModal = ({
   );
 };
 
-const ReceiveModal = ({
-  order,
-  onClose,
-  onDone,
-}: {
-  order: Order;
-  onClose: () => void;
-  onDone: () => void;
-}) => {
-  const dispatch = useAppDispatch();
-  const open = order.lineItems.filter((l) => l.receivedQuantity < l.quantity);
-  const [qty, setQty] = useState<Record<string, number | ''>>({});
-  const [loading, setLoading] = useState(false);
-  const lines = open
-    .map((l) => ({ product: l.product, quantity: Number(qty[l.product] || 0) }))
-    .filter((l) => l.quantity > 0);
-  const submit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!lines.length)
-      return toNotify('Nothing to receive', 'Enter a quantity for at least one item.', 'WARNING');
-    setLoading(true);
-    try {
-      await dispatch(receiveOrder({ id: order._id, lines })).unwrap();
-      toNotify('Goods received', 'Received quantities were recorded.', 'SUCCESS');
-      onDone();
-      onClose();
-    } catch (err) {
-      toNotify("Couldn't record receipt", err as string, 'ERROR');
-    } finally {
-      setLoading(false);
-    }
-  };
-  return (
-    <FormModal
-      opened
-      title="Receive goods"
-      subject={order.orderNo}
-      size="md"
-      submitLabel="Record receipt"
-      loading={loading}
-      dirty={lines.length > 0}
-      onSubmit={submit}
-      onClose={onClose}
-    >
-      <Text size="sm" c="dimmed">
-        Record what actually arrived. Stock levels aren&apos;t tracked yet; this keeps the delivery
-        history on the order.
-      </Text>
-      {open.map((l) => {
-        const remaining = Math.round((l.quantity - l.receivedQuantity) * 1000) / 1000;
-        return (
-          <NumberInput
-            key={l.product}
-            label={`${l.productName} (${l.productSku})`}
-            description={`${remaining} remaining of ${l.quantity}`}
-            min={0}
-            max={remaining}
-            decimalScale={3}
-            hideControls
-            value={qty[l.product] ?? ''}
-            onChange={(v) => setQty((q) => ({ ...q, [l.product]: v === '' ? '' : Number(v) }))}
-          />
-        );
-      })}
-    </FormModal>
-  );
-};
-
 const OrderDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const can = useCan();
@@ -185,7 +108,6 @@ const OrderDetailPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [nonce, setNonce] = useState(0);
   const [paying, setPaying] = useState(false);
-  const [receiving, setReceiving] = useState(false);
   const [cancelling, setCancelling] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -278,15 +200,6 @@ const OrderDetailPage = () => {
                   Record payment
                 </Button>
               )}
-              {open && can('order:update') && order.orderStatus !== 'received' && (
-                <Button
-                  variant="default"
-                  leftSection={<IconPackageImport size={16} aria-hidden />}
-                  onClick={() => setReceiving(true)}
-                >
-                  Receive goods
-                </Button>
-              )}
               {open && can('order:update') && (
                 <Button
                   variant="default"
@@ -354,7 +267,7 @@ const OrderDetailPage = () => {
               {order.cancelReason || 'No reason was recorded.'}
             </InlineAlert>
           )}
-          <SimpleGrid cols={{ base: 1, md: 3 }} spacing="md" style={{ alignItems: 'start' }}>
+          <SimpleGrid cols={{ base: 1, md: 3 }} spacing="md">
             <SectionCard title="Order">
               <DetailList
                 stacked
@@ -430,7 +343,6 @@ const OrderDetailPage = () => {
                   <Table.Tr>
                     <Table.Th>Item</Table.Th>
                     <Table.Th ta="right">Qty</Table.Th>
-                    <Table.Th ta="right">Received</Table.Th>
                     <Table.Th ta="right">Unit price</Table.Th>
                     <Table.Th ta="right">Discount</Table.Th>
                     <Table.Th ta="right">Tax</Table.Th>
@@ -448,9 +360,6 @@ const OrderDetailPage = () => {
                       </Table.Td>
                       <Table.Td ta="right" className="num">
                         {l.quantity}
-                      </Table.Td>
-                      <Table.Td ta="right" className="num">
-                        {l.receivedQuantity}
                       </Table.Td>
                       <Table.Td ta="right" className="num">
                         {formatLkr(l.unitPrice)}
@@ -605,9 +514,6 @@ const OrderDetailPage = () => {
             onClose={() => setPaying(false)}
             onDone={reload}
           />
-          {receiving && (
-            <ReceiveModal order={order} onClose={() => setReceiving(false)} onDone={reload} />
-          )}
           {cancelling && (
             <ReasonModal
               title="Cancel order?"

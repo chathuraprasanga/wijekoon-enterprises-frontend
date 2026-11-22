@@ -3,7 +3,7 @@ import { axiosInstance } from '@/interceptors/axiosInterceptor';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 
 export type OrderPaymentStatus = 'unpaid' | 'partially_paid' | 'paid';
-export type OrderStatus = 'pending' | 'partially_received' | 'received' | 'cancelled';
+export type OrderStatus = 'active' | 'cancelled';
 export type PaymentMethod = 'cash' | 'issued_cheque' | 'customer_cheque';
 export type PaymentStatus = 'completed' | 'returned' | 'reversed';
 
@@ -14,7 +14,6 @@ export type OrderLine = {
   size: string;
   unitPrice: number;
   quantity: number;
-  receivedQuantity: number;
   discount: number;
   tax: number;
   lineTotal: number;
@@ -184,11 +183,6 @@ export const cancelOrder = thunk(
   'cancel',
   async ({ id, reason }: { id: string; reason?: string }) =>
     (await axiosInstance.post<Order>(`/orders/${id}/cancel`, { reason })).data,
-);
-export const receiveOrder = thunk(
-  'receive',
-  async ({ id, lines }: { id: string; lines: { product: string; quantity: number }[] }) =>
-    (await axiosInstance.post<Order>(`/orders/${id}/receive`, { lines })).data,
 );
 export const deleteOrder = thunk('delete', async (id: string) => {
   await axiosInstance.delete(`/orders/${id}`);

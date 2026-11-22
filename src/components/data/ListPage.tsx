@@ -80,6 +80,9 @@ type Props<T> = {
   onView?: (record: T) => void;
   onEdit?: (record: T) => void;
   remove?: DeleteConfig<T>;
+  /** Hide Edit / Delete on rows where they don't apply (default: shown on every row). */
+  rowCanEdit?: (record: T) => boolean;
+  rowCanRemove?: (record: T) => boolean;
   /** Overlays (forms, dialogs) that may need to refresh the list. */
   children?: (ctx: { reload: () => void }) => ReactNode;
 };
@@ -108,6 +111,8 @@ export const ListPage = <T,>({
   onView,
   onEdit,
   remove,
+  rowCanEdit,
+  rowCanRemove,
   children,
 }: Props<T>) => {
   const { query, setPage, setSize, setSort, applyFilters, clear, hasFilters } = useListQuery({
@@ -327,7 +332,7 @@ export const ListPage = <T,>({
                             View
                           </Button>
                         )}
-                        {onEdit && (
+                        {onEdit && (rowCanEdit?.(r) ?? true) && (
                           <Button
                             variant="default"
                             flex={1}
@@ -338,7 +343,7 @@ export const ListPage = <T,>({
                             Edit
                           </Button>
                         )}
-                        {remove && (
+                        {remove && (rowCanRemove?.(r) ?? true) && (
                           <ActionIcon
                             size={42}
                             c="var(--ldg-accent-text)"
@@ -367,7 +372,7 @@ export const ListPage = <T,>({
                             </ActionIcon>
                           </Tooltip>
                         )}
-                        {onEdit && (
+                        {onEdit && (rowCanEdit?.(r) ?? true) && (
                           <Tooltip label="Edit">
                             <ActionIcon
                               variant="subtle"
@@ -378,7 +383,7 @@ export const ListPage = <T,>({
                             </ActionIcon>
                           </Tooltip>
                         )}
-                        {remove && (
+                        {remove && (rowCanRemove?.(r) ?? true) && (
                           <Tooltip label="Delete">
                             <ActionIcon
                               variant="subtle"
