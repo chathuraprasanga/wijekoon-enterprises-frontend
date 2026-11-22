@@ -22,7 +22,7 @@ export const SectionCard = ({ title, subtitle, action, children, flush }: Props)
     }}
   >
     <Group justify="space-between" align="flex-start" px="md" py="sm" wrap="nowrap" gap="md">
-      <Stack gap={2}>
+      <Stack gap={2} style={{ minWidth: 0 }}>
         <Title order={3}>{title}</Title>
         {subtitle && (
           <Text size="sm" c="dimmed">
@@ -30,7 +30,7 @@ export const SectionCard = ({ title, subtitle, action, children, flush }: Props)
           </Text>
         )}
       </Stack>
-      {action}
+      {action && <Box style={{ flex: 'none' }}>{action}</Box>}
     </Group>
     {children && (
       <Box style={{ borderTop: '1px solid var(--ldg-border)' }} p={flush ? 0 : 'md'}>

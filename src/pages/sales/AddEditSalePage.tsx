@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useMediaQuery } from '@mantine/hooks';
 import { Link, useBlocker, useNavigate, useParams } from 'react-router-dom';
 import {
   ActionIcon,
@@ -96,6 +97,7 @@ const AddEditSalePage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const wide = useMediaQuery('(min-width: 75em)');
   const can = useCan();
   const customers = useLookup<Customer>('customers');
   const products = useLookup<Product>('products');
@@ -409,11 +411,26 @@ const AddEditSalePage = () => {
         active={step}
         size="sm"
         mb="md"
+        orientation="horizontal"
         aria-label={`Step ${step + 1} of 2`}
         onStepClick={(i) => (i === 0 ? setStep(0) : next())}
       >
-        <Stepper.Step label="Sale details" description="Customer, items, adjustments" />
-        <Stepper.Step label="Payment" description="Cash, credit and cheques" />
+        <Stepper.Step
+          label="Sale details"
+          description={
+            <Text visibleFrom="sm" size="xs" span>
+              Customer, items, adjustments
+            </Text>
+          }
+        />
+        <Stepper.Step
+          label="Payment"
+          description={
+            <Text visibleFrom="sm" size="xs" span>
+              Cash, credit and cheques
+            </Text>
+          }
+        />
       </Stepper>
       <form
         noValidate
@@ -424,7 +441,7 @@ const AddEditSalePage = () => {
         }}
       >
         <SimpleGrid cols={{ base: 1, lg: 3 }} spacing="md" style={{ alignItems: 'start' }}>
-          <Stack gap="md" style={{ gridColumn: 'span 2', minWidth: 0 }}>
+          <Stack gap="md" style={{ gridColumn: wide ? 'span 2' : undefined, minWidth: 0 }}>
             {errors.length > 0 && (
               <InlineAlert
                 tone="danger"
@@ -545,7 +562,7 @@ const AddEditSalePage = () => {
                             <SimpleGrid cols={{ base: 2, sm: 4 }}>
                               <NumberInput
                                 label="Unit price"
-                                placeholder="Auto-filled from product"
+                                placeholder="Auto-filled"
                                 {...moneyInput}
                                 value={l.price}
                                 onChange={(v) =>

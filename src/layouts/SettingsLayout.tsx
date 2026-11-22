@@ -46,7 +46,16 @@ export const SettingsLayout = () => {
       <Tabs value={active} onChange={(v) => v && navigate(`/app/settings/${v}`)} mb="lg">
         <Tabs.List style={{ flexWrap: 'nowrap', overflowX: 'auto' }}>
           {tabs.map((t) => (
-            <Tabs.Tab key={t.value} value={t.value} leftSection={<t.icon size={16} aria-hidden />}>
+            <Tabs.Tab
+              key={t.value}
+              value={t.value}
+              px="sm"
+              leftSection={
+                <Box component="span" visibleFrom="sm" style={{ display: 'inline-flex' }}>
+                  <t.icon size={16} aria-hidden />
+                </Box>
+              }
+            >
               {t.label}
             </Tabs.Tab>
           ))}

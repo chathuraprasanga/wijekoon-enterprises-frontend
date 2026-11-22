@@ -3,6 +3,7 @@ import { Alert, Anchor, Box, Button, Drawer, Group, Loader, Stack, Text } from '
 import { EmptyState } from '@/components/EmptyState';
 import { axiosInstance } from '@/interceptors/axiosInterceptor';
 import { getErrorMessage } from '@/utils/getErrorMessage';
+import { formatDateTime } from '@/utils/format';
 import { timeAgo } from '@/utils/timeAgo';
 
 type Entry = { _id: string; action: string; description: string; createdAt: string };
@@ -49,44 +50,55 @@ const Panel = () => {
   }, []);
 
   return (
-    <Stack gap={0}>
-      {error && (
-        <Alert color="red" mb="sm">
-          {error}{' '}
-          <Anchor component="button" onClick={() => load(1)}>
-            Retry
-          </Anchor>
-        </Alert>
-      )}
-      {!loading && !error && items.length === 0 && (
-        <EmptyState title="No activity yet" description="Your actions appear here." />
-      )}
-      {items.map((e) => (
-        <Box key={e._id} py="sm" style={{ borderBottom: '1px solid var(--ldg-border)' }}>
-          <Text size="sm">{e.description}</Text>
-          <Text size="xs" c="dimmed">
-            {timeAgo(e.createdAt)} · {new Date(e.createdAt).toLocaleString('en-GB')}
-          </Text>
-        </Box>
-      ))}
-      {loading && (
-        <Group justify="center" py="md">
-          <Loader size="sm" />
-        </Group>
-      )}
-      {!loading && page < totalPages && (
-        <Button variant="default" mt="sm" onClick={() => load(page + 1)}>
-          Load more
-        </Button>
-      )}
-    </Stack>
+    <Box p={20} style={{ height: '100%', overflowY: 'auto' }}>
+      <Stack gap={0}>
+        {error && (
+          <Alert color="red" mb="sm">
+            {error}{' '}
+            <Anchor component="button" onClick={() => load(1)}>
+              Retry
+            </Anchor>
+          </Alert>
+        )}
+        {!loading && !error && items.length === 0 && (
+          <EmptyState title="No activity yet" description="Your actions appear here." />
+        )}
+        {items.map((e) => (
+          <Box key={e._id} py="sm" style={{ borderBottom: '1px solid var(--ldg-border)' }}>
+            <Text size="sm" fw={500}>
+              {e.description}
+            </Text>
+            <Text size="xs" c="dimmed" mt={2}>
+              {timeAgo(e.createdAt)} · {formatDateTime(e.createdAt)}
+            </Text>
+          </Box>
+        ))}
+        {loading && (
+          <Group justify="center" py="md">
+            <Loader size="sm" />
+          </Group>
+        )}
+        {!loading && page < totalPages && (
+          <Button variant="default" mt="sm" onClick={() => load(page + 1)}>
+            Load more
+          </Button>
+        )}
+      </Stack>
+    </Box>
   );
 };
 
 type Props = { opened: boolean; onClose: () => void };
 
 export const ActivityDrawer = ({ opened, onClose }: Props) => (
-  <Drawer opened={opened} onClose={onClose} position="right" size={440} title="Activity log">
+  <Drawer
+    opened={opened}
+    onClose={onClose}
+    position="right"
+    size={440}
+    styles={{ content: { maxWidth: '100%' } }}
+    title="My activity"
+  >
     <Panel />
   </Drawer>
 );

@@ -151,6 +151,11 @@ body {
 @media (max-width: 47.99em) {
   .sheet-footer {
     flex-wrap: nowrap;
+    /* long forms scroll under it, so the primary action is always reachable */
+    position: sticky;
+    bottom: 0;
+    background: var(--ldg-surface-raised);
+    z-index: 1;
   }
   .sheet-footer > * {
     flex: 1;

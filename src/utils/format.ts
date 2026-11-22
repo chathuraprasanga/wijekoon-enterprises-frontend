@@ -16,6 +16,18 @@ export const formatDate = (value: string | Date | null | undefined) =>
       })
     : DASH;
 
+/** 08 Nov 2026, 14:05 */
+export const formatDateTime = (value: string | Date | null | undefined) =>
+  value
+    ? new Date(value).toLocaleString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    : DASH;
+
 /** 0771234567 -> 077 123 4567 (entered as 07XXXXXXXX, shown as 07X XXX XXXX). */
 export const formatPhone = (value: string | null | undefined) => {
   const d = (value ?? '').replace(/\D/g, '');
