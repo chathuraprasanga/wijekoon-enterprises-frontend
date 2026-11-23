@@ -107,6 +107,7 @@ const AddEditSalePage = () => {
   const wide = useMediaQuery('(min-width: 75em)');
   const can = useCan();
   // Cheques already on the sale are only seen here unless the role may edit / delete them.
+  const canViewCheque = can('received-cheque:read');
   const canEditCheque = can('received-cheque:update');
   const canDeleteCheque = can('received-cheque:delete');
   const customers = useLookup<Customer>('customers');
@@ -194,7 +195,7 @@ const AddEditSalePage = () => {
             branch: c.branchCode,
             number: c.chequeNumber,
             deposit: new Date(c.depositDate),
-            saved: !canEditCheque, // read-only: never sent back on save
+            saved: !canEditCheque || !canViewCheque, // read-only: never sent back on save
           })),
         );
       } catch (e) {
@@ -206,7 +207,7 @@ const AddEditSalePage = () => {
     return () => {
       live = false;
     };
-  }, [id, dispatch, canEditCheque]);
+  }, [id, dispatch, canEditCheque, canViewCheque]);
 
   // --- the math (same rules as the server and the tablet app) ---
   const subtotal = lines.reduce((s, l) => s + lineTotal(l), 0);
@@ -794,7 +795,17 @@ const AddEditSalePage = () => {
                           </ActionIcon>
                         )}
                       </Group>
-                      {c.id && !canEditCheque ? (
+                      {c.id && !canViewCheque ? (
+                        <SimpleGrid cols={{ base: 1, sm: 2 }}>
+                          <Field label="Amount">{formatLkr(n(c.amount))}</Field>
+                          <Field label="Deposit date">** *** ****</Field>
+                          <Field label="Bank">***** (****)</Field>
+                          <Field label="Branch">{c.branch}</Field>
+                          <Field label="Cheque number">
+                            <span className="mono">{c.number}</span>
+                          </Field>
+                        </SimpleGrid>
+                      ) : c.id && !canEditCheque ? (
                         <SimpleGrid cols={{ base: 1, sm: 2 }}>
                           <Field label="Amount">{formatLkr(n(c.amount))}</Field>
                           <Field label="Deposit date">
