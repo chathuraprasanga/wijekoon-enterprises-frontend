@@ -858,6 +858,28 @@ const AddEditOrderPage = () => {
                 }
               >
                 <Stack gap="md">
+                  {id && editing && (
+                    <SimpleGrid cols={{ base: 1, sm: 2 }}>
+                      <NumberInput
+                        label="Cash"
+                        description="Paid in cash so far"
+                        {...moneyInput}
+                        value={round2(
+                          (editing.payments ?? [])
+                            .filter((p) => p.method === 'cash' && p.status === 'completed')
+                            .reduce((t, p) => t + p.amount, 0),
+                        )}
+                        disabled
+                      />
+                      <NumberInput
+                        label="Credit"
+                        description="Still to pay"
+                        {...moneyInput}
+                        value={editing.outstandingAmount}
+                        disabled
+                      />
+                    </SimpleGrid>
+                  )}
                   {id && editing && (editing.payments?.length ?? 0) > 0 && (
                     <Stack gap={4}>
                       <Text className="eyebrow">Payments so far</Text>
