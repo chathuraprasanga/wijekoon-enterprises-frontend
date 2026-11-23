@@ -144,7 +144,7 @@ const AddEditOrderPage = () => {
   const keys = useRef<Map<string, string>>(new Map());
 
   const touch = () => setDirty(true);
-  const canPay = can('payment:create');
+  const canPay = can('order:update');
 
   // Once money has moved, only the header may change (the server enforces it too).
   const locked =

@@ -95,7 +95,7 @@ const OrderDetailPage = () => {
         action={
           order && (
             <Group gap="xs" wrap="wrap">
-              {open && can('payment:create') && (
+              {open && can('order:update') && (
                 <Button
                   leftSection={<IconCash size={16} aria-hidden />}
                   onClick={() => setPaying(true)}
@@ -294,7 +294,7 @@ const OrderDetailPage = () => {
             </Box>
           </SectionCard>
 
-          {can('payment:read') && (
+          {can('order:read') && (
             <SectionCard
               title="Payment history"
               subtitle="Payments recorded against this order."
