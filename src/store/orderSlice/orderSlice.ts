@@ -29,7 +29,13 @@ export type OrderPayment = {
   status: PaymentStatus;
   recordedByName?: string;
   reversalReason?: string;
-  issuedCheque?: { _id: string; chequeNumber: string; chequeDate: string; status: string } | null;
+  issuedCheque?: {
+    _id: string;
+    chequeNumber: string;
+    chequeDate: string;
+    status: string;
+    bank?: string | null;
+  } | null;
   customerCheque?: {
     _id: string;
     chequeNumber: string;
@@ -198,6 +204,16 @@ export const setOrderCash = thunk(
   'setCash',
   async ({ id, amount }: { id: string; amount: number }) =>
     (await axiosInstance.post<Order>(`/orders/${id}/cash`, { amount })).data,
+);
+export const editChequePayment = thunk(
+  'payEditCheque',
+  async ({
+    id,
+    body,
+  }: {
+    id: string;
+    body: { bank: string; chequeNumber: string; chequeDate: string; amount: number };
+  }) => (await axiosInstance.patch<OrderPayment>(`/payments/${id}/cheque`, body)).data,
 );
 export const reversePayment = thunk(
   'payReverse',

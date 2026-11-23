@@ -38,6 +38,7 @@ import {
   createOrder,
   createPayment,
   setOrderCash,
+  editChequePayment,
   fetchOrderById,
   fetchSupplierItems,
   fetchTransferableCheques,
@@ -48,8 +49,9 @@ import { formatDate, formatLkr, formatSize, toYmd } from '@/utils/format';
 import { useBusinessRules, ymdPlusDays } from '@/hooks/useBusinessRules';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 import { useCan } from '@/utils/permissions';
-import { METHOD_LABELS } from './orderLabels';
-import { PaymentRowStatusBadge, PaymentStatusBadge } from './orderBadges';
+import { PaymentStatusBadge } from './orderBadges';
+import { Field } from '@/components/Field';
+import { bankDisplay, branchDisplay } from '@/utils/bankData';
 
 type Num = number | '';
 type Line = { key: number; product: string | null; price: Num; qty: Num; disc: Num; tax: Num };
@@ -66,6 +68,7 @@ type CustCheque = { key: number; cheque: string | null };
 
 const n = (v: Num) => (v === '' ? 0 : v);
 const round2 = (v: number) => Math.round(v * 100) / 100;
+type ExOur = { amount: Num; bank: string | null; number: string; date: string };
 let nextKey = 1;
 const newLine = (): Line => ({
   key: nextKey++,
@@ -125,6 +128,8 @@ const AddEditOrderPage = () => {
   const [shipping, setShipping] = useState<Num>('');
   const [other, setOther] = useState<Num>('');
   const [cash, setCash] = useState<Num>('');
+  // Edit: our cheques already on the order that this role may change, keyed by payment id.
+  const [exOurs, setExOurs] = useState<Record<string, ExOur>>({});
   // Until cash is typed it defaults to everything the cheques do not cover (a fully paid order).
   const [cashEdited, setCashEdited] = useState(false);
   const [ours, setOurs] = useState<OurCheque[]>([]);
@@ -194,6 +199,26 @@ const AddEditOrderPage = () => {
           ),
         );
         setCashEdited(true);
+        setExOurs(
+          Object.fromEntries(
+            (o.payments ?? [])
+              .filter(
+                (p) =>
+                  p.method === 'issued_cheque' &&
+                  p.status === 'completed' &&
+                  p.issuedCheque?.status === 'ISSUED',
+              )
+              .map((p) => [
+                p._id,
+                {
+                  amount: p.amount,
+                  bank: p.issuedCheque!.bank ?? null,
+                  number: p.issuedCheque!.chequeNumber,
+                  date: toYmd(p.issuedCheque!.chequeDate),
+                },
+              ]),
+          ),
+        );
       })
       .catch((e) => live && setLoadError(typeof e === 'string' ? e : getErrorMessage(e)))
       .finally(() => live && setLoading(false));
@@ -218,8 +243,7 @@ const AddEditOrderPage = () => {
 
   // Cheques in hand that may be handed to a supplier (create only; payments are made on save).
   useEffect(() => {
-    if (step !== 1 || id || !canPay || !canReceived || transferable.length || transferableError)
-      return;
+    if (step !== 1 || !canPay || !canReceived || transferable.length || transferableError) return;
     dispatch(fetchTransferableCheques())
       .unwrap()
       .then(setTransferable)
@@ -245,13 +269,28 @@ const AddEditOrderPage = () => {
       .filter((p) => p.method === 'cash' && p.status === 'completed')
       .reduce((t, p) => t + p.amount, 0),
   );
-  const otherPaid = editing ? round2(Math.max(0, (editing.paidAmount ?? 0) - cashPaidNow)) : 0;
+  // Edited amounts of our existing cheques move what the cheques have paid.
+  const draftDelta = round2(
+    Object.entries(exOurs).reduce(
+      (t, [pid, d]) =>
+        t + n(d.amount) - (editing?.payments?.find((p) => p._id === pid)?.amount ?? 0),
+      0,
+    ),
+  );
+  const otherPaid = editing
+    ? round2(Math.max(0, (editing.paidAmount ?? 0) - cashPaidNow) + draftDelta)
+    : 0;
   // Credit is whatever cash and cheques do not cover: never typed.
   const credit = round2(Math.max(0, net - cashValue - chequeValue - otherPaid));
   const remaining = round2(net - (cashValue + chequeValue + otherPaid));
   // A cheque only counts as paid once it clears; until then just cash is paid.
   const status =
     cashValue >= net - 0.01 && net > 0 ? 'paid' : cashValue > 0 ? 'partially_paid' : 'unpaid';
+
+  // Edit: cash and cheques already paid both count.
+  const paidTotal = cashValue + otherPaid;
+  const editStatus =
+    paidTotal >= net - 0.01 && net > 0 ? 'paid' : paidTotal > 0 ? 'partially_paid' : 'unpaid';
 
   const picked = lines.filter((l) => l.product);
   const errors1: string[] = [];
@@ -279,7 +318,7 @@ const AddEditOrderPage = () => {
     !!dueDate && !!date && dueDate < date,
     "The payment due date can't be before the order date",
   );
-  if (!id && canPay) {
+  if (canPay) {
     err2(remaining < -0.01, `Cash and cheques are ${formatLkr(-remaining)} over the net total`);
     ours.forEach((c, i) => {
       const row = `Our cheque ${i + 1}`;
@@ -293,6 +332,13 @@ const AddEditOrderPage = () => {
       );
     });
     custs.forEach((c, i) => err2(!c.cheque, `Received cheque ${i + 1}: select a cheque`));
+    Object.values(exOurs).forEach((d, i) => {
+      const row = `Our cheque ${i + 1}`;
+      err2(n(d.amount) <= 0, `${row}: enter an amount`);
+      err2(!d.bank, `${row}: select a bank account`);
+      err2(!/^\d{6}$/.test(d.number), `${row}: cheque number is 6 digits`);
+      err2(!d.date, `${row}: select the cheque date`);
+    });
   }
   const errors = step === 0 ? errors1 : errors2;
   // The same rules without the `tried` gates, per step (to decide if the flow may go on).
@@ -304,9 +350,11 @@ const AddEditOrderPage = () => {
         net > 0));
   const valid2 = () =>
     !(dueDate && date && dueDate < date) &&
-    (id ||
-      !canPay ||
+    (!canPay ||
       (remaining >= -0.01 &&
+        Object.values(exOurs).every(
+          (d) => n(d.amount) > 0 && d.bank && /^\d{6}$/.test(d.number) && d.date,
+        ) &&
         ours.every(
           (c, i) =>
             n(c.amount) > 0 &&
@@ -389,44 +437,68 @@ const AddEditOrderPage = () => {
       const order = created.current;
       // New orders: pay what was entered. Each payment has a fixed key, so a retry never doubles it.
       const today = toYmd(new Date());
-      const plan: { id: string; body: Omit<PaymentInput, 'idempotencyKey'> }[] = id
-        ? []
-        : [
-            ...(cashValue > 0
-              ? [
-                  {
-                    id: 'cash',
-                    body: { method: 'cash' as const, amount: cashValue, paymentDate: today },
-                  },
-                ]
-              : []),
-            ...ours.map((c) => ({
-              id: `o${c.key}`,
-              body: {
-                method: 'issued_cheque' as const,
-                amount: n(c.amount),
-                paymentDate: today,
-                cheque: {
-                  bank: c.bank!,
-                  chequeNumber: c.number.trim(),
-                  chequeDate: c.date,
+      const plan: { id: string; body: Omit<PaymentInput, 'idempotencyKey'> }[] = [
+        ...(!id && cashValue > 0
+          ? [
+              {
+                id: 'cash',
+                body: { method: 'cash' as const, amount: cashValue, paymentDate: today },
+              },
+            ]
+          : []),
+        ...ours.map((c) => ({
+          id: `o${c.key}`,
+          body: {
+            method: 'issued_cheque' as const,
+            amount: n(c.amount),
+            paymentDate: today,
+            cheque: {
+              bank: c.bank!,
+              chequeNumber: c.number.trim(),
+              chequeDate: c.date,
+            },
+          },
+        })),
+        ...custs.map((c) => ({
+          id: `c${c.key}`,
+          body: {
+            method: 'customer_cheque' as const,
+            customerCheque: c.cheque!,
+            paymentDate: today,
+            transferDate: today,
+          },
+        })),
+      ];
+      // Edit: the Cash field is the cash total (the server records or reverses the difference), and
+      // our cheques already on the order are saved as edited. Less cash goes first, more cash last,
+      // so the order's balance never overflows in between.
+      const setCashNow = () => dispatch(setOrderCash({ id: id!, amount: cashValue })).unwrap();
+      if (id && cashValue < cashPaidNow) await setCashNow();
+      if (id) {
+        for (const [pid, d] of Object.entries(exOurs)) {
+          const was = editing?.payments?.find((p) => p._id === pid);
+          if (
+            was &&
+            (n(d.amount) !== was.amount ||
+              d.bank !== (was.issuedCheque?.bank ?? null) ||
+              d.number !== was.issuedCheque?.chequeNumber ||
+              d.date !== toYmd(was.issuedCheque?.chequeDate))
+          ) {
+            await dispatch(
+              editChequePayment({
+                id: pid,
+                body: {
+                  bank: d.bank!,
+                  chequeNumber: d.number,
+                  chequeDate: d.date,
+                  amount: n(d.amount),
                 },
-              },
-            })),
-            ...custs.map((c) => ({
-              id: `c${c.key}`,
-              body: {
-                method: 'customer_cheque' as const,
-                customerCheque: c.cheque!,
-                paymentDate: today,
-                transferDate: today,
-              },
-            })),
-          ];
-      // Edit: the Cash field is the cash total; the server records or reverses the difference.
-      if (id && cashValue !== cashPaidNow) {
-        await dispatch(setOrderCash({ id, amount: cashValue })).unwrap();
+              }),
+            ).unwrap();
+          }
+        }
       }
+      if (id && cashValue > cashPaidNow) await setCashNow();
       for (const p of plan) {
         if (paid.current.has(p.id)) continue;
         if (!keys.current.has(p.id)) keys.current.set(p.id, crypto.randomUUID());
@@ -448,7 +520,7 @@ const AddEditOrderPage = () => {
       setTimeout(() => navigate('/app/orders'), 0);
     } catch (e) {
       const msg = typeof e === 'string' ? e : getErrorMessage(e);
-      const left = (cashValue > 0 ? 1 : 0) + ours.length + custs.length - paid.current.size;
+      const left = (!id && cashValue > 0 ? 1 : 0) + ours.length + custs.length - paid.current.size;
       setError(
         created.current
           ? `Order ${created.current.orderNo} was saved, but ${left === 1 ? 'a payment' : 'some payments'} could not be recorded: ${msg}. Save again to retry only what is left.`
@@ -501,7 +573,10 @@ const AddEditOrderPage = () => {
           t.customer?.firstName ? ` · ${t.customer.firstName} ${t.customer.lastName ?? ''}` : ''
         }`,
       }));
-  const payingNow = !id && canPay;
+  const payingNow = canPay;
+  const canViewOurs = can('issued-cheque:read');
+  const canViewReceived = can('received-cheque:read');
+  const canEditOurs = can('issued-cheque:update');
 
   return (
     <>
@@ -894,29 +969,13 @@ const AddEditOrderPage = () => {
                       />
                     </SimpleGrid>
                   )}
-                  {id && editing && (editing.payments?.length ?? 0) > 0 && (
-                    <Stack gap={4}>
-                      <Text className="eyebrow">Payments so far</Text>
-                      {editing.payments!.map((p) => (
-                        <Group key={p._id} justify="space-between" wrap="nowrap">
-                          <Group gap={6} wrap="nowrap">
-                            <Text size="sm">{METHOD_LABELS[p.method]}</Text>
-                            <PaymentRowStatusBadge status={p.status} />
-                          </Group>
-                          <Text size="sm" className="num">
-                            {formatLkr(p.amount)}
-                          </Text>
-                        </Group>
-                      ))}
-                    </Stack>
-                  )}
                   {!id && !canPay && (
                     <Text size="xs" c="dimmed">
                       You don&apos;t have permission to record payments. The order will be saved
                       unpaid, on credit.
                     </Text>
                   )}
-                  {payingNow && (
+                  {!id && payingNow && (
                     <SimpleGrid cols={{ base: 1, sm: 2 }}>
                       <NumberInput
                         label="Cash"
@@ -952,6 +1011,128 @@ const AddEditOrderPage = () => {
                       touch();
                     }}
                   />
+                  {(() => {
+                    // Cheques already on the order. Without the matching View only the amount shows;
+                    // with it they are read-only, except our own ones with Issue Cheques → Edit.
+                    const seen = { our: 0, recv: 0 };
+                    return (editing?.payments ?? [])
+                      .filter((p) => p.method !== 'cash' && p.status !== 'reversed')
+                      .map((p) => {
+                        const our = p.method === 'issued_cheque';
+                        const ic = p.issuedCheque;
+                        const cc = p.customerCheque;
+                        const k = our ? ++seen.our : ++seen.recv;
+                        const draft = exOurs[p._id];
+                        const canSee = our ? canViewOurs : canViewReceived;
+                        const bankName = banks.items.find((b) => b._id === ic?.bank)?.bankName;
+                        return (
+                          <Box
+                            key={p._id}
+                            p="sm"
+                            style={{ border: '1px solid var(--ldg-border)', borderRadius: 8 }}
+                          >
+                            <Text size="sm" fw={600} mb={6}>
+                              {our ? 'Our cheque' : 'Received cheque'} {k}
+                            </Text>
+                            {!canSee ? (
+                              <SimpleGrid cols={{ base: 1, sm: 2 }}>
+                                <Field label="Amount">{formatLkr(p.amount)}</Field>
+                                <Field label="Cheque date">** *** ****</Field>
+                                <Field label="Bank">***** (****)</Field>
+                                {!our && <Field label="Branch">{cc?.branchCode}</Field>}
+                                <Field label="Cheque number">
+                                  <span className="mono">{(ic ?? cc)?.chequeNumber}</span>
+                                </Field>
+                              </SimpleGrid>
+                            ) : our && draft && canEditOurs ? (
+                              <SimpleGrid cols={{ base: 1, sm: 2 }}>
+                                <NumberInput
+                                  label="Amount"
+                                  placeholder="0.00"
+                                  {...moneyInput}
+                                  value={draft.amount}
+                                  error={showErr2(n(draft.amount) <= 0)}
+                                  onChange={(v) => {
+                                    setExOurs((x) => ({
+                                      ...x,
+                                      [p._id]: { ...draft, amount: v === '' ? '' : Number(v) },
+                                    }));
+                                    touch();
+                                  }}
+                                />
+                                <DateInput
+                                  label="Cheque date"
+                                  placeholder="Select date"
+                                  value={draft.date || null}
+                                  error={showErr2(!draft.date)}
+                                  onChange={(v) => {
+                                    setExOurs((x) => ({
+                                      ...x,
+                                      [p._id]: { ...draft, date: toYmd(v) },
+                                    }));
+                                    touch();
+                                  }}
+                                />
+                                <Select
+                                  label="Bank account"
+                                  searchable
+                                  placeholder="Select an account"
+                                  data={bankData}
+                                  value={draft.bank}
+                                  error={showErr2(!draft.bank, 'Select an account')}
+                                  onChange={(v) => {
+                                    setExOurs((x) => ({ ...x, [p._id]: { ...draft, bank: v } }));
+                                    touch();
+                                  }}
+                                />
+                                <TextInput
+                                  label="Cheque number"
+                                  placeholder="6 digits"
+                                  maxLength={6}
+                                  inputMode="numeric"
+                                  value={draft.number}
+                                  error={
+                                    showErr2(!/^\d{6}$/.test(draft.number)) && 'Must be 6 digits'
+                                  }
+                                  onChange={(e) => {
+                                    setExOurs((x) => ({
+                                      ...x,
+                                      [p._id]: {
+                                        ...draft,
+                                        number: e.currentTarget.value.replace(/\D/g, ''),
+                                      },
+                                    }));
+                                    touch();
+                                  }}
+                                />
+                              </SimpleGrid>
+                            ) : our ? (
+                              <SimpleGrid cols={{ base: 1, sm: 2 }}>
+                                <Field label="Amount">{formatLkr(p.amount)}</Field>
+                                <Field label="Cheque date">
+                                  {ic?.chequeDate ? formatDate(ic.chequeDate) : '—'}
+                                </Field>
+                                <Field label="Bank account">{bankName ?? '—'}</Field>
+                                <Field label="Cheque number">
+                                  <span className="mono">{ic?.chequeNumber}</span>
+                                </Field>
+                              </SimpleGrid>
+                            ) : (
+                              <SimpleGrid cols={{ base: 1, sm: 2 }}>
+                                <Field label="Amount">{formatLkr(p.amount)}</Field>
+                                <Field label="Bank">{cc ? bankDisplay(cc.bankCode) : '—'}</Field>
+                                <Field label="Branch">
+                                  {cc ? branchDisplay(cc.bankCode, cc.branchCode) : '—'}
+                                </Field>
+                                <Field label="Cheque number">
+                                  <span className="mono">{cc?.chequeNumber}</span>
+                                </Field>
+                              </SimpleGrid>
+                            )}
+                          </Box>
+                        );
+                      });
+                  })()}
                   {payingNow &&
                     ours.map((c, i) => (
                       <Box
@@ -1124,20 +1305,21 @@ const AddEditOrderPage = () => {
                 {n(discount) > 0 && <Row label="Discount" value={-n(discount)} />}
                 <Row label="Net total" value={net} strong bordered />
                 {/* Payment only matters once there is something to pay, on the Payment step */}
-                {step === 1 && net > 0 && payingNow && (
+                {step === 1 && net > 0 && (payingNow || !!editing) && (
                   <>
                     <Text className="eyebrow" mt="sm">
                       Paid by
                     </Text>
                     {cashValue > 0 && <Row label="Cash" value={cashValue} />}
+                    {credit > 0 && <Row label="Credit" value={credit} />}
                     {oursValue > 0 && <Row label="Our cheques" value={oursValue} />}
                     {custValue > 0 && <Row label="Received cheques" value={custValue} />}
-                    {credit > 0 && <Row label="Credit" value={credit} />}
+                    {otherPaid > 0 && <Row label="Cheque" value={otherPaid} />}
                     <Group justify="space-between" mt="xs">
                       <Text size="sm" c="dimmed">
                         Status
                       </Text>
-                      <PaymentStatusBadge status={status} />
+                      <PaymentStatusBadge status={editing ? editStatus : status} />
                     </Group>
                   </>
                 )}
