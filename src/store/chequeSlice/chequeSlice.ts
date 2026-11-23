@@ -6,8 +6,11 @@ export type Cheque = {
   _id: string;
   /** Only on the combined list: a cheque we received, or one we issued to a supplier. */
   kind?: 'received' | 'issued';
-  customer: string;
-  sale: string;
+  /** 'other' = a party that isn't a customer (no customer / sale). */
+  partyType?: 'customer' | 'supplier' | 'other';
+  partyName?: string;
+  customer?: string;
+  sale?: string;
   depositDate: string;
   bankCode: string;
   branchCode: string;
@@ -35,8 +38,28 @@ export type Cheque = {
 
 export type ChequeInput = Pick<
   Cheque,
-  'customer' | 'sale' | 'depositDate' | 'bankCode' | 'branchCode' | 'chequeNumber' | 'amount'
-> & { overrideDepositLimit?: boolean };
+  'depositDate' | 'bankCode' | 'branchCode' | 'chequeNumber' | 'amount'
+> & {
+  customer?: string;
+  sale?: string;
+  partyType?: 'customer' | 'other';
+  partyName?: string;
+  overrideDepositLimit?: boolean;
+};
+
+/** A cheque we write from one of our bank accounts, to a supplier or any other payee. */
+export type IssueChequeInput = {
+  partyType: 'supplier' | 'other';
+  supplier?: string;
+  /** Supplier cheques only: pays this order, so its balance follows. */
+  order?: string;
+  payee?: string;
+  bank: string;
+  chequeNumber: string;
+  chequeDate: string;
+  amount: number;
+  notes?: string;
+};
 
 export type PagedChequesParams = {
   page?: number;
@@ -44,7 +67,11 @@ export type PagedChequesParams = {
   searchText?: string;
   customer?: string;
   sale?: string;
-  type?: 'all';
+  type?: 'all' | 'issued';
+  /** Received tab: one other party by name. Issued tab: one supplier, or one other payee by name. */
+  partyName?: string;
+  supplier?: string;
+  payee?: string;
   sortBy?: string;
   sortType?: string;
 };
@@ -155,3 +182,39 @@ const chequeSlice = createSlice({
 });
 
 export default chequeSlice.reducer;
+
+export const issueCheque = createAsyncThunk(
+  'cheque/issue',
+  async (payload: IssueChequeInput, { rejectWithValue }) => {
+    try {
+      return (await axiosInstance.post('/cheques/issue', payload)).data;
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error));
+    }
+  },
+);
+
+export const setIssuedChequeStatus = createAsyncThunk(
+  'cheque/issuedStatus',
+  async (p: { id: string; status: 'CLEARED' | 'RETURNED' }, { rejectWithValue }) => {
+    try {
+      return (await axiosInstance.post(`/cheques/issued/${p.id}/status`, { status: p.status }))
+        .data;
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error));
+    }
+  },
+);
+
+/** Names of other parties used before, for the searchable pick-list. */
+export const fetchChequeParties = createAsyncThunk(
+  'cheque/parties',
+  async (direction: 'received' | 'issued', { rejectWithValue }) => {
+    try {
+      return (await axiosInstance.get<string[]>('/cheques/parties', { params: { direction } }))
+        .data;
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error));
+    }
+  },
+);

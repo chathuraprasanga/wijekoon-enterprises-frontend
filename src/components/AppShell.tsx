@@ -66,7 +66,12 @@ const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
     items: [
       { label: 'Sales', path: '/app/sales', icon: IconCoin, permission: 'sale:read' },
       { label: 'Orders', path: '/app/orders', icon: IconShoppingCart, permission: 'order:read' },
-      { label: 'Cheques', path: '/app/cheques', icon: IconReceipt2, permission: 'cheque:read' },
+      {
+        label: 'Cheques',
+        path: '/app/cheques',
+        icon: IconReceipt2,
+        permission: 'received-cheque:read|issued-cheque:read',
+      },
     ],
   },
   {

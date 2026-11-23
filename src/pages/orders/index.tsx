@@ -17,12 +17,7 @@ import type { Supplier } from '@/store/supplierSlice/supplierSlice';
 import { useLookup } from '@/hooks/useLookup';
 import { formatDate, formatLkr } from '@/utils/format';
 import { useCan } from '@/utils/permissions';
-import {
-  OrderStatusBadge,
-  OverdueBadge,
-  PaymentRowStatusBadge,
-  PaymentStatusBadge,
-} from './orderBadges';
+import { OrderStatusBadge, OverdueBadge, PaymentStatusBadge } from './orderBadges';
 import { METHOD_LABELS } from './orderLabels';
 
 const SORT_MAP = {
@@ -155,7 +150,7 @@ const OrdersPage = () => {
         columns={[
           {
             key: 'orderNo',
-            header: 'Order no.',
+            header: 'Order ID',
             sortable: true,
             primary: true,
             render: (o) => (
@@ -198,7 +193,7 @@ const OrdersPage = () => {
           },
           {
             key: 'payment',
-            header: 'Payment',
+            header: 'Status',
             sortable: true,
             badge: true,
             render: (o) => (
@@ -233,32 +228,9 @@ const OrdersPage = () => {
         {view && (
           <>
             <Stack gap="md">
-              <Field label="Payment status">
-                <Group gap={6} mt={4}>
-                  <PaymentStatusBadge status={view.paymentStatus} />
-                  {view.isOverdue && <OverdueBadge />}
-                </Group>
-              </Field>
               <Field label="Supplier">{view.supplier?.name}</Field>
               <Field label="Supplier reference">{view.supplierRef}</Field>
               <Field label="Payment due">{view.dueDate ? formatDate(view.dueDate) : '—'}</Field>
-              {full?.payments && full.payments.length > 0 && (
-                <Field label="Payments">
-                  <Stack gap={2} mt={4}>
-                    {full.payments.map((p) => (
-                      <Group key={p._id} justify="space-between" wrap="nowrap">
-                        <Group gap={6} wrap="nowrap">
-                          <Text size="sm">{METHOD_LABELS[p.method]}</Text>
-                          <PaymentRowStatusBadge status={p.status} />
-                        </Group>
-                        <Text size="sm" className="num">
-                          {formatLkr(p.amount)}
-                        </Text>
-                      </Group>
-                    ))}
-                  </Stack>
-                </Field>
-              )}
             </Stack>
             <Text className="eyebrow" mt="lg" mb="xs">
               Items
@@ -326,6 +298,22 @@ const OrdersPage = () => {
                 ]}
               />
             </Box>
+            <Stack gap="md" mt="lg">
+              {full?.payments && full.payments.length > 0 && (
+                <Field label="Payments">
+                  <Stack gap={2} mt={4}>
+                    {full.payments.map((p) => (
+                      <Group key={p._id} justify="space-between" wrap="nowrap">
+                        <Text size="sm">{METHOD_LABELS[p.method]}</Text>
+                        <Text size="sm" className="num">
+                          {formatLkr(p.amount)}
+                        </Text>
+                      </Group>
+                    ))}
+                  </Stack>
+                </Field>
+              )}
+            </Stack>
           </>
         )}
       </DetailDialog>

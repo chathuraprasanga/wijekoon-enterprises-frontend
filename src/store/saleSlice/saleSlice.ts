@@ -36,6 +36,14 @@ export type Sale = {
   paymentMethod: SalePaymentMethod;
   notes?: string;
   dueDate?: string;
+  createdByName?: string;
+  paymentHistory?: {
+    method: string;
+    amount: number;
+    at: string;
+    reference?: string;
+    byName?: string;
+  }[];
   /** Empty/missing on sales saved before split payments existed. */
   payments?: SalePayment[];
   createdAt: string;
@@ -120,6 +128,25 @@ export const updateSale = createAsyncThunk(
     try {
       const { _id, ...body } = payload;
       const { data } = await axiosInstance.patch<Sale>(`/sales/${_id}`, body);
+      return data;
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error));
+    }
+  },
+);
+
+export type SalePaymentInput = {
+  method: 'cash' | 'cheque';
+  amount: number;
+  cheque?: { depositDate: string; bankCode: string; branchCode: string; chequeNumber: string };
+};
+
+export const recordSalePayment = createAsyncThunk(
+  'sale/recordPayment',
+  async (p: SalePaymentInput & { id: string }, { rejectWithValue }) => {
+    try {
+      const { id, ...body } = p;
+      const { data } = await axiosInstance.post<Sale>(`/sales/${id}/payments`, body);
       return data;
     } catch (error) {
       return rejectWithValue(getErrorMessage(error));

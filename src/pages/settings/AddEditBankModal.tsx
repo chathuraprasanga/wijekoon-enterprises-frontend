@@ -124,20 +124,34 @@ const BankForm = ({ bank, onClose, onSaved }: Omit<Props, 'opened'>) => {
         />
       </SimpleGrid>
       <TextInput
+        placeholder="Enter account number"
         label="Account number"
         withAsterisk
         description="Keep leading zeros."
         {...form.getInputProps('accountNumber')}
       />
-      <TextInput label="Account name" withAsterisk {...form.getInputProps('accountName')} />
+      <TextInput
+        placeholder="Enter account name"
+        label="Account name"
+        withAsterisk
+        {...form.getInputProps('accountName')}
+      />
       <Select
+        placeholder="Select account type"
         label="Account type"
         withAsterisk
         allowDeselect={false}
         data={[...ACCOUNT_TYPES]}
         {...form.getInputProps('accountType')}
       />
-      <Textarea label="Notes" autosize minRows={2} maxRows={4} {...form.getInputProps('notes')} />
+      <Textarea
+        placeholder="Optional notes"
+        label="Notes"
+        autosize
+        minRows={2}
+        maxRows={4}
+        {...form.getInputProps('notes')}
+      />
       <Switch
         label="Active"
         description="Inactive accounts can't be chosen for new cheques. Existing records are unaffected."

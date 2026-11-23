@@ -86,16 +86,6 @@ export const SaleStatusBadge = ({ status }: { status: 'paid' | 'partially_paid' 
     <StatusBadge tone="warning" label="Not paid" icon={IconAlertTriangle} />
   );
 
-// The API stores no clearance state, so cheque status comes from the deposit date alone.
-export const ChequeStatusBadge = ({ depositDate }: { depositDate: string }) => {
-  const today = new Date().toISOString().slice(0, 10);
-  const day = depositDate.slice(0, 10);
-  if (day < today)
-    return <StatusBadge tone="danger" label="Deposit date passed" icon={IconAlertCircle} />;
-  if (day === today) return <StatusBadge tone="warning" label="Due today" icon={IconClock} />;
-  return <StatusBadge tone="info" label="Upcoming" icon={IconCalendar} />;
-};
-
 export const NotAvailableBadge = () => (
   <StatusBadge tone="info" label="Not available yet" icon={IconHourglass} />
 );

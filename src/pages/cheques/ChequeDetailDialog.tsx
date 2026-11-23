@@ -3,7 +3,7 @@ import { Box, Button, Stack, Text } from '@mantine/core';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { DetailList } from '@/components/DetailList';
 import { DetailDialog } from '@/components/DetailDialog';
-import { ChequeLifecycleBadge, ChequeStatusBadge } from '@/components/StatusBadge';
+import { ChequeLifecycleBadge } from '@/components/StatusBadge';
 import { toNotify } from '@/hooks/toNotify';
 import { useBusinessRules, ymdPlusDays } from '@/hooks/useBusinessRules';
 import { useAppDispatch } from '@/store/hooks';
@@ -41,7 +41,7 @@ export const ChequeDetailDialog = ({ cheque, customerName, onClose, onChanged }:
   const [loading, setLoading] = useState(false);
 
   const status = cheque?.status ?? 'RECEIVED';
-  const moves = can('cheque:update') ? (ACTIONS[status] ?? []) : [];
+  const moves = can('received-cheque:update') ? (ACTIONS[status] ?? []) : [];
 
   const run = async () => {
     if (!cheque || !action) return;
@@ -96,7 +96,6 @@ export const ChequeDetailDialog = ({ cheque, customerName, onClose, onChanged }:
               </Text>
               <Stack gap={6} mt={4} align="flex-start">
                 <ChequeLifecycleBadge status={status} />
-                {status === 'RECEIVED' && <ChequeStatusBadge depositDate={cheque.depositDate} />}
               </Stack>
               {status === 'TRANSFERRED' && (
                 <Text size="sm" c="dimmed" mt={6}>

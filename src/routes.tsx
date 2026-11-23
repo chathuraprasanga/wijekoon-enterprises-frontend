@@ -16,6 +16,7 @@ import SuppliersPage from '@/pages/suppliers';
 import ProductsPage from '@/pages/products';
 import OrdersPage from '@/pages/orders';
 import SalesPage from '@/pages/sales';
+import SaleDetailPage from '@/pages/sales/SaleDetailPage';
 import AddEditSalePage from '@/pages/sales/AddEditSalePage';
 import ChequesPage from '@/pages/cheques';
 import AddEditOrderPage from '@/pages/orders/AddEditOrderPage';
@@ -154,6 +155,14 @@ export const router = createBrowserRouter([
             ),
           },
           {
+            path: 'sales/:id',
+            element: (
+              <RequireAccess permission="sale:read" section="Sales">
+                <SaleDetailPage />
+              </RequireAccess>
+            ),
+          },
+          {
             path: 'sales/:id/edit',
             element: (
               <RequireAccess permission="sale:update" section="Sales">
@@ -164,7 +173,7 @@ export const router = createBrowserRouter([
           {
             path: 'cheques',
             element: (
-              <RequireAccess permission="cheque:read" section="Cheques">
+              <RequireAccess permission="received-cheque:read|issued-cheque:read" section="Cheques">
                 <ChequesPage />
               </RequireAccess>
             ),

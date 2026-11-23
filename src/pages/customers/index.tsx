@@ -160,10 +160,8 @@ const CustomersPage = () => {
           <AddEditCustomerModal
             opened={!!form}
             customer={form?.customer ?? null}
-            onClose={() => {
-              setForm(null);
-              reload();
-            }}
+            onClose={() => setForm(null)}
+            onSaved={reload}
           />
           <DetailDialog
             opened={!!view}

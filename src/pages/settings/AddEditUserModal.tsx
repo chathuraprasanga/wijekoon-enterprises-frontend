@@ -24,17 +24,21 @@ type Props = {
   opened: boolean;
   user: User | null;
   onClose: () => void;
+  onSaved?: () => void;
 };
 
-export const AddEditUserModal = ({ opened, user, onClose }: Props) =>
-  opened ? <AddEditUserForm key={user?._id ?? 'new'} user={user} onClose={onClose} /> : null;
+export const AddEditUserModal = ({ opened, user, onClose, onSaved }: Props) =>
+  opened ? (
+    <AddEditUserForm key={user?._id ?? 'new'} user={user} onClose={onClose} onSaved={onSaved} />
+  ) : null;
 
 type FormProps = {
   user: User | null;
   onClose: () => void;
+  onSaved?: () => void;
 };
 
-const AddEditUserForm = ({ user, onClose }: FormProps) => {
+const AddEditUserForm = ({ user, onClose, onSaved }: FormProps) => {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
   const me = useAppSelector((state) => state.auth.user);
@@ -86,6 +90,7 @@ const AddEditUserForm = ({ user, onClose }: FormProps) => {
           'SUCCESS',
         );
       }
+      onSaved?.();
       onClose();
     } catch (error) {
       toNotify(user ? 'Failed to update user' : 'Failed to create user', error as string, 'ERROR');

@@ -22,7 +22,7 @@ import { InlineAlert } from '@/components/InlineAlert';
 import { DataTable } from '@/components/data/DataTable';
 import {
   ActiveBadge,
-  ChequeStatusBadge,
+  ChequeLifecycleBadge,
   CustomerTypeBadge,
   SaleStatusBadge,
 } from '@/components/StatusBadge';
@@ -41,7 +41,7 @@ import { useCan } from '@/utils/permissions';
 const CustomerDetailPage = () => {
   const can = useCan();
   const canSales = can('sale:read');
-  const canCheques = can('cheque:read');
+  const canCheques = can('received-cheque:read');
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -264,7 +264,7 @@ const CustomerDetailPage = () => {
                 )}
               </SectionCard>
             )}
-            {can('cheque:read') && (
+            {can('received-cheque:read') && (
               <SectionCard
                 title="Recent cheques"
                 action={
@@ -296,7 +296,7 @@ const CustomerDetailPage = () => {
                         header: 'Sale',
                         render: (c) => (
                           <span className="mono">
-                            {salesLookup.byId.get(c.sale)?.salesId ?? '—'}
+                            {salesLookup.byId.get(c.sale ?? '')?.salesId ?? '—'}
                           </span>
                         ),
                       },
@@ -315,7 +315,7 @@ const CustomerDetailPage = () => {
                         key: 'state',
                         header: 'Status',
                         badge: true,
-                        render: (c) => <ChequeStatusBadge depositDate={c.depositDate} />,
+                        render: (c) => <ChequeLifecycleBadge status={c.status} />,
                       },
                     ]}
                   />

@@ -1,19 +1,18 @@
 import { IconCoin } from '@tabler/icons-react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Anchor, Box, Group, Stack, Table, Text } from '@mantine/core';
+import { Box, Button, Group, Stack, Table, Text } from '@mantine/core';
 import { ListPage } from '@/components/data/ListPage';
 import { DetailDialog } from '@/components/DetailDialog';
 import { DetailList } from '@/components/DetailList';
-import { SaleStatusBadge, StatusBadge } from '@/components/StatusBadge';
+import { SaleStatusBadge } from '@/components/StatusBadge';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { type Sale, deleteSale, fetchSales } from '@/store/saleSlice/saleSlice';
 import type { Customer } from '@/store/customerSlice/customerSlice';
-import type { Cheque } from '@/store/chequeSlice/chequeSlice';
 import { Field } from '@/components/Field';
 import { useLookup } from '@/hooks/useLookup';
 import { formatDate, formatLkr } from '@/utils/format';
-import { customerName, PAYMENT_LABELS } from './saleLabels';
+import { customerName, PAYMENT_LABELS, saleOutstanding } from './saleLabels';
 import { CustomerLabel } from '@/components/CustomerLabel';
 import { useCan } from '@/utils/permissions';
 
@@ -39,9 +38,15 @@ const SalesPage = () => {
   const customers = useLookup<Customer>('customers');
   const [view, setView] = useState<Sale | null>(null);
 
-  const cheques = useLookup<Cheque>('cheques');
   const nameOf = (id: string) => customerName(customers.byId.get(id));
-  const relatedCheques = view ? cheques.items.filter((c) => c.sale === view._id) : [];
+  // Cash / cheque money received (credit is what is still owed, not a payment).
+  const paid: NonNullable<Sale['paymentHistory']> = view
+    ? view.paymentHistory?.length
+      ? view.paymentHistory
+      : (view.payments ?? [])
+          .filter((p) => p.method !== 'credit')
+          .map((p) => ({ ...p, at: view.salesDate }))
+    : [];
 
   return (
     <>
@@ -106,12 +111,6 @@ const SalesPage = () => {
             render: (s) => <CustomerLabel customer={customers.byId.get(s.customer)} />,
           },
           {
-            key: 'payment',
-            header: 'Payment',
-            hideBelow: 'md',
-            render: (s) => <StatusBadge tone="neutral" label={PAYMENT_LABELS[s.paymentMethod]} />,
-          },
-          {
             key: 'netTotal',
             header: 'Total',
             sortable: true,
@@ -119,11 +118,34 @@ const SalesPage = () => {
             render: (s) => formatLkr(s.netTotal),
           },
           {
+            key: 'paid',
+            header: 'Paid',
+            align: 'right',
+            hideBelow: 'md',
+            render: (s) => formatLkr(s.netTotal - saleOutstanding(s)),
+          },
+          {
+            key: 'outstanding',
+            header: 'Outstanding',
+            align: 'right',
+            render: (s) => (
+              <Text span fw={saleOutstanding(s) > 0 ? 600 : 400} inherit>
+                {formatLkr(saleOutstanding(s))}
+              </Text>
+            ),
+          },
+          {
             key: 'status',
             header: 'Status',
             sortable: true,
             badge: true,
             render: (s) => <SaleStatusBadge status={s.status} />,
+          },
+          {
+            key: 'by',
+            header: 'Created by',
+            hideBelow: 'md',
+            render: (s) => s.createdByName ?? '—',
           },
         ]}
       >
@@ -133,64 +155,21 @@ const SalesPage = () => {
             onClose={() => setView(null)}
             title={view ? <span className="mono">{view.salesId}</span> : ''}
             subtitle={view ? `${formatDate(view.salesDate)} · ${nameOf(view.customer)}` : undefined}
+            actions={
+              view && (
+                <Button component={Link} to={`/app/sales/${view._id}`}>
+                  Open sale
+                </Button>
+              )
+            }
           >
             {view && (
               <>
                 <Stack gap="md">
-                  <Field label="Payment method">{PAYMENT_LABELS[view.paymentMethod]}</Field>
-                  {view.payments && view.payments.length > 1 && (
-                    <Field label="Payments">
-                      <Stack gap={2} mt={4}>
-                        {view.payments.map((p) => (
-                          <Group key={p.method} justify="space-between" wrap="nowrap">
-                            <Text size="sm">{PAYMENT_LABELS[p.method]}</Text>
-                            <Text size="sm" className="num">
-                              {formatLkr(p.amount)}
-                            </Text>
-                          </Group>
-                        ))}
-                      </Stack>
-                    </Field>
-                  )}
-                  <Field label="Status">
-                    <Box mt={4}>
-                      <SaleStatusBadge status={view.status} />
-                    </Box>
-                  </Field>
                   <Field label="Customer">
                     <CustomerLabel customer={customers.byId.get(view.customer)} />
                   </Field>
-                  {view.dueDate && (
-                    <Field label="Payment due date">{formatDate(view.dueDate)}</Field>
-                  )}
-                  {view.notes && (
-                    <Field label="Notes">
-                      <Text size="sm" style={{ whiteSpace: 'pre-wrap' }}>
-                        {view.notes}
-                      </Text>
-                    </Field>
-                  )}
-                  {relatedCheques.length > 0 && (
-                    <Field label={relatedCheques.length > 1 ? 'Related cheques' : 'Related cheque'}>
-                      <Stack gap={2} mt={4}>
-                        {relatedCheques.map((c) => (
-                          <Group key={c._id} justify="space-between" wrap="nowrap">
-                            <Anchor
-                              component={Link}
-                              to="/app/cheques"
-                              className="mono"
-                              style={{ color: 'var(--ldg-accent-text)' }}
-                            >
-                              {c.chequeNumber}
-                            </Anchor>
-                            <Text size="sm" className="num">
-                              {formatLkr(c.amount)}
-                            </Text>
-                          </Group>
-                        ))}
-                      </Stack>
-                    </Field>
-                  )}
+                  <Field label="Payment due">{view.dueDate ? formatDate(view.dueDate) : '—'}</Field>
                 </Stack>
                 <Text className="eyebrow" mt="lg" mb="xs">
                   Items
@@ -246,10 +225,41 @@ const SalesPage = () => {
                           label: 'Net total',
                           value: <strong className="num">{formatLkr(view.netTotal)}</strong>,
                         },
+                        {
+                          label: 'Paid',
+                          value: (
+                            <span className="num">
+                              {formatLkr(view.netTotal - saleOutstanding(view))}
+                            </span>
+                          ),
+                        },
+                        {
+                          label: 'Outstanding',
+                          value: (
+                            <strong className="num">{formatLkr(saleOutstanding(view))}</strong>
+                          ),
+                        },
                       ],
                     ]}
                   />
                 </Box>
+                {paid.length > 0 && (
+                  <Field label="Payments">
+                    <Stack gap={2} mt={4}>
+                      {paid.map((p, i) => (
+                        <Group key={i} justify="space-between" wrap="nowrap">
+                          <Text size="sm">
+                            {PAYMENT_LABELS[p.method as 'cash'] ?? p.method}
+                            {p.reference ? ` · No. ${p.reference}` : ''}
+                          </Text>
+                          <Text size="sm" className="num">
+                            {formatLkr(p.amount)}
+                          </Text>
+                        </Group>
+                      ))}
+                    </Stack>
+                  </Field>
+                )}
               </>
             )}
           </DetailDialog>

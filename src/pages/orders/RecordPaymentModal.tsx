@@ -209,6 +209,7 @@ const Form = ({ order, onClose, onDone }: Omit<Props, 'opened'>) => {
             parts. Set when the supplier expects the money.
           </InlineAlert>
           <DateInput
+            placeholder="Select date"
             label="Payment due date"
             description={`Order date + ${rules.orderDueDays} days unless you change it`}
             clearable
@@ -228,6 +229,7 @@ const Form = ({ order, onClose, onDone }: Omit<Props, 'opened'>) => {
           )}
           <SimpleGrid cols={{ base: 1, xs: 2 }}>
             <DateInput
+              placeholder="Select date"
               label={kind === 'customer_cheque' ? 'Transfer date' : 'Payment date'}
               withAsterisk
               value={date}
@@ -239,6 +241,7 @@ const Form = ({ order, onClose, onDone }: Omit<Props, 'opened'>) => {
             />
             {kind !== 'customer_cheque' && (
               <NumberInput
+                placeholder="LKR 0.00"
                 label="Amount (LKR)"
                 withAsterisk
                 {...money}
@@ -280,6 +283,7 @@ const Form = ({ order, onClose, onDone }: Omit<Props, 'opened'>) => {
               )}
               <SimpleGrid cols={{ base: 1, xs: 2 }}>
                 <TextInput
+                  placeholder="Enter 6-digit cheque number"
                   label="Cheque number"
                   withAsterisk
                   inputMode="numeric"
@@ -291,6 +295,7 @@ const Form = ({ order, onClose, onDone }: Omit<Props, 'opened'>) => {
                   }}
                 />
                 <DateInput
+                  placeholder="Select date"
                   label="Cheque date"
                   withAsterisk
                   value={chequeDate}
@@ -350,6 +355,7 @@ const Form = ({ order, onClose, onDone }: Omit<Props, 'opened'>) => {
           )}
 
           <TextInput
+            placeholder="Optional reference"
             label="Reference"
             maxLength={80}
             value={reference}
@@ -359,6 +365,7 @@ const Form = ({ order, onClose, onDone }: Omit<Props, 'opened'>) => {
             }}
           />
           <Textarea
+            placeholder="Optional notes"
             label="Notes"
             autosize
             minRows={2}

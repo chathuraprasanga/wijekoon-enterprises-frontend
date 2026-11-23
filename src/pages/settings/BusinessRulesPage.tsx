@@ -220,6 +220,7 @@ const BusinessRulesPage = () => {
           >
             {g.rules.map((r) => (
               <NumberInput
+                placeholder="Enter number of days"
                 key={r.key}
                 label={r.label}
                 description={r.description}
@@ -238,6 +239,7 @@ const BusinessRulesPage = () => {
           </SimpleGrid>
           {g.title === 'Payment due dates' && (
             <Select
+              placeholder="Select time"
               mt="md"
               maw={{ base: '100%', sm: 280 }}
               label="Due check time (Sri Lanka)"
@@ -251,6 +253,7 @@ const BusinessRulesPage = () => {
           )}
           {g.title === 'Cheque clearing' && (
             <Select
+              placeholder="Select time"
               mt="md"
               maw={{ base: '100%', sm: 280 }}
               label="Clearing time (Sri Lanka)"
@@ -293,6 +296,7 @@ const BusinessRulesPage = () => {
                 onChange={(e) => setReminder(k, { enabled: e.currentTarget.checked })}
               />
               <NumberInput
+                placeholder="Enter number of days"
                 label="Remind before (days)"
                 description="Also notifies on the due day and every day while overdue"
                 suffix=" days"

@@ -21,19 +21,26 @@ type Props = {
   opened: boolean;
   supplier: Supplier | null;
   onClose: () => void;
+  onSaved?: () => void;
 };
 
-export const AddEditSupplierModal = ({ opened, supplier, onClose }: Props) =>
+export const AddEditSupplierModal = ({ opened, supplier, onClose, onSaved }: Props) =>
   opened ? (
-    <AddEditSupplierForm key={supplier?._id ?? 'new'} supplier={supplier} onClose={onClose} />
+    <AddEditSupplierForm
+      key={supplier?._id ?? 'new'}
+      supplier={supplier}
+      onClose={onClose}
+      onSaved={onSaved}
+    />
   ) : null;
 
 type FormProps = {
   supplier: Supplier | null;
   onClose: () => void;
+  onSaved?: () => void;
 };
 
-const AddEditSupplierForm = ({ supplier, onClose }: FormProps) => {
+const AddEditSupplierForm = ({ supplier, onClose, onSaved }: FormProps) => {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
 
@@ -69,6 +76,7 @@ const AddEditSupplierForm = ({ supplier, onClose }: FormProps) => {
         await dispatch(createSupplier(payload)).unwrap();
         toNotify('Supplier added', `${payload.name} was added.`, 'SUCCESS');
       }
+      onSaved?.();
       onClose();
     } catch (error) {
       toNotify(

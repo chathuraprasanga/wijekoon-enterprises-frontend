@@ -7,7 +7,7 @@ import { SectionCard } from '@/components/SectionCard';
 import { DataTable } from '@/components/data/DataTable';
 import { EmptyState } from '@/components/EmptyState';
 import { InlineAlert } from '@/components/InlineAlert';
-import { ChequeStatusBadge, SaleStatusBadge } from '@/components/StatusBadge';
+import { ChequeLifecycleBadge, SaleStatusBadge } from '@/components/StatusBadge';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchCustomers } from '@/store/customerSlice/customerSlice';
 import { fetchSuppliers } from '@/store/supplierSlice/supplierSlice';
@@ -38,7 +38,8 @@ const DashboardPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const can = useCan();
-  const canRead = (module: string) => can(`${module}:read`);
+  const canRead = (module: string) =>
+    can(`${module === 'cheque' ? 'received-cheque' : module}:read`);
   const canCustomers = canRead('customer');
   const canSuppliers = canRead('supplier');
   const canProducts = canRead('product');
@@ -251,7 +252,7 @@ const DashboardPage = () => {
                     primary: true,
                     render: (c) => <span className="mono">{c.chequeNumber}</span>,
                   },
-                  { key: 'customer', header: 'Customer', render: (c) => name(c.customer) },
+                  { key: 'customer', header: 'Customer', render: (c) => name(c.customer ?? '') },
                   {
                     key: 'depositDate',
                     header: 'Deposit date',
@@ -267,7 +268,7 @@ const DashboardPage = () => {
                     key: 'state',
                     header: 'Status',
                     badge: true,
-                    render: (c) => <ChequeStatusBadge depositDate={c.depositDate} />,
+                    render: (c) => <ChequeLifecycleBadge status={c.status} />,
                   },
                 ]}
               />

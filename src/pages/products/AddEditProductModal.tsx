@@ -31,19 +31,26 @@ type Props = {
   opened: boolean;
   product: Product | null;
   onClose: () => void;
+  onSaved?: () => void;
 };
 
-export const AddEditProductModal = ({ opened, product, onClose }: Props) =>
+export const AddEditProductModal = ({ opened, product, onClose, onSaved }: Props) =>
   opened ? (
-    <AddEditProductForm key={product?._id ?? 'new'} product={product} onClose={onClose} />
+    <AddEditProductForm
+      key={product?._id ?? 'new'}
+      product={product}
+      onClose={onClose}
+      onSaved={onSaved}
+    />
   ) : null;
 
 type FormProps = {
   product: Product | null;
   onClose: () => void;
+  onSaved?: () => void;
 };
 
-const AddEditProductForm = ({ product, onClose }: FormProps) => {
+const AddEditProductForm = ({ product, onClose, onSaved }: FormProps) => {
   const dispatch = useAppDispatch();
   // A focused text input pops the phone keyboard, which resizes the sheet and makes the dropdown blink.
   const phone = useMediaQuery('(max-width: 47.99em)');
@@ -97,6 +104,7 @@ const AddEditProductForm = ({ product, onClose }: FormProps) => {
         await dispatch(createProduct(payload)).unwrap();
         toNotify('Product added', `${payload.name} was added.`, 'SUCCESS');
       }
+      onSaved?.();
       onClose();
     } catch (error) {
       toNotify(

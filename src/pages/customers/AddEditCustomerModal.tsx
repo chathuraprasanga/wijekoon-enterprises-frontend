@@ -30,19 +30,26 @@ type Props = {
   opened: boolean;
   customer: Customer | null;
   onClose: () => void;
+  onSaved?: () => void;
 };
 
-export const AddEditCustomerModal = ({ opened, customer, onClose }: Props) =>
+export const AddEditCustomerModal = ({ opened, customer, onClose, onSaved }: Props) =>
   opened ? (
-    <AddEditCustomerForm key={customer?._id ?? 'new'} customer={customer} onClose={onClose} />
+    <AddEditCustomerForm
+      key={customer?._id ?? 'new'}
+      customer={customer}
+      onClose={onClose}
+      onSaved={onSaved}
+    />
   ) : null;
 
 type FormProps = {
   customer: Customer | null;
   onClose: () => void;
+  onSaved?: () => void;
 };
 
-const AddEditCustomerForm = ({ customer, onClose }: FormProps) => {
+const AddEditCustomerForm = ({ customer, onClose, onSaved }: FormProps) => {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
 
@@ -97,6 +104,7 @@ const AddEditCustomerForm = ({ customer, onClose }: FormProps) => {
           'SUCCESS',
         );
       }
+      onSaved?.();
       onClose();
     } catch (error) {
       toNotify(

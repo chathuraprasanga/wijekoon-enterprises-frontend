@@ -166,10 +166,8 @@ const ProductsPage = () => {
           <AddEditProductModal
             opened={!!form}
             product={form?.product ?? null}
-            onClose={() => {
-              setForm(null);
-              reload();
-            }}
+            onClose={() => setForm(null)}
+            onSaved={reload}
           />
           <DetailDialog
             opened={!!view}

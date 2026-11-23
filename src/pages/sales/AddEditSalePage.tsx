@@ -393,7 +393,7 @@ const AddEditSalePage = () => {
     );
   }
 
-  const canCheque = can('cheque:create');
+  const canCheque = can('received-cheque:create');
   // Edit: the cheque records are what the sale records as paid by cheque; flag a mismatch.
   const savedCheque = editing?.payments?.length
     ? editing.payments.filter((p) => p.method === 'cheque').reduce((s, p) => s + p.amount, 0)
@@ -510,6 +510,7 @@ const AddEditSalePage = () => {
                     />
                   </SimpleGrid>
                   <Textarea
+                    placeholder="Optional notes"
                     mt="md"
                     label="Notes"
                     autosize

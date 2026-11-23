@@ -1,36 +1,20 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  ActionIcon,
-  Box,
-  Button,
-  Group,
-  Menu,
-  SimpleGrid,
-  Skeleton,
-  Stack,
-  Table,
-  Text,
-  Textarea,
-} from '@mantine/core';
-import { IconCash, IconDotsVertical, IconPencil, IconTrash, IconX } from '@tabler/icons-react';
+import { Box, Button, Group, SimpleGrid, Skeleton, Stack, Table, Text } from '@mantine/core';
+import { IconCash, IconPencil, IconTrash } from '@tabler/icons-react';
 import { PageHeader } from '@/components/PageHeader';
 import { SectionCard } from '@/components/SectionCard';
 import { DetailList } from '@/components/DetailList';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { EmptyState } from '@/components/EmptyState';
 import { InlineAlert } from '@/components/InlineAlert';
-import { FormModal } from '@/components/FormModal';
 import { toNotify } from '@/hooks/toNotify';
 import { useAppDispatch } from '@/store/hooks';
 import {
   type Order,
   type OrderPayment,
-  cancelOrder,
   deleteOrder,
   fetchOrderById,
-  reversePayment,
-  setChequeStatus,
 } from '@/store/orderSlice/orderSlice';
 import { formatDate, formatLkr } from '@/utils/format';
 import { useCan } from '@/utils/permissions';
@@ -43,61 +27,6 @@ import {
 } from './orderBadges';
 import { RecordPaymentModal } from './RecordPaymentModal';
 
-type ChequeAction = { payment: OrderPayment; status: 'CLEARED' | 'RETURNED' };
-
-// A prompt for one free-text reason (cancel an order, reverse a payment).
-const ReasonModal = ({
-  title,
-  label,
-  required,
-  submitLabel,
-  onSubmit,
-  onClose,
-}: {
-  title: string;
-  label: string;
-  required?: boolean;
-  submitLabel: string;
-  onSubmit: (reason: string) => Promise<void>;
-  onClose: () => void;
-}) => {
-  const [reason, setReason] = useState('');
-  const [tried, setTried] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const submit = async (e: FormEvent) => {
-    e.preventDefault();
-    setTried(true);
-    if (required && !reason.trim()) return;
-    setLoading(true);
-    try {
-      await onSubmit(reason.trim());
-    } finally {
-      setLoading(false);
-    }
-  };
-  return (
-    <FormModal
-      opened
-      title={title}
-      submitLabel={submitLabel}
-      loading={loading}
-      onSubmit={submit}
-      onClose={onClose}
-    >
-      <Textarea
-        label={label}
-        withAsterisk={required}
-        autosize
-        minRows={2}
-        maxLength={300}
-        value={reason}
-        error={tried && required && !reason.trim() ? 'A reason is required.' : undefined}
-        onChange={(e) => setReason(e.currentTarget.value)}
-      />
-    </FormModal>
-  );
-};
-
 const OrderDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const can = useCan();
@@ -108,12 +37,8 @@ const OrderDetailPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [nonce, setNonce] = useState(0);
   const [paying, setPaying] = useState(false);
-  const [cancelling, setCancelling] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [reversing, setReversing] = useState<OrderPayment | null>(null);
-  const [chequeAction, setChequeAction] = useState<ChequeAction | null>(null);
-  const [acting, setActing] = useState(false);
   const reload = () => setNonce((n) => n + 1);
 
   useEffect(() => {
@@ -150,33 +75,12 @@ const OrderDetailPage = () => {
     }
   };
 
-  const runChequeAction = async () => {
-    if (!chequeAction) return;
-    setActing(true);
-    try {
-      await dispatch(
-        setChequeStatus({ id: chequeAction.payment._id, status: chequeAction.status }),
-      ).unwrap();
-      toNotify('Cheque updated', 'The order balance was recalculated.', 'SUCCESS');
-      setChequeAction(null);
-      reload();
-    } catch (e) {
-      toNotify("Couldn't update cheque", e as string, 'ERROR');
-    } finally {
-      setActing(false);
-    }
-  };
-
   const chequeLabel = (p: OrderPayment) =>
     p.issuedCheque
       ? `No. ${p.issuedCheque.chequeNumber}`
       : p.customerCheque
         ? `No. ${p.customerCheque.chequeNumber}`
         : (p.reference ?? '—');
-
-  // Cash can be reversed; a cheque can only be cleared (by itself, or sooner by hand) or returned.
-  const chequeOf = (p: OrderPayment) => p.issuedCheque ?? p.customerCheque;
-  const canActOn = (p: OrderPayment) => can('payment:update') && p.status === 'completed';
 
   const title = order?.orderNo ?? 'Order';
 
@@ -207,15 +111,6 @@ const OrderDetailPage = () => {
                   onClick={() => navigate(`/app/orders/${order._id}/edit`)}
                 >
                   Edit
-                </Button>
-              )}
-              {open && can('order:update') && (
-                <Button
-                  variant="default"
-                  leftSection={<IconX size={16} aria-hidden />}
-                  onClick={() => setCancelling(true)}
-                >
-                  Cancel order
                 </Button>
               )}
               {can('order:delete') && (
@@ -278,12 +173,6 @@ const OrderDetailPage = () => {
                       value: <span className="num">{formatDate(order.orderDate)}</span>,
                     },
                     { label: 'Supplier reference', value: order.supplierRef },
-                    {
-                      label: 'Expected delivery',
-                      value: order.expectedDeliveryDate
-                        ? formatDate(order.expectedDeliveryDate)
-                        : '—',
-                    },
                     {
                       label: 'Payment due',
                       value: order.dueDate ? formatDate(order.dueDate) : '—',
@@ -408,7 +297,7 @@ const OrderDetailPage = () => {
           {can('payment:read') && (
             <SectionCard
               title="Payment history"
-              subtitle="Payments are reversed, never deleted."
+              subtitle="Payments recorded against this order."
               flush
             >
               {!order.payments?.length ? (
@@ -431,7 +320,6 @@ const OrderDetailPage = () => {
                         <Table.Th ta="right">Amount</Table.Th>
                         <Table.Th>Status</Table.Th>
                         <Table.Th>Recorded by</Table.Th>
-                        <Table.Th ta="right">Actions</Table.Th>
                       </Table.Tr>
                     </Table.Thead>
                     <Table.Tbody>
@@ -454,47 +342,6 @@ const OrderDetailPage = () => {
                             <PaymentRowStatusBadge status={p.status} />
                           </Table.Td>
                           <Table.Td>{p.recordedByName ?? '—'}</Table.Td>
-                          <Table.Td ta="right">
-                            {canActOn(p) && (
-                              <Menu position="bottom-end" withinPortal>
-                                <Menu.Target>
-                                  <ActionIcon
-                                    variant="subtle"
-                                    aria-label={`Actions for payment of ${formatLkr(p.amount)}`}
-                                  >
-                                    <IconDotsVertical size={18} />
-                                  </ActionIcon>
-                                </Menu.Target>
-                                <Menu.Dropdown>
-                                  {p.method === 'cash' ? (
-                                    <Menu.Item color="red" onClick={() => setReversing(p)}>
-                                      Reverse payment
-                                    </Menu.Item>
-                                  ) : (
-                                    <>
-                                      {chequeOf(p)?.status !== 'CLEARED' && (
-                                        <Menu.Item
-                                          onClick={() =>
-                                            setChequeAction({ payment: p, status: 'CLEARED' })
-                                          }
-                                        >
-                                          Mark cleared
-                                        </Menu.Item>
-                                      )}
-                                      <Menu.Item
-                                        color="red"
-                                        onClick={() =>
-                                          setChequeAction({ payment: p, status: 'RETURNED' })
-                                        }
-                                      >
-                                        Mark returned
-                                      </Menu.Item>
-                                    </>
-                                  )}
-                                </Menu.Dropdown>
-                              </Menu>
-                            )}
-                          </Table.Td>
                         </Table.Tr>
                       ))}
                     </Table.Tbody>
@@ -514,61 +361,8 @@ const OrderDetailPage = () => {
             onClose={() => setPaying(false)}
             onDone={reload}
           />
-          {cancelling && (
-            <ReasonModal
-              title="Cancel order?"
-              label="Reason (optional)"
-              submitLabel="Cancel order"
-              onClose={() => setCancelling(false)}
-              onSubmit={async (reason) => {
-                try {
-                  await dispatch(cancelOrder({ id: order._id, reason })).unwrap();
-                  toNotify('Order cancelled', `${order.orderNo} was cancelled.`, 'SUCCESS');
-                  setCancelling(false);
-                  reload();
-                } catch (e) {
-                  toNotify("Couldn't cancel order", e as string, 'ERROR');
-                }
-              }}
-            />
-          )}
-          {reversing && (
-            <ReasonModal
-              title="Reverse payment?"
-              label="Reason"
-              required
-              submitLabel="Reverse payment"
-              onClose={() => setReversing(null)}
-              onSubmit={async (reason) => {
-                try {
-                  await dispatch(reversePayment({ id: reversing._id, reason })).unwrap();
-                  toNotify('Payment reversed', 'The outstanding balance was restored.', 'SUCCESS');
-                  setReversing(null);
-                  reload();
-                } catch (e) {
-                  toNotify("Couldn't reverse payment", e as string, 'ERROR');
-                }
-              }}
-            />
-          )}
         </>
       )}
-      <ConfirmDialog
-        opened={!!chequeAction}
-        title={
-          chequeAction?.status === 'CLEARED' ? 'Mark cheque cleared?' : 'Mark cheque returned?'
-        }
-        destructive={chequeAction?.status !== 'CLEARED'}
-        trashIcon={false}
-        loading={acting}
-        confirmLabel="Confirm"
-        onConfirm={runChequeAction}
-        onClose={() => setChequeAction(null)}
-      >
-        {chequeAction?.status === 'CLEARED'
-          ? 'Cheques clear by themselves on their clearing day. The order stays as it is.'
-          : 'The payment will no longer count and the amount becomes payable again.'}
-      </ConfirmDialog>
       <ConfirmDialog
         opened={confirmDelete}
         title="Delete order?"

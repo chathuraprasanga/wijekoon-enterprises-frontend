@@ -67,6 +67,8 @@ type Props<T> = {
   sortMap?: Record<string, string>;
   load: (params: LoadParams) => Promise<unknown>;
   createLabel?: string;
+  /** Replaces the + on the create button. */
+  createIcon?: ReactNode;
   /** First-use empty state: what to add and why. */
   emptyDescription?: string;
   emptyIcon?: ReactNode;
@@ -77,6 +79,8 @@ type Props<T> = {
   refreshable?: boolean;
   /** Extra buttons in the page header, after the primary action. */
   extraActions?: ReactNode;
+  /** Shown at the left of the count row inside the card (e.g. a view toggle). */
+  leading?: ReactNode;
   onView?: (record: T) => void;
   onEdit?: (record: T) => void;
   remove?: DeleteConfig<T>;
@@ -102,11 +106,13 @@ export const ListPage = <T,>({
   sortMap,
   load,
   createLabel,
+  createIcon,
   emptyDescription,
   emptyIcon,
   embedded,
   onCreate,
   extraActions,
+  leading,
   refreshable,
   onView,
   onEdit,
@@ -197,7 +203,7 @@ export const ListPage = <T,>({
         </Button>
       )}
       {onCreate && (
-        <Button leftSection={<IconPlus size={16} aria-hidden />} onClick={onCreate}>
+        <Button leftSection={createIcon ?? <IconPlus size={16} aria-hidden />} onClick={onCreate}>
           {createLabel}
         </Button>
       )}
@@ -237,11 +243,14 @@ export const ListPage = <T,>({
             onClear={clear}
           />
           <Group justify="space-between" gap="sm">
-            <Text size="sm" c="dimmed" aria-live="polite">
-              {loading
-                ? 'Loading…'
-                : `${total.toLocaleString('en-US')} ${total === 1 ? entity.singular : entity.plural}`}
-            </Text>
+            <Group gap="sm">
+              {leading}
+              <Text size="sm" c="dimmed" aria-live="polite">
+                {loading
+                  ? 'Loading…'
+                  : `${total.toLocaleString('en-US')} ${total === 1 ? entity.singular : entity.plural}`}
+              </Text>
+            </Group>
             <SegmentedControl
               visibleFrom="sm"
               size="xs"
@@ -418,6 +427,7 @@ export const ListPage = <T,>({
                   Rows
                 </Text>
                 <Select
+                  placeholder="Rows"
                   id="page-size"
                   w={76}
                   data={PAGE_SIZES.map(String)}

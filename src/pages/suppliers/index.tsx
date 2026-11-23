@@ -128,10 +128,8 @@ const SuppliersPage = () => {
           <AddEditSupplierModal
             opened={!!form}
             supplier={form?.supplier ?? null}
-            onClose={() => {
-              setForm(null);
-              reload();
-            }}
+            onClose={() => setForm(null)}
+            onSaved={reload}
           />
           <DetailDialog
             opened={!!view}

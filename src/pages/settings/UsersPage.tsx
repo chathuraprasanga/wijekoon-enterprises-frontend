@@ -173,10 +173,8 @@ const UsersPage = () => {
           <AddEditUserModal
             opened={!!form}
             user={form?.user ?? null}
-            onClose={() => {
-              setForm(null);
-              reload();
-            }}
+            onClose={() => setForm(null)}
+            onSaved={reload}
           />
           <DetailDialog
             opened={!!view}
@@ -205,6 +203,7 @@ const UsersPage = () => {
                   <Field label="Phone">
                     <span className="num">{formatPhone(view.phone)}</span>
                   </Field>
+                  <Field label="Address">{view.address || '—'}</Field>
                   <Field label="Roles">
                     {view.roles.length ? (
                       <Group gap={4} mt={4}>

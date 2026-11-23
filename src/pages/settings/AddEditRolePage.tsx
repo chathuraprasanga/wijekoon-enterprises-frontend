@@ -26,6 +26,12 @@ type RoleFormValues = { name: string; permissions: string[] };
 const findPermission = (modulePermissions: Permission[], action: string) =>
   modulePermissions.find((permission) => permission.action === action);
 
+// 3rd-party module -> the module whose Create it needs.
+const THIRD_PARTY_BASE: Record<string, string> = {
+  'third-party-received-cheque': 'received-cheque',
+  'third-party-issued-cheque': 'issued-cheque',
+};
+
 const AddEditRolePage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -70,10 +76,30 @@ const AddEditRolePage = () => {
     return groups;
   }, {});
 
+  // A 3rd-party cheque permission builds on its own Receive / Issue Cheques: selecting it selects
+  // that module's Create (and View), and Create stays on while it is.
+  const isOn = (p?: Permission) => !!p && form.values.permissions.includes(p._id);
+  const baseOf = (module: string) => THIRD_PARTY_BASE[module];
+  const lockedByThirdParty = (module: string, action: string) =>
+    action === 'create' &&
+    Object.entries(THIRD_PARTY_BASE).some(
+      ([tp, base]) =>
+        base === module && isOn(findPermission(permissionsByModule[tp] ?? [], 'create')),
+    );
+  const isLocked = (module: string, action: string, modulePermissions: Permission[]) =>
+    (action === 'read' && isViewLocked(modulePermissions)) || lockedByThirdParty(module, action);
+
   const togglePermission = (modulePermissions: Permission[], action: string) => {
     const permission = findPermission(modulePermissions, action);
     if (!permission) return;
     const current = new Set(form.values.permissions);
+    const base = baseOf(permission.module);
+    if (base && !current.has(permission._id)) {
+      for (const a of ['create', 'read']) {
+        const dep = findPermission(permissionsByModule[base] ?? [], a);
+        if (dep) current.add(dep._id);
+      }
+    }
     if (current.has(permission._id)) {
       current.delete(permission._id);
     } else {
@@ -88,7 +114,7 @@ const AddEditRolePage = () => {
   };
 
   const isViewLocked = (modulePermissions: Permission[]) =>
-    ['create', 'update', 'delete'].some((action) => {
+    PERMISSION_ACTION_ORDER.filter((a) => a !== 'read').some((action) => {
       const permission = findPermission(modulePermissions, action);
       return permission && form.values.permissions.includes(permission._id);
     });
@@ -174,7 +200,7 @@ const AddEditRolePage = () => {
                             key={action}
                             label={PERMISSION_ACTION_LABELS[action]}
                             checked={form.values.permissions.includes(permission._id)}
-                            disabled={action === 'read' && isViewLocked(modulePermissions)}
+                            disabled={isLocked(module, action, modulePermissions)}
                             onChange={() => togglePermission(modulePermissions, action)}
                           />
                         );
@@ -221,7 +247,7 @@ const AddEditRolePage = () => {
                                 <Checkbox
                                   aria-label={`${PERMISSION_ACTION_LABELS[action]} ${formatModuleLabel(module)}`}
                                   checked={form.values.permissions.includes(permission._id)}
-                                  disabled={action === 'read' && isViewLocked(modulePermissions)}
+                                  disabled={isLocked(module, action, modulePermissions)}
                                   onChange={() => togglePermission(modulePermissions, action)}
                                 />
                               </Group>

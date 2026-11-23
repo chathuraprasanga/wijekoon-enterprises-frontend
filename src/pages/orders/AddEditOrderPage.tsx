@@ -113,7 +113,6 @@ const AddEditOrderPage = () => {
   const [itemsFor, setItemsFor] = useState<string | null>(null);
   const [date, setDate] = useState<string>(toYmd(new Date()));
   const [supplierRef, setSupplierRef] = useState('');
-  const [expected, setExpected] = useState(toYmd(new Date()));
   // Payment due date: order date + the configured days until the user edits (or clears) it.
   const rules = useBusinessRules();
   const [dueEdited, setDueEdited] = useState<string | null>(null);
@@ -165,7 +164,6 @@ const AddEditOrderPage = () => {
         setSupplier(o.supplier._id);
         setDate(toYmd(o.orderDate));
         setSupplierRef(o.supplierRef ?? '');
-        setExpected(toYmd(o.expectedDeliveryDate));
         setDueEdited(toYmd(o.dueDate));
         setNotes(o.notes ?? '');
         setLines(
@@ -346,7 +344,6 @@ const AddEditOrderPage = () => {
       const header: OrderInput = {
         orderDate: date,
         supplierRef: supplierRef.trim(),
-        expectedDeliveryDate: expected || null,
         dueDate: dueDate || null,
         notes: notes.trim(),
       };
@@ -593,6 +590,7 @@ const AddEditOrderPage = () => {
                       }}
                     />
                     <TextInput
+                      placeholder="Enter supplier invoice number"
                       label="Supplier invoice / reference"
                       value={supplierRef}
                       maxLength={60}
@@ -601,18 +599,9 @@ const AddEditOrderPage = () => {
                         touch();
                       }}
                     />
-                    <DateInput
-                      label="Expected delivery"
-                      placeholder="Select date"
-                      clearable
-                      value={expected || null}
-                      onChange={(v) => {
-                        setExpected(toYmd(v));
-                        touch();
-                      }}
-                    />
                   </SimpleGrid>
                   <Textarea
+                    placeholder="Optional notes"
                     mt="md"
                     label="Notes"
                     autosize
