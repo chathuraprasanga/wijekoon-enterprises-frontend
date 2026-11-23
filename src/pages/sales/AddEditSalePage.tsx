@@ -47,7 +47,9 @@ import type { Customer } from '@/store/customerSlice/customerSlice';
 import type { Product } from '@/store/productSlice/productSlice';
 import { axiosInstance } from '@/interceptors/axiosInterceptor';
 import { getErrorMessage } from '@/utils/getErrorMessage';
-import { formatLkr, formatSize, toYmd } from '@/utils/format';
+import { formatDate, formatLkr, formatSize, toYmd } from '@/utils/format';
+import { bankDisplay, branchDisplay } from '@/utils/bankData';
+import { Field } from '@/components/Field';
 import { useCan } from '@/utils/permissions';
 import { customerName } from './saleLabels';
 
@@ -104,6 +106,9 @@ const AddEditSalePage = () => {
   const dispatch = useAppDispatch();
   const wide = useMediaQuery('(min-width: 75em)');
   const can = useCan();
+  // Cheques already on the sale are only seen here unless the role may edit / delete them.
+  const canEditCheque = can('received-cheque:update');
+  const canDeleteCheque = can('received-cheque:delete');
   const customers = useLookup<Customer>('customers');
   const products = useLookup<Product>('products');
   const noProducts = !products.loading && !products.error && products.items.length === 0;
@@ -189,6 +194,7 @@ const AddEditSalePage = () => {
             branch: c.branchCode,
             number: c.chequeNumber,
             deposit: new Date(c.depositDate),
+            saved: !canEditCheque, // read-only: never sent back on save
           })),
         );
       } catch (e) {
@@ -200,7 +206,7 @@ const AddEditSalePage = () => {
     return () => {
       live = false;
     };
-  }, [id, dispatch]);
+  }, [id, dispatch, canEditCheque]);
 
   // --- the math (same rules as the server and the tablet app) ---
   const subtotal = lines.reduce((s, l) => s + lineTotal(l), 0);
@@ -773,55 +779,71 @@ const AddEditSalePage = () => {
                         <Text size="sm" fw={600}>
                           Cheque {i + 1}
                         </Text>
-                        <ActionIcon
-                          variant="subtle"
-                          c="var(--ldg-accent-text)"
-                          aria-label={`Remove cheque ${i + 1}`}
-                          onClick={() => {
-                            if (c.id) removed.current.push(c.id);
-                            setCheques((cs) => cs.filter((x) => x.key !== c.key));
-                            touch();
-                          }}
-                        >
-                          <IconTrash size={16} />
-                        </ActionIcon>
+                        {(!c.id || canDeleteCheque) && (
+                          <ActionIcon
+                            variant="subtle"
+                            c="var(--ldg-accent-text)"
+                            aria-label={`Remove cheque ${i + 1}`}
+                            onClick={() => {
+                              if (c.id) removed.current.push(c.id);
+                              setCheques((cs) => cs.filter((x) => x.key !== c.key));
+                              touch();
+                            }}
+                          >
+                            <IconTrash size={16} />
+                          </ActionIcon>
+                        )}
                       </Group>
-                      <SimpleGrid cols={{ base: 1, sm: 2 }}>
-                        <NumberInput
-                          label="Amount"
-                          placeholder="0.00"
-                          {...moneyInput}
-                          value={c.amount}
-                          error={showErr2(n(c.amount) <= 0)}
-                          onChange={(v) => setChq(c.key, { amount: v === '' ? '' : Number(v) })}
-                        />
-                        <DepositDateInput
-                          value={c.deposit}
-                          error={showErr2(!c.deposit)}
-                          override={!!c.override}
-                          onOverrideChange={(o) => setChq(c.key, { override: o })}
-                          onChange={(v) => setChq(c.key, { deposit: v })}
-                        />
-                        <BankBranchSelect
-                          bankCode={c.bank}
-                          branchCode={c.branch}
-                          bankError={showErr2(!c.bank) && 'Select a bank'}
-                          branchError={showErr2(!c.branch) && 'Select a branch'}
-                          onChange={(v) =>
-                            setChq(c.key, { bank: v.bankCode, branch: v.branchCode })
-                          }
-                        />
-                        <TextInput
-                          label="Cheque number"
-                          placeholder="6 digits"
-                          maxLength={6}
-                          value={c.number}
-                          error={showErr2(!/^\d{6}$/.test(c.number)) && 'Must be 6 digits'}
-                          onChange={(e) =>
-                            setChq(c.key, { number: e.currentTarget.value.replace(/\D/g, '') })
-                          }
-                        />
-                      </SimpleGrid>
+                      {c.id && !canEditCheque ? (
+                        <SimpleGrid cols={{ base: 1, sm: 2 }}>
+                          <Field label="Amount">{formatLkr(n(c.amount))}</Field>
+                          <Field label="Deposit date">
+                            {c.deposit ? formatDate(c.deposit) : '—'}
+                          </Field>
+                          <Field label="Bank">{bankDisplay(c.bank)}</Field>
+                          <Field label="Branch">{branchDisplay(c.bank, c.branch)}</Field>
+                          <Field label="Cheque number">
+                            <span className="mono">{c.number}</span>
+                          </Field>
+                        </SimpleGrid>
+                      ) : (
+                        <SimpleGrid cols={{ base: 1, sm: 2 }}>
+                          <NumberInput
+                            label="Amount"
+                            placeholder="0.00"
+                            {...moneyInput}
+                            value={c.amount}
+                            error={showErr2(n(c.amount) <= 0)}
+                            onChange={(v) => setChq(c.key, { amount: v === '' ? '' : Number(v) })}
+                          />
+                          <DepositDateInput
+                            value={c.deposit}
+                            error={showErr2(!c.deposit)}
+                            override={!!c.override}
+                            onOverrideChange={(o) => setChq(c.key, { override: o })}
+                            onChange={(v) => setChq(c.key, { deposit: v })}
+                          />
+                          <BankBranchSelect
+                            bankCode={c.bank}
+                            branchCode={c.branch}
+                            bankError={showErr2(!c.bank) && 'Select a bank'}
+                            branchError={showErr2(!c.branch) && 'Select a branch'}
+                            onChange={(v) =>
+                              setChq(c.key, { bank: v.bankCode, branch: v.branchCode })
+                            }
+                          />
+                          <TextInput
+                            label="Cheque number"
+                            placeholder="6 digits"
+                            maxLength={6}
+                            value={c.number}
+                            error={showErr2(!/^\d{6}$/.test(c.number)) && 'Must be 6 digits'}
+                            onChange={(e) =>
+                              setChq(c.key, { number: e.currentTarget.value.replace(/\D/g, '') })
+                            }
+                          />
+                        </SimpleGrid>
+                      )}
                     </Box>
                   ))}
                 </Stack>

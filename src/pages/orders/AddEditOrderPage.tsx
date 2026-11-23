@@ -858,21 +858,6 @@ const AddEditOrderPage = () => {
                 }
               >
                 <Stack gap="md">
-                  {id && editing && (
-                    <InlineAlert tone="info" title="Record or reverse payments on the order">
-                      Cash, cheque and credit payments for this order are managed from its page.
-                      <Box mt="xs">
-                        <Button
-                          component={Link}
-                          to={`/app/orders/${editing._id}`}
-                          size="xs"
-                          variant="default"
-                        >
-                          Open order
-                        </Button>
-                      </Box>
-                    </InlineAlert>
-                  )}
                   {id && editing && (editing.payments?.length ?? 0) > 0 && (
                     <Stack gap={4}>
                       <Text className="eyebrow">Payments so far</Text>
