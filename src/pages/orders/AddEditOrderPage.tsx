@@ -37,6 +37,7 @@ import {
   type TransferableCheque,
   createOrder,
   createPayment,
+  setOrderCash,
   fetchOrderById,
   fetchSupplierItems,
   fetchTransferableCheques,
@@ -150,10 +151,9 @@ const AddEditOrderPage = () => {
   const canReceived = can('received-cheque:read');
 
   // Once money has moved, only the header may change (the server enforces it too).
-  const locked =
-    !!editing &&
-    (editing.orderStatus === 'cancelled' ||
-      (editing.payments ?? []).some((p) => p.status === 'completed'));
+  const locked = editing?.orderStatus === 'cancelled';
+  // The supplier can't change once money was paid to it.
+  const supplierLocked = locked || (editing?.payments ?? []).some((p) => p.status === 'completed');
 
   // Edit: load the order, then fill the form.
   useEffect(() => {
@@ -186,6 +186,14 @@ const AddEditOrderPage = () => {
         setTax(money(o.tax));
         setShipping(money(o.shipping));
         setOther(money(o.otherExpenses));
+        setCash(
+          money(
+            (o.payments ?? [])
+              .filter((p) => p.method === 'cash' && p.status === 'completed')
+              .reduce((t, p) => t + p.amount, 0),
+          ),
+        );
+        setCashEdited(true);
       })
       .catch((e) => live && setLoadError(typeof e === 'string' ? e : getErrorMessage(e)))
       .finally(() => live && setLoading(false));
@@ -231,9 +239,16 @@ const AddEditOrderPage = () => {
   const chequeValue = round2(oursValue + custValue);
   // Until cash is typed the whole total is credit (cash 0).
   const cashValue = cashEdited ? n(cash) : 0;
+  // Edit: cash already taken, and what cheques have paid; the Cash field sets the cash total.
+  const cashPaidNow = round2(
+    (editing?.payments ?? [])
+      .filter((p) => p.method === 'cash' && p.status === 'completed')
+      .reduce((t, p) => t + p.amount, 0),
+  );
+  const otherPaid = editing ? round2(Math.max(0, (editing.paidAmount ?? 0) - cashPaidNow)) : 0;
   // Credit is whatever cash and cheques do not cover: never typed.
-  const credit = round2(Math.max(0, net - cashValue - chequeValue));
-  const remaining = round2(net - (cashValue + chequeValue));
+  const credit = round2(Math.max(0, net - cashValue - chequeValue - otherPaid));
+  const remaining = round2(net - (cashValue + chequeValue + otherPaid));
   // A cheque only counts as paid once it clears; until then just cash is paid.
   const status =
     cashValue >= net - 0.01 && net > 0 ? 'paid' : cashValue > 0 ? 'partially_paid' : 'unpaid';
@@ -408,6 +423,10 @@ const AddEditOrderPage = () => {
               },
             })),
           ];
+      // Edit: the Cash field is the cash total; the server records or reverses the difference.
+      if (id && cashValue !== cashPaidNow) {
+        await dispatch(setOrderCash({ id, amount: cashValue })).unwrap();
+      }
       for (const p of plan) {
         if (paid.current.has(p.id)) continue;
         if (!keys.current.has(p.id)) keys.current.set(p.id, crypto.randomUUID());
@@ -544,12 +563,6 @@ const AddEditOrderPage = () => {
                 A cancelled order can&apos;t be edited.
               </InlineAlert>
             )}
-            {locked && editing?.orderStatus !== 'cancelled' && (
-              <InlineAlert tone="info" title="Items and prices are locked">
-                This order has payments. Reverse the payments to change items, prices or the
-                supplier; you can still update the reference, dates and notes.
-              </InlineAlert>
-            )}
             {errors.length > 0 && (
               <InlineAlert
                 tone="danger"
@@ -577,7 +590,7 @@ const AddEditOrderPage = () => {
                       withAsterisk
                       searchable
                       placeholder="Select supplier"
-                      disabled={locked}
+                      disabled={supplierLocked}
                       data={activeSuppliers.map((s) => ({ value: s._id, label: s.name }))}
                       value={supplier}
                       error={showErr(!supplier)}
@@ -862,20 +875,21 @@ const AddEditOrderPage = () => {
                     <SimpleGrid cols={{ base: 1, sm: 2 }}>
                       <NumberInput
                         label="Cash"
-                        description="Paid in cash so far"
+                        placeholder="0.00"
                         {...moneyInput}
-                        value={round2(
-                          (editing.payments ?? [])
-                            .filter((p) => p.method === 'cash' && p.status === 'completed')
-                            .reduce((t, p) => t + p.amount, 0),
-                        )}
-                        disabled
+                        value={cash}
+                        error={showErr2(remaining < -0.01)}
+                        onChange={(v) => {
+                          setCash(v === '' ? '' : Number(v));
+                          touch();
+                        }}
                       />
                       <NumberInput
                         label="Credit"
-                        description="Still to pay"
+                        description="Calculated from the rest"
+                        placeholder="Calculated automatically"
                         {...moneyInput}
-                        value={editing.outstandingAmount}
+                        value={credit}
                         disabled
                       />
                     </SimpleGrid>

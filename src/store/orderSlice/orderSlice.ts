@@ -194,6 +194,11 @@ export const createPayment = thunk(
   async ({ id, body }: { id: string; body: PaymentInput }) =>
     (await axiosInstance.post<OrderPayment>(`/orders/${id}/payments`, body)).data,
 );
+export const setOrderCash = thunk(
+  'setCash',
+  async ({ id, amount }: { id: string; amount: number }) =>
+    (await axiosInstance.post<Order>(`/orders/${id}/cash`, { amount })).data,
+);
 export const reversePayment = thunk(
   'payReverse',
   async ({ id, reason }: { id: string; reason: string }) =>
