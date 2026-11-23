@@ -705,18 +705,19 @@ const AddEditSalePage = () => {
                 title="Payment"
                 subtitle="Credit is whatever cash and cheques do not cover."
                 action={
-                  <Button
-                    variant="default"
-                    size="xs"
-                    leftSection={<IconPlus size={14} aria-hidden />}
-                    disabled={!canCheque}
-                    onClick={() => {
-                      setCheques((cs) => [...cs, newCheque()]);
-                      touch();
-                    }}
-                  >
-                    Add cheque
-                  </Button>
+                  canCheque ? (
+                    <Button
+                      variant="default"
+                      size="xs"
+                      leftSection={<IconPlus size={14} aria-hidden />}
+                      onClick={() => {
+                        setCheques((cs) => [...cs, newCheque()]);
+                        touch();
+                      }}
+                    >
+                      Add cheque
+                    </Button>
+                  ) : undefined
                 }
               >
                 <Stack gap="md">
@@ -823,11 +824,6 @@ const AddEditSalePage = () => {
                       </SimpleGrid>
                     </Box>
                   ))}
-                  {!canCheque && (
-                    <Text size="xs" c="dimmed">
-                      You don&apos;t have permission to add cheques.
-                    </Text>
-                  )}
                 </Stack>
               </SectionCard>
             )}
