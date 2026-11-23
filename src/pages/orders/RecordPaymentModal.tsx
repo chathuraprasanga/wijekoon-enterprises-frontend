@@ -197,8 +197,10 @@ const Form = ({ order, onClose, onDone }: Omit<Props, 'opened'>) => {
         data={[
           { value: 'cash', label: 'Cash' },
           { value: 'credit', label: 'Credit' },
-          { value: 'issued_cheque', label: 'Our cheque' },
-          { value: 'customer_cheque', label: 'Customer cheque' },
+          ...(can('issued-cheque:create') ? [{ value: 'issued_cheque', label: 'Our cheque' }] : []),
+          ...(can('received-cheque:read')
+            ? [{ value: 'customer_cheque', label: 'Received cheques' }]
+            : []),
         ]}
       />
 
@@ -320,7 +322,7 @@ const Form = ({ order, onClose, onDone }: Omit<Props, 'opened'>) => {
                 </InlineAlert>
               ) : (
                 <Select
-                  label="Customer cheque"
+                  label="Received cheque"
                   withAsterisk
                   searchable
                   placeholder={cheques.length ? 'Select a cheque' : 'No transferable cheques'}

@@ -145,6 +145,9 @@ const AddEditOrderPage = () => {
 
   const touch = () => setDirty(true);
   const canPay = can('order:update');
+  // Our cheques need Issue Cheques → Create; handing on received cheques needs Receive Cheques → View.
+  const canOurs = can('issued-cheque:create');
+  const canReceived = can('received-cheque:read');
 
   // Once money has moved, only the header may change (the server enforces it too).
   const locked =
@@ -207,12 +210,13 @@ const AddEditOrderPage = () => {
 
   // Cheques in hand that may be handed to a supplier (create only; payments are made on save).
   useEffect(() => {
-    if (step !== 1 || id || !canPay || transferable.length || transferableError) return;
+    if (step !== 1 || id || !canPay || !canReceived || transferable.length || transferableError)
+      return;
     dispatch(fetchTransferableCheques())
       .unwrap()
       .then(setTransferable)
       .catch((e) => setTransferableError(e as string));
-  }, [step, id, canPay, transferable.length, transferableError, dispatch]);
+  }, [step, id, canPay, canReceived, transferable.length, transferableError, dispatch]);
 
   const itemsLoading = !!supplier && itemsFor !== supplier;
   const byId = new Map(items.map((i) => [i._id, i]));
@@ -273,7 +277,7 @@ const AddEditOrderPage = () => {
         `${row}: same cheque entered twice`,
       );
     });
-    custs.forEach((c, i) => err2(!c.cheque, `Customer cheque ${i + 1}: select a cheque`));
+    custs.forEach((c, i) => err2(!c.cheque, `Received cheque ${i + 1}: select a cheque`));
   }
   const errors = step === 0 ? errors1 : errors2;
   // The same rules without the `tried` gates, per step (to decide if the flow may go on).
@@ -816,7 +820,7 @@ const AddEditOrderPage = () => {
                     : 'Credit is whatever cash and cheques do not cover.'
                 }
                 action={
-                  payingNow ? (
+                  payingNow && (canOurs || canReceived) ? (
                     <Menu position="bottom-end" withinPortal>
                       <Menu.Target>
                         <Button
@@ -828,22 +832,26 @@ const AddEditOrderPage = () => {
                         </Button>
                       </Menu.Target>
                       <Menu.Dropdown>
-                        <Menu.Item
-                          onClick={() => {
-                            setOurs((cs) => [...cs, newOurs()]);
-                            touch();
-                          }}
-                        >
-                          Our cheque
-                        </Menu.Item>
-                        <Menu.Item
-                          onClick={() => {
-                            setCusts((cs) => [...cs, newCust()]);
-                            touch();
-                          }}
-                        >
-                          Customer cheque
-                        </Menu.Item>
+                        {canOurs && (
+                          <Menu.Item
+                            onClick={() => {
+                              setOurs((cs) => [...cs, newOurs()]);
+                              touch();
+                            }}
+                          >
+                            Our cheque
+                          </Menu.Item>
+                        )}
+                        {canReceived && (
+                          <Menu.Item
+                            onClick={() => {
+                              setCusts((cs) => [...cs, newCust()]);
+                              touch();
+                            }}
+                          >
+                            Received cheque
+                          </Menu.Item>
+                        )}
                       </Menu.Dropdown>
                     </Menu>
                   ) : undefined
@@ -1007,12 +1015,12 @@ const AddEditOrderPage = () => {
                         >
                           <Group justify="space-between" mb={6} wrap="nowrap">
                             <Text size="sm" fw={600}>
-                              Customer cheque {i + 1}
+                              Received cheque {i + 1}
                             </Text>
                             <ActionIcon
                               variant="subtle"
                               c="var(--ldg-accent-text)"
-                              aria-label={`Remove customer cheque ${i + 1}`}
+                              aria-label={`Remove received cheque ${i + 1}`}
                               onClick={() => {
                                 setCusts((cs) => cs.filter((x) => x.key !== c.key));
                                 touch();
@@ -1027,7 +1035,7 @@ const AddEditOrderPage = () => {
                             </InlineAlert>
                           ) : (
                             <Select
-                              label="Customer cheque"
+                              label="Received cheque"
                               searchable
                               placeholder={
                                 transferable.length ? 'Select a cheque' : 'No transferable cheques'
@@ -1102,7 +1110,7 @@ const AddEditOrderPage = () => {
                     </Text>
                     {cashValue > 0 && <Row label="Cash" value={cashValue} />}
                     {oursValue > 0 && <Row label="Our cheques" value={oursValue} />}
-                    {custValue > 0 && <Row label="Customer cheques" value={custValue} />}
+                    {custValue > 0 && <Row label="Received cheques" value={custValue} />}
                     {credit > 0 && <Row label="Credit" value={credit} />}
                     <Group justify="space-between" mt="xs">
                       <Text size="sm" c="dimmed">

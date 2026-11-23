@@ -26,10 +26,11 @@ type RoleFormValues = { name: string; permissions: string[] };
 const findPermission = (modulePermissions: Permission[], action: string) =>
   modulePermissions.find((permission) => permission.action === action);
 
-// 3rd-party module -> the module whose Create it needs.
-const THIRD_PARTY_BASE: Record<string, string> = {
-  'third-party-received-cheque': 'received-cheque',
-  'third-party-issued-cheque': 'issued-cheque',
+// Permission -> the permissions it can't work without (selected with it, and locked while it is on).
+const NEEDS: Record<string, string[]> = {
+  'issued-cheque:create': ['bank:read'],
+  'third-party-received-cheque:create': ['received-cheque:create', 'received-cheque:read'],
+  'third-party-issued-cheque:create': ['issued-cheque:create', 'issued-cheque:read', 'bank:read'],
 };
 
 const AddEditRolePage = () => {
@@ -76,30 +77,21 @@ const AddEditRolePage = () => {
     return groups;
   }, {});
 
-  // A 3rd-party cheque permission builds on its own Receive / Issue Cheques: selecting it selects
-  // that module's Create (and View), and Create stays on while it is.
-  const isOn = (p?: Permission) => !!p && form.values.permissions.includes(p._id);
-  const baseOf = (module: string) => THIRD_PARTY_BASE[module];
-  const lockedByThirdParty = (module: string, action: string) =>
-    action === 'create' &&
-    Object.entries(THIRD_PARTY_BASE).some(
-      ([tp, base]) =>
-        base === module && isOn(findPermission(permissionsByModule[tp] ?? [], 'create')),
-    );
+  const keyOf = (p: Permission) => `${p.module}:${p.action}`;
+  const byKey = (key: string) => permissions.find((p) => keyOf(p) === key);
+  // Keys that some selected permission needs: they stay on (locked) while it is.
+  const lockedKeys = new Set(
+    permissions
+      .filter((p) => form.values.permissions.includes(p._id))
+      .flatMap((p) => NEEDS[keyOf(p)] ?? []),
+  );
   const isLocked = (module: string, action: string, modulePermissions: Permission[]) =>
-    (action === 'read' && isViewLocked(modulePermissions)) || lockedByThirdParty(module, action);
+    (action === 'read' && isViewLocked(modulePermissions)) || lockedKeys.has(`${module}:${action}`);
 
   const togglePermission = (modulePermissions: Permission[], action: string) => {
     const permission = findPermission(modulePermissions, action);
     if (!permission) return;
     const current = new Set(form.values.permissions);
-    const base = baseOf(permission.module);
-    if (base && !current.has(permission._id)) {
-      for (const a of ['create', 'read']) {
-        const dep = findPermission(permissionsByModule[base] ?? [], a);
-        if (dep) current.add(dep._id);
-      }
-    }
     if (current.has(permission._id)) {
       current.delete(permission._id);
     } else {
@@ -108,6 +100,17 @@ const AddEditRolePage = () => {
       if (action !== 'read') {
         const view = findPermission(modulePermissions, 'read');
         if (view) current.add(view._id);
+      }
+      // What it needs comes along (and what that needs, in turn).
+      const queue = [keyOf(permission)];
+      while (queue.length) {
+        for (const key of NEEDS[queue.pop()!] ?? []) {
+          const dep = byKey(key);
+          if (dep && !current.has(dep._id)) {
+            current.add(dep._id);
+            queue.push(key);
+          }
+        }
       }
     }
     form.setFieldValue('permissions', Array.from(current));
