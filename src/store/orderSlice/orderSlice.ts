@@ -215,6 +215,10 @@ export const editChequePayment = thunk(
     body: { bank: string; chequeNumber: string; chequeDate: string; amount: number };
   }) => (await axiosInstance.patch<OrderPayment>(`/payments/${id}/cheque`, body)).data,
 );
+export const deleteChequePayment = thunk(
+  'payDeleteCheque',
+  async (id: string) => (await axiosInstance.delete<OrderPayment>(`/payments/${id}/cheque`)).data,
+);
 export const reversePayment = thunk(
   'payReverse',
   async ({ id, reason }: { id: string; reason: string }) =>

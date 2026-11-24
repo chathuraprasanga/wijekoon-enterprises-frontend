@@ -33,12 +33,14 @@ import {
   type Order,
   type OrderInput,
   type PaymentInput,
+  type OrderPayment,
   type SupplierItem,
   type TransferableCheque,
   createOrder,
   createPayment,
   setOrderCash,
   editChequePayment,
+  deleteChequePayment,
   fetchOrderById,
   fetchSupplierItems,
   fetchTransferableCheques,
@@ -130,6 +132,8 @@ const AddEditOrderPage = () => {
   const [cash, setCash] = useState<Num>('');
   // Edit: our cheques already on the order that this role may change, keyed by payment id.
   const [exOurs, setExOurs] = useState<Record<string, ExOur>>({});
+  // Edit: our cheques marked for deletion; they go when the order is saved.
+  const [delOurs, setDelOurs] = useState<string[]>([]);
   // Until cash is typed it defaults to everything the cheques do not cover (a fully paid order).
   const [cashEdited, setCashEdited] = useState(false);
   const [ours, setOurs] = useState<OurCheque[]>([]);
@@ -277,8 +281,11 @@ const AddEditOrderPage = () => {
       0,
     ),
   );
+  const delTotal = round2(
+    delOurs.reduce((t, pid) => t + (editing?.payments?.find((p) => p._id === pid)?.amount ?? 0), 0),
+  );
   const otherPaid = editing
-    ? round2(Math.max(0, (editing.paidAmount ?? 0) - cashPaidNow) + draftDelta)
+    ? round2(Math.max(0, (editing.paidAmount ?? 0) - cashPaidNow) + draftDelta - delTotal)
     : 0;
   // Credit is whatever cash and cheques do not cover: never typed.
   const credit = round2(Math.max(0, net - cashValue - chequeValue - otherPaid));
@@ -473,6 +480,12 @@ const AddEditOrderPage = () => {
       // our cheques already on the order are saved as edited. Less cash goes first, more cash last,
       // so the order's balance never overflows in between.
       const setCashNow = () => dispatch(setOrderCash({ id: id!, amount: cashValue })).unwrap();
+      if (id) {
+        for (const pid of delOurs) {
+          await dispatch(deleteChequePayment(pid)).unwrap();
+          setDelOurs((x) => x.filter((v) => v !== pid));
+        }
+      }
       if (id && cashValue < cashPaidNow) await setCashNow();
       if (id) {
         for (const [pid, d] of Object.entries(exOurs)) {
@@ -577,6 +590,13 @@ const AddEditOrderPage = () => {
   const canViewOurs = can('issued-cheque:read');
   const canViewReceived = can('received-cheque:read');
   const canEditOurs = can('issued-cheque:update');
+  const canDeleteOurs = can('issued-cheque:delete');
+  const draftOf = (p: OrderPayment) => ({
+    amount: p.amount,
+    bank: p.issuedCheque!.bank ?? null,
+    number: p.issuedCheque!.chequeNumber,
+    date: toYmd(p.issuedCheque!.chequeDate),
+  });
 
   return (
     <>
@@ -1025,16 +1045,61 @@ const AddEditOrderPage = () => {
                         const draft = exOurs[p._id];
                         const canSee = our ? canViewOurs : canViewReceived;
                         const bankName = banks.items.find((b) => b._id === ic?.bank)?.bankName;
+                        const marked = delOurs.includes(p._id);
+                        const deletable =
+                          canDeleteOurs &&
+                          our &&
+                          p.status === 'completed' &&
+                          ic?.status === 'ISSUED';
                         return (
                           <Box
                             key={p._id}
                             p="sm"
                             style={{ border: '1px solid var(--ldg-border)', borderRadius: 8 }}
                           >
-                            <Text size="sm" fw={600} mb={6}>
-                              {our ? 'Our cheque' : 'Received cheque'} {k}
-                            </Text>
-                            {!canSee ? (
+                            <Group justify="space-between" mb={6}>
+                              <Text size="sm" fw={600}>
+                                {our ? 'Our cheque' : 'Received cheque'} {k}
+                              </Text>
+                              {deletable && (
+                                <Button
+                                  variant="subtle"
+                                  color={marked ? undefined : 'red'}
+                                  size="compact-sm"
+                                  leftSection={marked ? undefined : <IconTrash size={14} />}
+                                  onClick={() => {
+                                    if (marked) {
+                                      setDelOurs((x) => x.filter((v) => v !== p._id));
+                                      if (draft === undefined && canEditOurs && ic)
+                                        setExOurs((x) => ({ ...x, [p._id]: draftOf(p) }));
+                                    } else {
+                                      setDelOurs((x) => [...x, p._id]);
+                                      setExOurs((x) => {
+                                        const rest = { ...x };
+                                        delete rest[p._id];
+                                        return rest;
+                                      });
+                                    }
+                                    touch();
+                                  }}
+                                >
+                                  {marked ? 'Undo' : 'Delete'}
+                                </Button>
+                              )}
+                            </Group>
+                            {marked ? (
+                              <>
+                                <SimpleGrid cols={{ base: 1, sm: 2 }} mb={6}>
+                                  <Field label="Amount">{formatLkr(p.amount)}</Field>
+                                  <Field label="Bank account">
+                                    {canSee ? (bankName ?? '—') : '***** (****)'}
+                                  </Field>
+                                </SimpleGrid>
+                                <Text size="sm" c="dimmed">
+                                  Will be deleted when you save changes.
+                                </Text>
+                              </>
+                            ) : !canSee ? (
                               <SimpleGrid cols={{ base: 1, sm: 2 }}>
                                 <Field label="Amount">{formatLkr(p.amount)}</Field>
                                 <Field label="Cheque date">** *** ****</Field>
