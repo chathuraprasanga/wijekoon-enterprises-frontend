@@ -29,11 +29,13 @@ const ACTIONS: Record<string, { status: string; label: string; destructive?: boo
 type Props = {
   cheque: Cheque | null;
   customerName: string;
+  /** The sale's number, for a customer's cheque. */
+  saleNo?: string;
   onClose: () => void;
   onChanged: () => void;
 };
 
-export const ChequeDetailDialog = ({ cheque, customerName, onClose, onChanged }: Props) => {
+export const ChequeDetailDialog = ({ cheque, customerName, saleNo, onClose, onChanged }: Props) => {
   const can = useCan();
   const dispatch = useAppDispatch();
   const rules = useBusinessRules();
@@ -73,8 +75,8 @@ export const ChequeDetailDialog = ({ cheque, customerName, onClose, onChanged }:
       <DetailDialog
         opened={!!cheque && !action}
         onClose={onClose}
-        title={cheque ? <span className="mono">{cheque.chequeNumber}</span> : ''}
-        subtitle={cheque ? `${formatLkr(cheque.amount)} · ${customerName}` : undefined}
+        title="Cheque details"
+        subtitle={cheque ? `${cheque.chequeNumber} · ${formatLkr(cheque.amount)}` : undefined}
         actions={moves.map((m, i) => (
           <Button
             key={m.status}
@@ -107,18 +109,27 @@ export const ChequeDetailDialog = ({ cheque, customerName, onClose, onChanged }:
               groups={[
                 [
                   {
-                    label: 'Deposit date',
+                    label: cheque.partyType === 'other' ? 'Payer' : 'Customer',
+                    value: customerName,
+                  },
+                  { label: 'Amount', value: formatLkr(cheque.amount) },
+                  ...(cheque.partyType === 'other'
+                    ? []
+                    : [{ label: 'Sale', value: <span className="mono">{saleNo ?? '—'}</span> }]),
+                  { label: 'Bank', value: bankDisplay(cheque.bankCode) },
+                  { label: 'Branch', value: branchDisplay(cheque.bankCode, cheque.branchCode) },
+                  {
+                    label: 'Cheque date',
                     value: <span className="num">{formatDate(cheque.depositDate)}</span>,
+                  },
+                  {
+                    label: 'Received on',
+                    value: <span className="num">{formatDate(cheque.createdAt)}</span>,
                   },
                   {
                     label: 'Expected clearing',
                     value: <span className="num">{formatDate(cheque.expectedClearingDate)}</span>,
                   },
-                  { label: 'Bank', value: bankDisplay(cheque.bankCode) },
-                  { label: 'Branch', value: branchDisplay(cheque.bankCode, cheque.branchCode) },
-                  ...(cheque.depositLimitOverridden
-                    ? [{ label: 'Deposit limit', value: 'Overridden when saved' }]
-                    : []),
                 ],
               ]}
             />

@@ -74,12 +74,8 @@ export const IssuedChequeDialog = ({
           </Button>
         ))}
         onClose={onClose}
-        title={cheque ? <span className="mono">{cheque.chequeNumber}</span> : ''}
-        subtitle={
-          cheque
-            ? `${formatLkr(cheque.amount)} · ${cheque.supplierName ?? cheque.payee ?? '—'}`
-            : undefined
-        }
+        title="Cheque details"
+        subtitle={cheque ? `${cheque.chequeNumber} · ${formatLkr(cheque.amount)}` : undefined}
       >
         {cheque && (
           <Stack gap="md">
@@ -99,23 +95,24 @@ export const IssuedChequeDialog = ({
             <DetailList
               groups={[
                 [
-                  {
-                    label: 'Supplier',
-                    value:
-                      cheque.supplierName ??
-                      (cheque.partyType === 'other' ? 'Other party' : undefined),
-                  },
-                  { label: 'Payee', value: cheque.payee },
-                  {
-                    label: 'Order',
-                    value: cheque.order ? (
-                      <Link to={`/app/orders/${cheque.order}`}>
-                        {cheque.orderNo ?? 'Open order'}
-                      </Link>
-                    ) : (
-                      '—'
-                    ),
-                  },
+                  ...(cheque.partyType === 'other'
+                    ? [{ label: 'Payee', value: cheque.payee }]
+                    : [{ label: 'Supplier', value: cheque.supplierName ?? '—' }]),
+                  { label: 'Amount', value: formatLkr(cheque.amount) },
+                  ...(cheque.partyType === 'other'
+                    ? []
+                    : [
+                        {
+                          label: 'Order',
+                          value: cheque.order ? (
+                            <Link to={`/app/orders/${cheque.order}`}>
+                              {cheque.orderNo ?? 'Open order'}
+                            </Link>
+                          ) : (
+                            '—'
+                          ),
+                        },
+                      ]),
                   {
                     label: 'Our account',
                     value: cheque.bankName

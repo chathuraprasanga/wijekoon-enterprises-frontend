@@ -60,20 +60,21 @@ export const CustomerTypeBadge = ({ type }: { type?: 'HARDWARE_STORE' | 'INDIVID
   );
 
 // Customer cheque lifecycle (RECEIVED -> DEPOSITED | TRANSFERRED -> CLEARED, auto after the clearing date; RETURNED any time, then DEPOSITED again).
-export const ChequeLifecycleBadge = ({ status }: { status?: string }) => {
+export const ChequeLifecycleBadge = ({ status, plain }: { status?: string; plain?: boolean }) => {
+  const ic = (i: Icon) => (plain ? undefined : i);
   switch (status) {
     case 'DEPOSITED':
-      return <StatusBadge tone="accent" label="Deposited" icon={IconClock} />;
+      return <StatusBadge tone="accent" label="Deposited" icon={ic(IconClock)} />;
     case 'TRANSFERRED':
-      return <StatusBadge tone="info" label="Transferred" icon={IconHourglass} />;
+      return <StatusBadge tone="info" label="Transferred" icon={ic(IconHourglass)} />;
     case 'CLEARED':
-      return <StatusBadge tone="success" label="Cleared" icon={IconCircleCheck} />;
+      return <StatusBadge tone="success" label="Cleared" icon={ic(IconCircleCheck)} />;
     case 'ISSUED':
-      return <StatusBadge tone="info" label="Issued" icon={IconHourglass} />;
+      return <StatusBadge tone="info" label="Issued" icon={ic(IconHourglass)} />;
     case 'RETURNED':
-      return <StatusBadge tone="danger" label="Returned" icon={IconAlertCircle} />;
+      return <StatusBadge tone="danger" label="Returned" icon={ic(IconAlertCircle)} />;
     default:
-      return <StatusBadge tone="warning" label="Received" icon={IconCalendar} />;
+      return <StatusBadge tone="warning" label="Received" icon={ic(IconCalendar)} />;
   }
 };
 

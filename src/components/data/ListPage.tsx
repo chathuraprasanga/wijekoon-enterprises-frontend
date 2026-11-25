@@ -72,6 +72,8 @@ type Props<T> = {
   /** First-use empty state: what to add and why. */
   emptyDescription?: string;
   emptyIcon?: ReactNode;
+  /** Replaces the empty state's create button (null for none). */
+  emptyAction?: ReactNode;
   /** Inside another page (e.g. a Settings tab): no page header of its own. */
   embedded?: boolean;
   onCreate?: () => void;
@@ -109,6 +111,7 @@ export const ListPage = <T,>({
   createIcon,
   emptyDescription,
   emptyIcon,
+  emptyAction,
   embedded,
   onCreate,
   extraActions,
@@ -306,6 +309,8 @@ export const ListPage = <T,>({
                   >
                     {query.q ? 'Clear search' : 'Clear filters'}
                   </Button>
+                ) : emptyAction !== undefined ? (
+                  emptyAction
                 ) : (
                   onCreate && (
                     <Button leftSection={<IconPlus size={16} aria-hidden />} onClick={onCreate}>

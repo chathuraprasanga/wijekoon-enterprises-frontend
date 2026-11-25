@@ -68,6 +68,11 @@ export type PagedChequesParams = {
   customer?: string;
   sale?: string;
   type?: 'all' | 'issued';
+  /** Comma-separated received-cheque statuses to keep. */
+  status?: string;
+  /** Deposit date range, YYYY-MM-DD. */
+  dateFrom?: string;
+  dateTo?: string;
   /** Received tab: one other party by name. Issued tab: one supplier, or one other payee by name. */
   partyName?: string;
   supplier?: string;
@@ -106,6 +111,10 @@ export const fetchCheques = createAsyncThunk(
   },
 );
 
+/** Same list, but returned to the caller only: a picker must not replace the page's own rows. */
+export const searchCheques = async (params: PagedChequesParams) =>
+  (await axiosInstance.get<PagedChequesResponse>('/cheques/paged', { params })).data;
+
 export const createCheque = createAsyncThunk(
   'cheque/create',
   async (payload: ChequeInput, { rejectWithValue }) => {
@@ -125,6 +134,18 @@ export const updateCheque = createAsyncThunk(
       const { _id, ...body } = payload;
       const { data } = await axiosInstance.patch<Cheque>(`/cheques/${_id}`, body);
       return data;
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error));
+    }
+  },
+);
+
+/// Deposits several received cheques at once.
+export const depositCheques = createAsyncThunk(
+  'cheque/deposit',
+  async (ids: string[], { rejectWithValue }) => {
+    try {
+      return (await axiosInstance.post<{ deposited: number }>('/cheques/deposit', { ids })).data;
     } catch (error) {
       return rejectWithValue(getErrorMessage(error));
     }
