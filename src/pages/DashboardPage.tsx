@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Anchor, Box, Button, Flex, SimpleGrid, Skeleton, Stack, Text } from '@mantine/core';
-import { IconPlus } from '@tabler/icons-react';
+import { Anchor, Button, Grid, SegmentedControl, SimpleGrid, Stack } from '@mantine/core';
+import { IconAlertCircle, IconCircleCheck, IconClock, IconPlus } from '@tabler/icons-react';
 import { PageHeader } from '@/components/PageHeader';
 import { SectionCard } from '@/components/SectionCard';
 import { DataTable } from '@/components/data/DataTable';
@@ -9,24 +9,35 @@ import { EmptyState } from '@/components/EmptyState';
 import { InlineAlert } from '@/components/InlineAlert';
 import { ChequeLifecycleBadge, SaleStatusBadge } from '@/components/StatusBadge';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { fetchCustomers } from '@/store/customerSlice/customerSlice';
-import { fetchSuppliers } from '@/store/supplierSlice/supplierSlice';
-import { fetchProducts } from '@/store/productSlice/productSlice';
 import { fetchSales } from '@/store/saleSlice/saleSlice';
 import { fetchCheques } from '@/store/chequeSlice/chequeSlice';
 import { useLookup } from '@/hooks/useLookup';
 import { customerName } from '@/pages/sales/saleLabels';
 import type { Customer } from '@/store/customerSlice/customerSlice';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 import { formatDate, formatLkr } from '@/utils/format';
 import { useCan } from '@/utils/permissions';
-
-const GLANCE = [
-  { key: 'sale', label: 'Sales recorded', path: '/app/sales', cta: 'View sales' },
-  { key: 'cheque', label: 'Cheques on file', path: '/app/cheques', cta: 'View cheques' },
-  { key: 'customer', label: 'Customers', path: '/app/customers', cta: 'View customers' },
-  { key: 'supplier', label: 'Suppliers', path: '/app/suppliers', cta: 'View suppliers' },
-  { key: 'product', label: 'Products', path: '/app/products', cta: 'View products' },
-] as const;
+import { ChartCard } from '@/pages/dashboard/ChartCard';
+import { ChartPatterns } from '@/pages/dashboard/ChartTip';
+import { DashboardFilters } from '@/pages/dashboard/DashboardFilters';
+import { KpiTile } from '@/pages/dashboard/KpiTile';
+import {
+  Donut,
+  DueColumns,
+  GroupedBars,
+  HBars,
+  LineChart,
+  StackBar,
+} from '@/pages/dashboard/charts';
+import { fetchDashboard, type DashboardData } from '@/pages/dashboard/dashboardApi';
+import { CHEQUE_STATUS, PAY_METHOD, SALE_STATUS } from '@/pages/dashboard/chartKinds';
+import {
+  lkrShort,
+  presetRange,
+  rangeLabel,
+  type Preset,
+  type Range,
+} from '@/pages/dashboard/dashboardUtils';
 
 const ViewAll = ({ to }: { to: string }) => (
   <Anchor component={Link} to={to} size="sm" fw={500}>
@@ -34,57 +45,56 @@ const ViewAll = ({ to }: { to: string }) => (
   </Anchor>
 );
 
+const SALE_ICON = {
+  paid: <IconCircleCheck size={15} aria-hidden />,
+  partially_paid: <IconClock size={15} aria-hidden />,
+  not_paid: <IconAlertCircle size={15} aria-hidden />,
+} as const;
+const AGEING = [
+  { label: '0–30 days', kind: 'solid' },
+  { label: '31–60 days', kind: 'dots' },
+  { label: '60+ days', kind: 'cross' },
+] as const;
+
+const share = (v: number, total: number) =>
+  `${total > 0 ? ((v / total) * 100).toFixed(1) : '0.0'}%`;
+
 const DashboardPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const can = useCan();
-  const canRead = (module: string) =>
-    can(`${module === 'cheque' ? 'received-cheque' : module}:read`);
-  const canCustomers = canRead('customer');
-  const canSuppliers = canRead('supplier');
-  const canProducts = canRead('product');
-  const canSales = canRead('sale');
-  const canCheques = canRead('cheque');
+  const canSales = can('sale:read');
+  const canOrders = can('order:read');
+  const canCheques = can('received-cheque:read');
+  const canCustomers = canSales && can('customer:read');
+  const canSuppliers = canOrders && can('supplier:read');
   const user = useAppSelector((s) => s.auth.user);
-  const glance = GLANCE.filter((g) => canRead(g.key));
-  const totals = useAppSelector((s) => ({
-    customer: s.customer.total,
-    supplier: s.supplier.total,
-    product: s.product.total,
-    sale: s.sale.total,
-    cheque: s.cheque.total,
-  }));
   const sales = useAppSelector((s) => s.sale.items);
   const cheques = useAppSelector((s) => s.cheque.items);
   const customers = useLookup<Customer>('customers');
+  const [range, setRange] = useState<Range>(() => presetRange('mtd'));
+  const [preset, setPreset] = useState<Preset>('mtd');
+  const [compare, setCompare] = useState(true);
+  const [prodBy, setProdBy] = useState<'quantity' | 'revenue'>('quantity');
+  const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [listsLoading, setListsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [nonce, setNonce] = useState(0);
+  const anyData = canSales || canOrders || canCheques;
 
+  // Charts: refetched whenever the range changes.
   useEffect(() => {
+    if (!anyData) return;
     let live = true;
     const load = async () => {
       setLoading(true);
       setError(null);
       try {
-        // Only what this user may read: a missing permission would 403 the whole dashboard.
-        const results = await Promise.allSettled([
-          canCustomers && dispatch(fetchCustomers({ page: 1, limit: 1 })).unwrap(),
-          canSuppliers && dispatch(fetchSuppliers({ page: 1, limit: 1 })).unwrap(),
-          canProducts && dispatch(fetchProducts({ page: 1, limit: 1 })).unwrap(),
-          canSales &&
-            dispatch(
-              fetchSales({ page: 1, limit: 5, sortBy: 'salesDate', sortType: 'desc' }),
-            ).unwrap(),
-          canCheques &&
-            dispatch(
-              fetchCheques({ page: 1, limit: 5, sortBy: 'depositDate', sortType: 'asc' }),
-            ).unwrap(),
-        ]);
-        // each piece loads on its own; report if any failed
-        if (live && results.some((r) => r.status === 'rejected')) {
-          setError("Some figures couldn't be loaded. Try again.");
-        }
+        const d = await fetchDashboard(range.from, range.to);
+        if (live) setData(d);
+      } catch (e) {
+        if (live) setError(getErrorMessage(e));
       } finally {
         if (live) setLoading(false);
       }
@@ -93,7 +103,30 @@ const DashboardPage = () => {
     return () => {
       live = false;
     };
-  }, [dispatch, nonce, canCustomers, canSuppliers, canProducts, canSales, canCheques]);
+  }, [anyData, range.from, range.to, nonce]);
+
+  // The two lists at the bottom ignore the date filter.
+  useEffect(() => {
+    let live = true;
+    const load = async () => {
+      setListsLoading(true);
+      await Promise.allSettled([
+        canSales &&
+          dispatch(
+            fetchSales({ page: 1, limit: 5, sortBy: 'salesDate', sortType: 'desc' }),
+          ).unwrap(),
+        canCheques &&
+          dispatch(
+            fetchCheques({ page: 1, limit: 5, sortBy: 'depositDate', sortType: 'asc' }),
+          ).unwrap(),
+      ]);
+      if (live) setListsLoading(false);
+    };
+    void load();
+    return () => {
+      live = false;
+    };
+  }, [dispatch, nonce, canSales, canCheques]);
 
   const name = (id: string) => customerName(customers.byId.get(id));
   const today = new Date().toLocaleDateString('en-GB', {
@@ -102,12 +135,27 @@ const DashboardPage = () => {
     month: 'short',
     year: 'numeric',
   });
+  const series = data?.series ?? [];
+  const spark = (k: 'sales' | 'purchases' | 'received') => series.map((p) => p[k] ?? 0);
+  const t = data?.totals;
+  const salesTotal = t?.sales?.value ?? 0;
+  const prevLabel = data ? rangeLabel(data.range.previousFrom, data.range.previousTo) : '';
+  const noSales = !!t?.sales && t.sales.value === 0 && t.sales.previous === 0;
+  const split = data?.paymentSplit ?? [];
+  const status = data?.saleStatus ?? [];
+  const proj = data?.topProducts?.[prodBy] ?? [];
+  const pipeline = CHEQUE_STATUS.map((c) => ({
+    label: c.label,
+    kind: c.kind,
+    value: data?.chequePipeline?.find((p) => p.status === c.status)?.value ?? 0,
+  }));
 
   return (
     <>
+      <ChartPatterns />
       <PageHeader
         title={`Welcome${user ? `, ${user.firstName}` : ''}`}
-        description="Here is what is happening with your business today."
+        description={today}
         action={
           can('sale:create') ? (
             <Button
@@ -126,63 +174,348 @@ const DashboardPage = () => {
             title="The dashboard couldn't be loaded"
             action={
               <Button mt="xs" size="xs" variant="default" onClick={() => setNonce((n) => n + 1)}>
-                Retry
+                Try again
               </Button>
             }
           >
             {error}
           </InlineAlert>
         )}
-        {glance.length === 0 && (
+        {!anyData && (
           <EmptyState
             title="Nothing to show yet"
             description="Your role does not include viewing any records. Contact an administrator if you need access."
           />
         )}
-        {glance.length > 0 && (
-          <SectionCard title="Today at a glance" subtitle={today} flush>
-            <SimpleGrid cols={{ base: 1, sm: 3, lg: 5 }} spacing={0}>
-              {glance.map((g) => (
-                <Box
-                  key={g.key}
-                  component={Link}
-                  to={g.path}
-                  aria-label={`${g.label}: ${totals[g.key]}. ${g.cta}`}
-                  p="md"
-                  style={{
-                    color: 'inherit',
-                    textDecoration: 'none',
-                    borderRight: '1px solid var(--ldg-border)',
-                    borderBottom: '1px solid var(--ldg-border)',
-                    marginRight: -1,
-                    marginBottom: -1,
-                  }}
-                >
-                  <Flex
-                    direction={{ base: 'row', sm: 'column' }}
-                    justify="space-between"
-                    align={{ base: 'center', sm: 'flex-start' }}
-                    gap={2}
-                  >
-                    <Text size="sm" c="dimmed">
-                      {g.label}
-                    </Text>
-                    {loading ? (
-                      <Skeleton h={32} w={64} my={4} />
-                    ) : (
-                      <Text fz={30} fw={600} lh={1.25} c="var(--ldg-accent-text)" className="num">
-                        {totals[g.key].toLocaleString('en-US')}
-                      </Text>
-                    )}
-                    <Text size="sm" fw={500} c="var(--ldg-accent-text)" visibleFrom="sm">
-                      {g.cta} →
-                    </Text>
-                  </Flex>
-                </Box>
-              ))}
-            </SimpleGrid>
-          </SectionCard>
+        {anyData && (
+          <DashboardFilters
+            range={range}
+            preset={preset}
+            compare={compare}
+            previous={data ? { from: data.range.previousFrom, to: data.range.previousTo } : null}
+            onChange={(r, p) => {
+              setRange(r);
+              setPreset(p);
+            }}
+            onCompare={setCompare}
+          />
         )}
+        {anyData && (
+          <SimpleGrid cols={{ base: 1, xs: 2, md: 3, xl: 6 }} spacing="sm">
+            {canSales && (
+              <KpiTile
+                label="Sales"
+                loading={loading}
+                value={salesTotal}
+                previous={compare ? t?.sales?.previous : undefined}
+                spark={spark('sales')}
+                emptyNote="No sales in this period"
+              />
+            )}
+            {canOrders && (
+              <KpiTile
+                label="Purchases"
+                loading={loading}
+                value={t?.purchases?.value ?? 0}
+                previous={compare ? t?.purchases?.previous : undefined}
+                spark={spark('purchases')}
+              />
+            )}
+            {canSales && (
+              <KpiTile
+                label="Received"
+                loading={loading}
+                value={t?.received?.value ?? 0}
+                previous={compare ? t?.received?.previous : undefined}
+                spark={spark('received')}
+              />
+            )}
+            {canSales && (
+              <KpiTile
+                label="Outstanding receivables"
+                loading={loading}
+                value={t?.receivables ?? 0}
+              />
+            )}
+            {canOrders && (
+              <KpiTile label="Outstanding payables" loading={loading} value={t?.payables ?? 0} />
+            )}
+            {canCheques && (
+              <KpiTile
+                label="Cheques pending"
+                loading={loading}
+                value={t?.cheques?.value ?? 0}
+                prefix={String(t?.cheques?.count ?? 0)}
+              />
+            )}
+          </SimpleGrid>
+        )}
+        <Grid gap="md">
+          {canSales && (
+            <Grid.Col span={{ base: 12, lg: 8 }}>
+              <ChartCard
+                title="Sales over time"
+                subtitle={`${series.length > 92 ? 'Weekly' : 'Daily'}, ${rangeLabel(range.from, range.to)}`}
+                scope="period"
+                loading={loading}
+                empty={
+                  noSales
+                    ? {
+                        title: 'No sales in this period',
+                        description: 'Try a longer range, or record a sale.',
+                      }
+                    : null
+                }
+              >
+                <LineChart series={series} compare={compare} prevLabel={prevLabel} />
+              </ChartCard>
+            </Grid.Col>
+          )}
+          {canSales && (
+            <Grid.Col span={{ base: 12, lg: 4 }}>
+              <ChartCard
+                title="Payment method split"
+                subtitle="Share of sales value"
+                scope="period"
+                loading={loading}
+                empty={
+                  split.length === 0
+                    ? {
+                        title: 'No sales in this period',
+                        description: 'Try a longer range, or record a sale.',
+                      }
+                    : null
+                }
+              >
+                <Donut
+                  noun="Sales"
+                  centre={`LKR ${lkrShort(split.reduce((n, p) => n + p.value, 0))}`}
+                  sub={`${split.length} method${split.length === 1 ? '' : 's'}`}
+                  slices={split.map((p) => ({
+                    label: PAY_METHOD[p.method]?.label ?? p.method,
+                    kind: PAY_METHOD[p.method]?.kind ?? 'grey',
+                    value: p.value,
+                    count: p.count,
+                  }))}
+                />
+              </ChartCard>
+            </Grid.Col>
+          )}
+          {canSales && canOrders && (
+            <Grid.Col span={{ base: 12, lg: 8 }}>
+              <ChartCard
+                title="Sales vs purchases"
+                subtitle={series.length <= 98 ? 'Weekly totals, LKR' : '30-day totals, LKR'}
+                scope="period"
+                loading={loading}
+                empty={
+                  noSales && (t?.purchases?.value ?? 0) === 0
+                    ? { title: 'Nothing in this period', description: 'Try a longer range.' }
+                    : null
+                }
+              >
+                <GroupedBars series={series} />
+              </ChartCard>
+            </Grid.Col>
+          )}
+          {canSales && (
+            <Grid.Col span={{ base: 12, lg: canOrders ? 4 : 12 }}>
+              <ChartCard
+                title="Sale status"
+                subtitle="Value by payment status"
+                scope="period"
+                loading={loading}
+                empty={
+                  status.length === 0
+                    ? {
+                        title: 'No sales in this period',
+                        description: 'Try a longer range, or record a sale.',
+                      }
+                    : null
+                }
+              >
+                <StackBar
+                  items={(['paid', 'partially_paid', 'not_paid'] as const).map((k) => ({
+                    label: SALE_STATUS[k].label,
+                    kind: SALE_STATUS[k].kind,
+                    icon: SALE_ICON[k],
+                    value: status.find((s) => s.status === k)?.value ?? 0,
+                  }))}
+                />
+              </ChartCard>
+            </Grid.Col>
+          )}
+          {canCustomers && (
+            <Grid.Col span={{ base: 12, md: 6, xl: 4 }}>
+              <ChartCard
+                title="Top customers"
+                subtitle="By sales value, top 5"
+                scope="period"
+                loading={loading}
+                empty={
+                  (data?.topCustomers ?? []).length === 0
+                    ? { title: 'No sales in this period', description: 'Try a longer range.' }
+                    : null
+                }
+              >
+                <HBars
+                  kind="solid"
+                  rows={(data?.topCustomers ?? []).map((c) => ({
+                    name: c.name,
+                    value: c.value,
+                    display: `LKR ${c.value.toLocaleString('en-US')}`,
+                    tip: [
+                      { label: 'Sales', value: formatLkr(c.value) },
+                      { label: 'Orders', value: String(c.orders) },
+                      { label: 'Share', value: share(c.value, salesTotal) },
+                    ],
+                  }))}
+                />
+              </ChartCard>
+            </Grid.Col>
+          )}
+          {canSales && (
+            <Grid.Col span={{ base: 12, md: 6, xl: 4 }}>
+              <ChartCard
+                title="Top products"
+                subtitle={`Top 5 by ${prodBy === 'quantity' ? 'quantity sold' : 'revenue'}`}
+                scope="period"
+                loading={loading}
+                control={
+                  <SegmentedControl
+                    size="xs"
+                    aria-label="Rank products by"
+                    value={prodBy}
+                    onChange={(v) => setProdBy(v as 'quantity' | 'revenue')}
+                    data={[
+                      { value: 'quantity', label: 'Quantity' },
+                      { value: 'revenue', label: 'Revenue' },
+                    ]}
+                  />
+                }
+                empty={
+                  proj.length === 0
+                    ? { title: 'No sales in this period', description: 'Try a longer range.' }
+                    : null
+                }
+              >
+                <HBars
+                  kind="stripe"
+                  rows={proj.map((p) => ({
+                    name: p.name,
+                    value: prodBy === 'quantity' ? p.quantity : p.revenue,
+                    display:
+                      prodBy === 'quantity'
+                        ? `${p.quantity.toLocaleString('en-US')} units`
+                        : `LKR ${p.revenue.toLocaleString('en-US')}`,
+                    tip: [
+                      { label: 'Units', value: p.quantity.toLocaleString('en-US') },
+                      { label: 'Revenue', value: formatLkr(p.revenue) },
+                    ],
+                  }))}
+                />
+              </ChartCard>
+            </Grid.Col>
+          )}
+          {canSuppliers && (
+            <Grid.Col span={{ base: 12, md: 6, xl: 4 }}>
+              <ChartCard
+                title="Top suppliers"
+                subtitle="By purchase value, top 5"
+                scope="period"
+                loading={loading}
+                empty={
+                  (data?.topSuppliers ?? []).length === 0
+                    ? { title: 'No purchases in this period', description: 'Try a longer range.' }
+                    : null
+                }
+              >
+                <HBars
+                  kind="dots"
+                  rows={(data?.topSuppliers ?? []).map((s) => ({
+                    name: s.name,
+                    value: s.value,
+                    display: `LKR ${s.value.toLocaleString('en-US')}`,
+                    tip: [
+                      { label: 'Purchases', value: formatLkr(s.value) },
+                      { label: 'Orders', value: String(s.orders) },
+                      { label: 'Share', value: share(s.value, t?.purchases?.value ?? 0) },
+                    ],
+                  }))}
+                />
+              </ChartCard>
+            </Grid.Col>
+          )}
+          {canCheques && (
+            <Grid.Col span={{ base: 12, md: 6, xl: 4 }}>
+              <ChartCard
+                title="Cheque pipeline"
+                subtitle="Value by status, LKR"
+                scope="current"
+                loading={loading}
+                empty={
+                  pipeline.every((p) => p.value === 0) && !loading
+                    ? {
+                        title: 'No cheques yet',
+                        description: 'Cheques you receive show here by status.',
+                      }
+                    : null
+                }
+              >
+                <StackBar items={pipeline} />
+              </ChartCard>
+            </Grid.Col>
+          )}
+          {canCheques && (
+            <Grid.Col span={{ base: 12, md: 6, xl: 4 }}>
+              <ChartCard
+                title="Cheques due"
+                subtitle="By week of deposit date"
+                scope="current"
+                loading={loading}
+                empty={
+                  (data?.chequesDue ?? []).every((b) => b.count === 0) && !loading
+                    ? {
+                        title: 'No cheques waiting',
+                        description: 'Cheques you receive will show here by week.',
+                      }
+                    : null
+                }
+              >
+                <DueColumns buckets={data?.chequesDue ?? []} />
+              </ChartCard>
+            </Grid.Col>
+          )}
+          {canSales && (
+            <Grid.Col span={{ base: 12, md: 6, xl: 4 }}>
+              <ChartCard
+                title="Receivables ageing"
+                subtitle="Outstanding by days overdue"
+                scope="current"
+                loading={loading}
+                empty={
+                  (data?.ageing ?? []).every((v) => v === 0) && !loading
+                    ? {
+                        title: 'Nothing outstanding',
+                        description: 'Credit sales that are not yet paid show here.',
+                      }
+                    : null
+                }
+              >
+                <HBars
+                  kind="solid"
+                  rows={AGEING.map((a, i) => ({
+                    name: a.label,
+                    kind: a.kind,
+                    value: data?.ageing?.[i] ?? 0,
+                    display: formatLkr(data?.ageing?.[i] ?? 0),
+                  }))}
+                />
+              </ChartCard>
+            </Grid.Col>
+          )}
+        </Grid>
+
         {canSales && (
           <SectionCard
             title="Recent sales"
@@ -190,7 +523,7 @@ const DashboardPage = () => {
             action={<ViewAll to="/app/sales" />}
             flush
           >
-            {!loading && sales.length === 0 ? (
+            {!listsLoading && sales.length === 0 ? (
               <EmptyState
                 title="No sales yet"
                 description="Sales appear here once they're recorded."
@@ -200,7 +533,7 @@ const DashboardPage = () => {
                 caption="Recent sales"
                 records={sales}
                 rowKey={(s) => s._id}
-                loading={loading}
+                loading={listsLoading}
                 columns={[
                   {
                     key: 'salesId',
@@ -237,14 +570,14 @@ const DashboardPage = () => {
             action={<ViewAll to="/app/cheques" />}
             flush
           >
-            {!loading && cheques.length === 0 ? (
+            {!listsLoading && cheques.length === 0 ? (
               <EmptyState title="No cheques yet" description="Cheques you add appear here." />
             ) : (
               <DataTable
                 caption="Cheques to follow up"
                 records={cheques}
                 rowKey={(c) => c._id}
-                loading={loading}
+                loading={listsLoading}
                 columns={[
                   {
                     key: 'chequeNumber',
