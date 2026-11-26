@@ -7,6 +7,7 @@ import { toNotify } from '@/hooks/toNotify';
 import { useAppDispatch } from '@/store/hooks';
 import { type Sale, recordSalePayment } from '@/store/saleSlice/saleSlice';
 import { formatLkr, toYmd } from '@/utils/format';
+import { useCan } from '@/utils/permissions';
 import { saleOutstanding } from './saleLabels';
 
 type Props = { sale: Sale; opened: boolean; onClose: () => void; onDone: () => void };
@@ -16,6 +17,8 @@ export const RecordSalePaymentModal = ({ sale, opened, onClose, onDone }: Props)
 
 const Form = ({ sale, onClose, onDone }: Omit<Props, 'opened'>) => {
   const dispatch = useAppDispatch();
+  // A cheque payment also records a received cheque, so it needs Receive Cheques → Create.
+  const canCheque = useCan()('received-cheque:create');
   const room = saleOutstanding(sale);
   const [method, setMethod] = useState<'cash' | 'cheque'>('cash');
   const [amount, setAmount] = useState<number | ''>(room);
@@ -81,15 +84,17 @@ const Form = ({ sale, onClose, onDone }: Omit<Props, 'opened'>) => {
       <Text size="sm" c="dimmed">
         Outstanding: <strong className="num">{formatLkr(room)}</strong>
       </Text>
-      <SegmentedControl
-        fullWidth
-        value={method}
-        onChange={(v) => setMethod(v as 'cash' | 'cheque')}
-        data={[
-          { value: 'cash', label: 'Cash' },
-          { value: 'cheque', label: 'Cheque' },
-        ]}
-      />
+      {canCheque && (
+        <SegmentedControl
+          fullWidth
+          value={method}
+          onChange={(v) => setMethod(v as 'cash' | 'cheque')}
+          data={[
+            { value: 'cash', label: 'Cash' },
+            { value: 'cheque', label: 'Cheque' },
+          ]}
+        />
+      )}
       <NumberInput
         placeholder="LKR 0.00"
         label="Amount"
