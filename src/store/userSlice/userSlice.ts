@@ -11,6 +11,9 @@ export type User = {
   address: string | null;
   roles: string[];
   isActive: boolean;
+  isTestUser?: boolean;
+  testExpiresAt?: string | null;
+  testExpired?: boolean;
   createdAt: string;
   updatedAt: string;
 };
@@ -55,6 +58,43 @@ export const fetchUsers = createAsyncThunk(
     try {
       const { data } = await axiosInstance.get<PagedUsersResponse>('/users/paged', { params });
       return data;
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error));
+    }
+  },
+);
+
+export type TestUserInput = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  /** ISO date-time when the test time ends */
+  expiresAt: string;
+};
+
+/** Super admin only: a time-limited user who works on their own sample data. */
+export const createTestUser = createAsyncThunk(
+  'user/createTest',
+  async (payload: TestUserInput, { rejectWithValue }) => {
+    try {
+      const { data } = await axiosInstance.post<User>('/users/test', payload);
+      return data;
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error));
+    }
+  },
+);
+
+export const extendTestUser = createAsyncThunk(
+  'user/extendTest',
+  async ({ id, expiresAt }: { id: string; expiresAt: string }, { rejectWithValue }) => {
+    try {
+      const { data } = await axiosInstance.patch<{ testExpiresAt: string; testExpired: boolean }>(
+        `/users/${id}/test-expiry`,
+        { expiresAt },
+      );
+      return { id, ...data };
     } catch (error) {
       return rejectWithValue(getErrorMessage(error));
     }
@@ -133,6 +173,16 @@ const userSlice = createSlice({
     });
     builder.addCase(createUser.fulfilled, (state, action) => {
       state.items.unshift(action.payload);
+    });
+    builder.addCase(createTestUser.fulfilled, (state, action) => {
+      state.items.unshift(action.payload);
+    });
+    builder.addCase(extendTestUser.fulfilled, (state, action) => {
+      state.items = state.items.map((item) =>
+        item._id === action.payload.id
+          ? { ...item, testExpiresAt: action.payload.testExpiresAt, testExpired: false }
+          : item,
+      );
     });
     builder.addCase(updateUser.fulfilled, (state, action) => {
       state.items = state.items.map((item) =>

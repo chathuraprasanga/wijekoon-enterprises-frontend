@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button, Group } from '@mantine/core';
-import { IconKey, IconPencil } from '@tabler/icons-react';
+import { IconFlask, IconKey, IconPencil } from '@tabler/icons-react';
+import { DateTimePicker } from '@mantine/dates';
 import { ListPage } from '@/components/data/ListPage';
 import { DetailDialog } from '@/components/DetailDialog';
 import { Box, Stack, Text } from '@mantine/core';
@@ -9,10 +10,12 @@ import { StatusSection } from '@/components/StatusSection';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { ActiveBadge, StatusBadge } from '@/components/StatusBadge';
 import { AddEditUserModal } from '@/pages/settings/AddEditUserModal';
+import { TestUserModal } from '@/pages/settings/TestUserModal';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   type User,
   deleteUser,
+  extendTestUser,
   fetchUsers,
   resetUserPassword,
   updateUser,
@@ -20,7 +23,7 @@ import {
 import { fetchRoles } from '@/store/roleSlice/roleSlice';
 import { toNotify } from '@/hooks/toNotify';
 import { useActiveToggle } from '@/hooks/useActiveToggle';
-import { formatPhone, fullName } from '@/utils/format';
+import { dateTimeToIso, formatDateTime, formatPhone, fullName } from '@/utils/format';
 import { useCan } from '@/utils/permissions';
 
 const SORT_MAP = { name: 'firstName' };
@@ -34,6 +37,10 @@ const UsersPage = () => {
   const [view, setView] = useState<User | null>(null);
   const [toReset, setToReset] = useState<User | null>(null);
   const [resetting, setResetting] = useState(false);
+  const isSuperAdmin = useAppSelector((s) => !!s.auth.user?.isSuperAdmin);
+  const [testForm, setTestForm] = useState(false);
+  const [newExpiry, setNewExpiry] = useState<string | null>(null);
+  const [extending, setExtending] = useState(false);
 
   // The role list needs role:read (or user:create/update); without it names show as a dash.
   useEffect(() => {
@@ -59,6 +66,23 @@ const UsersPage = () => {
       ).unwrap(),
     (id, isActive) => setView((v) => (v && v._id === id ? { ...v, isActive } : v)),
   );
+
+  const handleExtend = async () => {
+    if (!view || !newExpiry) return;
+    setExtending(true);
+    try {
+      const r = await dispatch(
+        extendTestUser({ id: view._id, expiresAt: dateTimeToIso(newExpiry) }),
+      ).unwrap();
+      setView({ ...view, testExpiresAt: r.testExpiresAt, testExpired: false });
+      setNewExpiry(null);
+      toNotify('Test access updated', 'The sample data was reset to its initial state.', 'SUCCESS');
+    } catch (error) {
+      toNotify("Couldn't change the expiry", error as string, 'ERROR');
+    } finally {
+      setExtending(false);
+    }
+  };
 
   const handleReset = async () => {
     if (!toReset) return;
@@ -114,6 +138,17 @@ const UsersPage = () => {
         ).unwrap()
       }
       createLabel="Add user"
+      extraActions={
+        isSuperAdmin ? (
+          <Button
+            variant="default"
+            leftSection={<IconFlask size={16} aria-hidden />}
+            onClick={() => setTestForm(true)}
+          >
+            Add test user
+          </Button>
+        ) : undefined
+      }
       onCreate={can('user:create') ? () => setForm({ user: null }) : undefined}
       onView={setView}
       onEdit={can('user:update') ? (user) => setForm({ user }) : undefined}
@@ -138,7 +173,17 @@ const UsersPage = () => {
           header: 'Name',
           sortable: true,
           primary: true,
-          render: (u) => <b style={{ fontWeight: 500 }}>{fullName(u)}</b>,
+          render: (u) => (
+            <Group gap={6} wrap="nowrap">
+              <b style={{ fontWeight: 500 }}>{fullName(u)}</b>
+              {u.isTestUser && (
+                <StatusBadge
+                  tone={u.testExpired ? 'neutral' : 'warning'}
+                  label={u.testExpired ? 'Test · expired' : 'Test'}
+                />
+              )}
+            </Group>
+          ),
         },
         { key: 'email', header: 'Email', sortable: true, render: (u) => u.email },
         {
@@ -170,6 +215,7 @@ const UsersPage = () => {
     >
       {({ reload }) => (
         <>
+          {testForm && <TestUserModal onClose={() => setTestForm(false)} onSaved={reload} />}
           <AddEditUserModal
             opened={!!form}
             user={form?.user ?? null}
@@ -216,6 +262,38 @@ const UsersPage = () => {
                     )}
                   </Field>
                 </Stack>
+                {view.isTestUser && (
+                  <Box mt="lg">
+                    <Text className="eyebrow" mb={6}>
+                      TEST ACCESS
+                    </Text>
+                    <Text size="sm">
+                      {view.testExpired ? 'Expired' : 'Ends'}{' '}
+                      <b>{view.testExpiresAt ? formatDateTime(view.testExpiresAt) : '—'}</b>. They
+                      only see sample data.
+                    </Text>
+                    {isSuperAdmin && (
+                      <Group gap="xs" mt="xs" align="flex-end" wrap="wrap">
+                        <DateTimePicker
+                          placeholder="New end time"
+                          minDate={new Date()}
+                          valueFormat="DD MMM YYYY, hh:mm A"
+                          value={newExpiry}
+                          onChange={setNewExpiry}
+                          style={{ flex: '1 1 220px' }}
+                        />
+                        <Button
+                          variant="default"
+                          loading={extending}
+                          disabled={!newExpiry}
+                          onClick={handleExtend}
+                        >
+                          {view.testExpired ? 'Give more time' : 'Change end time'}
+                        </Button>
+                      </Group>
+                    )}
+                  </Box>
+                )}
                 <StatusSection
                   label="ACCOUNT"
                   title="Active account"

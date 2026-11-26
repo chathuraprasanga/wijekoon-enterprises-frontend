@@ -71,3 +71,6 @@ export const toYmd = (v: unknown) => {
   const d = v as Date;
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 };
+
+/** `YYYY-MM-DD HH:mm:ss` (a Mantine date-time value, local time) -> ISO instant. */
+export const dateTimeToIso = (v: string) => new Date(v.replace(' ', 'T')).toISOString();

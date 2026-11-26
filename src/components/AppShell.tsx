@@ -32,6 +32,7 @@ import {
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { logOut, logoutUser } from '@/store/authSlice/authSlice';
+import { TestModeBanner } from '@/components/TestModeBanner';
 import { useCan } from '@/utils/permissions';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { NotificationsBell } from '@/components/NotificationsBell';
@@ -112,7 +113,7 @@ export const AppShell = () => {
         Skip to content
       </a>
       <MantineAppShell
-        header={{ height: 48 }}
+        header={{ height: user?.isTestUser ? 80 : 48 }}
         navbar={{
           width: { base: 280, sm: 56, md: 240 },
           breakpoint: 'sm',
@@ -132,7 +133,8 @@ export const AppShell = () => {
         }}
       >
         <MantineAppShell.Header>
-          <Group h="100%" px="md" justify="space-between" wrap="nowrap">
+          {user?.isTestUser && <TestModeBanner expiresAt={user.testExpiresAt} />}
+          <Group h={48} px="md" justify="space-between" wrap="nowrap">
             <Group wrap="nowrap" gap="sm">
               <Burger
                 opened={opened}

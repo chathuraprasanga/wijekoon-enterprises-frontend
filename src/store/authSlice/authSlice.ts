@@ -23,6 +23,9 @@ export type AuthUser = {
   avatar: string | null;
   roles: AuthRole[];
   isSuperAdmin: boolean;
+  /** A time-limited demo account working on sample data; the app shows when it ends. */
+  isTestUser?: boolean;
+  testExpiresAt?: string | null;
   /** A generated temporary password is still in use: only change-password works until it's changed. */
   mustChangePassword?: boolean;
   isActive: boolean;
