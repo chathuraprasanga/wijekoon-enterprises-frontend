@@ -551,7 +551,7 @@ export const HBars = ({ rows, kind }: { rows: BarRow[]; kind: Kind }) => {
             style={{ outline: 'none' }}
           >
             <Group justify="space-between" wrap="nowrap" gap="sm" mb={2}>
-              <Text size="sm" fw={500} truncate>
+              <Text size="sm" fw={500} truncate title={r.name}>
                 {r.name}
               </Text>
               <Text size="sm" className="mono" style={{ flex: 'none' }}>

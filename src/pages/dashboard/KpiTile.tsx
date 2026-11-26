@@ -6,6 +6,7 @@ import {
   IconMinus,
 } from '@tabler/icons-react';
 import { Sparkline } from './charts';
+import './dashboard.css';
 import { pct } from './dashboardUtils';
 
 type Props = {
@@ -35,15 +36,17 @@ export const KpiTile = ({ label, value, prefix, loading, previous, spark, emptyN
       : 'var(--ldg-danger-text)';
   return (
     <Box
+      className="kpi"
       p="sm"
       style={{
         background: 'var(--ldg-surface-raised)',
         border: '1px solid var(--ldg-border)',
         borderRadius: 8,
         minWidth: 0,
+        height: '100%',
       }}
     >
-      <Text size="sm" c="dimmed">
+      <Text size="sm" c="dimmed" truncate>
         {label}
       </Text>
       {loading ? (
@@ -53,30 +56,24 @@ export const KpiTile = ({ label, value, prefix, loading, previous, spark, emptyN
         </>
       ) : (
         <>
-          <Text
-            ta="right"
-            fw={600}
-            fz={{ base: 20, md: 22 }}
-            lh={1.3}
-            mt={4}
-            className="num"
-            style={{ overflowWrap: 'anywhere' }}
-          >
+          <Text ta="right" fw={600} mt={4} className="num kpi-amount">
             {prefix && <span>{prefix} · </span>}
             <Text component="span" fz={13} fw={500} c="dimmed" mr={4}>
               LKR
             </Text>
             {fmt(value)}
           </Text>
-          <Group justify="space-between" align="center" mt={6} gap="xs" wrap="nowrap">
+          <Group justify="space-between" align="center" mt={6} gap="xs" wrap="nowrap" mih={28}>
             {current ? (
-              <Group gap={4} c="dimmed" wrap="nowrap">
-                <IconInfoCircle size={14} aria-hidden />
-                <Text size="xs">Not affected by filter</Text>
+              <Group gap={4} c="dimmed" wrap="nowrap" style={{ minWidth: 0 }}>
+                <IconInfoCircle size={14} aria-hidden style={{ flex: 'none' }} />
+                <Text size="xs" truncate>
+                  Not affected by filter
+                </Text>
               </Group>
             ) : (
-              <Box style={{ minWidth: 0 }}>
-                <Group gap={2} wrap="nowrap" fw={600} fz={13} style={{ color: tone }}>
+              <Group gap={6} wrap="nowrap" style={{ minWidth: 0 }}>
+                <Group gap={2} wrap="nowrap" fw={600} fz={13} style={{ color: tone, flex: 'none' }}>
                   {flat ? (
                     <IconMinus size={14} aria-hidden />
                   ) : up ? (
@@ -88,13 +85,15 @@ export const KpiTile = ({ label, value, prefix, loading, previous, spark, emptyN
                     {flat ? 'No change' : `${up ? '+' : '−'}${Math.abs(change!).toFixed(1)}%`}
                   </span>
                 </Group>
-                <Text size="xs" c="dimmed">
+                <Text size="xs" c="dimmed" truncate>
                   {value === 0 && previous === 0 && emptyNote ? emptyNote : 'vs previous period'}
                 </Text>
-              </Box>
+              </Group>
             )}
             {spark && spark.length > 1 && (
-              <Sparkline sparkline={spark} kind={flat || up ? 'up' : 'down'} />
+              <span className="kpi-spark" style={{ flex: 'none', display: 'inline-flex' }}>
+                <Sparkline sparkline={spark} kind={flat || up ? 'up' : 'down'} />
+              </span>
             )}
           </Group>
         </>

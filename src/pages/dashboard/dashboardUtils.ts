@@ -57,9 +57,10 @@ export const longDay = (s: string) =>
 export const rangeLabel = (from: string, to: string) =>
   `${shortDay(from)}${from.slice(0, 4) === to.slice(0, 4) ? '' : ` ${from.slice(0, 4)}`} – ${shortDay(to)} ${to.slice(0, 4)}`;
 
-/** 12400000 -> "12.4M", 240000 -> "240k". */
+/** 4820000000 -> "4.8B", 12400000 -> "12.4M", 240000 -> "240k". */
 export const lkrShort = (n: number) => {
   const a = Math.abs(n);
+  if (a >= 1e9) return `${+(n / 1e9).toFixed(a >= 1e10 ? 0 : 1)}B`;
   if (a >= 1e6) return `${+(n / 1e6).toFixed(a >= 1e7 ? 0 : 1)}M`;
   if (a >= 1e3) return `${+(n / 1e3).toFixed(a >= 1e4 ? 0 : 1)}k`;
   return String(Math.round(n));
