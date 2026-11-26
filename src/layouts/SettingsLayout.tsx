@@ -3,6 +3,7 @@ import { Box, Tabs } from '@mantine/core';
 import {
   IconBell,
   IconBuildingBank,
+  IconDatabaseX,
   IconAdjustments,
   IconHistory,
   IconShieldLock,
@@ -33,6 +34,7 @@ const TABS: {
   },
   { value: 'audit-logs', label: 'Audit logs', icon: IconHistory, permission: 'audit-log:read' },
   { value: 'notifications', label: 'Notifications', icon: IconBell, superAdminOnly: true },
+  { value: 'data', label: 'Data', icon: IconDatabaseX, superAdminOnly: true },
 ];
 
 // Tabs are routes (/app/settings/profile), so the active tab survives a refresh.

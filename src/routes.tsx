@@ -27,6 +27,7 @@ import UsersPage from '@/pages/settings/UsersPage';
 import RolesPage from '@/pages/settings/RolesPage';
 import AuditLogsPage from '@/pages/settings/AuditLogsPage';
 import NotificationsAdminPage from '@/pages/settings/NotificationsAdminPage';
+import DataClearPage from '@/pages/settings/DataClearPage';
 import BanksPage from '@/pages/settings/BanksPage';
 import BusinessRulesPage from '@/pages/settings/BusinessRulesPage';
 import BankDetailPage from '@/pages/settings/BankDetailPage';
@@ -255,6 +256,14 @@ export const router = createBrowserRouter([
                 element: (
                   <RequireAccess superAdminOnly section="Notifications">
                     <NotificationsAdminPage />
+                  </RequireAccess>
+                ),
+              },
+              {
+                path: 'data',
+                element: (
+                  <RequireAccess superAdminOnly section="Data">
+                    <DataClearPage />
                   </RequireAccess>
                 ),
               },
