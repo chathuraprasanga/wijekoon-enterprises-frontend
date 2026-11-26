@@ -322,7 +322,7 @@ const AddEditOrderPage = () => {
     err1(picked.length > 0 && net <= 0, 'The net total must be more than 0');
   }
   err2(
-    !!dueDate && !!date && dueDate < date,
+    credit > 0 && !!dueDate && !!date && dueDate < date,
     "The payment due date can't be before the order date",
   );
   if (canPay) {
@@ -356,7 +356,7 @@ const AddEditOrderPage = () => {
         picked.every((l) => n(l.qty) >= 1 && n(l.disc) <= 100 && n(l.tax) <= 100) &&
         net > 0));
   const valid2 = () =>
-    !(dueDate && date && dueDate < date) &&
+    !(credit > 0 && dueDate && date && dueDate < date) &&
     (!canPay ||
       (remaining >= -0.01 &&
         Object.values(exOurs).every(
@@ -418,7 +418,8 @@ const AddEditOrderPage = () => {
       const header: OrderInput = {
         orderDate: date,
         supplierRef: supplierRef.trim(),
-        dueDate: dueDate || null,
+        // Only credit has a due date; a fully paid order has none.
+        dueDate: credit > 0 ? dueDate || null : null,
         notes: notes.trim(),
       };
       const body: OrderInput = locked
@@ -1019,18 +1020,20 @@ const AddEditOrderPage = () => {
                       />
                     </SimpleGrid>
                   )}
-                  <DateInput
-                    label="Payment due date"
-                    description="When the supplier expects the money, if any is on credit."
-                    placeholder="Select date"
-                    clearable
-                    value={dueDate || null}
-                    error={showErr2(!!dueDate && !!date && dueDate < date)}
-                    onChange={(v) => {
-                      setDueEdited(toYmd(v));
-                      touch();
-                    }}
-                  />
+                  {credit > 0 && (
+                    <DateInput
+                      label="Payment due date"
+                      description="When the supplier expects the money, if any is on credit."
+                      placeholder="Select date"
+                      clearable
+                      value={dueDate || null}
+                      error={showErr2(!!dueDate && !!date && dueDate < date)}
+                      onChange={(v) => {
+                        setDueEdited(toYmd(v));
+                        touch();
+                      }}
+                    />
+                  )}
                   {(() => {
                     // Cheques already on the order. Without the matching View only the amount shows;
                     // with it they are read-only, except our own ones with Issue Cheques → Edit.
