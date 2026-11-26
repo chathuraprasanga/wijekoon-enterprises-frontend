@@ -81,18 +81,29 @@ export const TestUserModal = ({ onClose, onSaved }: Props) => {
         records, and the sample data resets when their time ends.
       </Text>
       <SimpleGrid cols={{ base: 1, sm: 2 }}>
-        <TextInput label="First name" required {...form.getInputProps('firstName')} />
-        <TextInput label="Last name" {...form.getInputProps('lastName')} />
+        <TextInput
+          label="First name"
+          placeholder="Enter first name"
+          required
+          {...form.getInputProps('firstName')}
+        />
+        <TextInput
+          label="Last name"
+          placeholder="Enter last name"
+          {...form.getInputProps('lastName')}
+        />
       </SimpleGrid>
       <SimpleGrid cols={{ base: 1, sm: 2 }}>
         <TextInput
           label="Email"
+          placeholder="Enter email address"
           required
           leftSection={<IconMail size={16} aria-hidden />}
           {...form.getInputProps('email')}
         />
         <TextInput
           label="Phone"
+          placeholder="Enter phone number"
           required
           leftSection={<IconPhone size={16} aria-hidden />}
           {...form.getInputProps('phone')}
@@ -100,6 +111,7 @@ export const TestUserModal = ({ onClose, onSaved }: Props) => {
       </SimpleGrid>
       <DateTimePicker
         label="Test access ends"
+        placeholder="Select date and time"
         description="They are signed out then, and the sample data is reset."
         required
         minDate={new Date()}
