@@ -122,16 +122,17 @@ const ChequesPage = () => {
       }
       extraActions={
         <>
-          {(can('issued-cheque:create') || can('third-party-issued-cheque:create')) && (
-            <Button
-              color="orange"
-              leftSection={<IconArrowUpRight size={16} aria-hidden />}
-              onClick={() => setIssuing(true)}
-            >
-              Issue cheque
-            </Button>
-          )}
-          {can('received-cheque:update') && (
+          {issuedTab &&
+            (can('issued-cheque:create') || can('third-party-issued-cheque:create')) && (
+              <Button
+                color="orange"
+                leftSection={<IconArrowUpRight size={16} aria-hidden />}
+                onClick={() => setIssuing(true)}
+              >
+                Issue cheque
+              </Button>
+            )}
+          {!issuedTab && can('received-cheque:update') && (
             <Button variant="default" onClick={() => setDepositing(true)}>
               Deposit cheques
             </Button>
@@ -160,7 +161,7 @@ const ChequesPage = () => {
       }
       emptyIcon={<IconReceipt2 size={20} />}
       onCreate={
-        can('received-cheque:create') || can('third-party-received-cheque:create')
+        !issuedTab && (can('received-cheque:create') || can('third-party-received-cheque:create'))
           ? () => setForm({ cheque: null })
           : undefined
       }
