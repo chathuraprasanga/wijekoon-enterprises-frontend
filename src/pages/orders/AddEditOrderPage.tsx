@@ -531,7 +531,7 @@ const AddEditOrderPage = () => {
       );
       setSaved(true);
       // Navigate after state settles so the blocker no longer sees unsaved edits.
-      setTimeout(() => navigate('/app/orders'), 0);
+      setTimeout(() => navigate(id ? '/app/orders' : `/app/orders/${order._id}`), 0);
     } catch (e) {
       const msg = typeof e === 'string' ? e : getErrorMessage(e);
       const left = (!id && cashValue > 0 ? 1 : 0) + ours.length + custs.length - paid.current.size;

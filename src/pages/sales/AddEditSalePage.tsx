@@ -372,7 +372,7 @@ const AddEditSalePage = () => {
       );
       setSaved(true);
       // Navigate after state settles so the blocker no longer sees unsaved edits.
-      setTimeout(() => navigate('/app/sales'), 0);
+      setTimeout(() => navigate(id ? '/app/sales' : `/app/sales/${sale._id}`), 0);
     } catch (e) {
       const msg = typeof e === 'string' ? e : getErrorMessage(e);
       const left = cheques.filter((c) => !c.saved).length;
