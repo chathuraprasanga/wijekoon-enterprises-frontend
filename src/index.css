@@ -131,6 +131,17 @@ body {
     background: var(--ldg-surface-raised);
     border-top: 1px solid var(--ldg-border);
   }
+  /* two or three buttons share the bar: tighter padding so labels aren't cut off */
+  .page-action .mantine-Button-root {
+    padding-inline: 8px;
+    font-size: 13px;
+  }
+  .page-action .mantine-Button-section {
+    margin-inline-end: 6px;
+  }
+  .page-action .mantine-Group-root {
+    gap: 8px;
+  }
   .page-action .mantine-Button-root,
   .page-action-inline,
   .page-action-inline .mantine-Group-root {

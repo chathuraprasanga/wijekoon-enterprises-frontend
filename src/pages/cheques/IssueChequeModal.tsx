@@ -133,7 +133,9 @@ const Form = ({ onClose, onSaved }: Omit<Props, 'opened'>) => {
             searchable
             comboboxProps={{ withinPortal: false }}
             placeholder="Select supplier"
-            data={suppliers.items.map((s) => ({ value: s._id, label: s.name }))}
+            data={suppliers.items
+              .filter((s) => s.isActive || s._id === supplier)
+              .map((s) => ({ value: s._id, label: s.name }))}
             disabled={suppliers.loading}
             value={supplier}
             error={err('Supplier')}

@@ -199,7 +199,9 @@ const AddEditProductForm = ({ product, onClose, onSaved }: FormProps) => {
         label="Supplier"
         withAsterisk
         placeholder="Select supplier"
-        data={suppliers.map((supplier) => ({ value: supplier._id, label: supplier.name }))}
+        data={suppliers
+          .filter((s) => s.isActive || s._id === form.values.supplier)
+          .map((s) => ({ value: s._id, label: s.name }))}
         searchable={!phone}
         comboboxProps={{ withinPortal: false }}
         {...form.getInputProps('supplier')}

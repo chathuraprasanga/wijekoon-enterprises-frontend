@@ -148,7 +148,7 @@ export const SendNotificationModal = ({ onClose, onSent }: Props) => {
           </Text>
           <SegmentedControl
             fullWidth
-            orientation={narrow ? 'vertical' : 'horizontal'}
+            size={narrow ? 'xs' : 'sm'}
             value={audience}
             onChange={(v) => setAudience(v as Audience)}
             data={[

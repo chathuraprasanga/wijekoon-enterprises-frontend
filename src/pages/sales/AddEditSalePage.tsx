@@ -497,7 +497,9 @@ const AddEditSalePage = () => {
                       withAsterisk
                       searchable
                       placeholder="Select customer"
-                      data={customers.items.map((c) => ({ value: c._id, label: customerName(c) }))}
+                      data={customers.items
+                        .filter((c) => c.isActive || c._id === customer)
+                        .map((c) => ({ value: c._id, label: customerName(c) }))}
                       value={customer}
                       error={showErr(!customer)}
                       onChange={(v) => {

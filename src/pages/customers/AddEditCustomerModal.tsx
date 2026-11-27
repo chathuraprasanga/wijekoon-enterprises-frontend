@@ -174,7 +174,7 @@ const AddEditCustomerForm = ({ customer, onClose, onSaved }: FormProps) => {
         inputMode="tel"
         autoComplete="tel"
         placeholder="Enter phone number"
-        description="Sri Lankan mobile, 07X XXXXXXX."
+        description="Sri Lankan mobile or landline, 10 digits."
         leftSection={<IconPhone size={16} aria-hidden />}
         {...form.getInputProps('phone')}
       />

@@ -180,7 +180,9 @@ const ChequeForm = ({ cheque, onClose, onSaved }: Omit<Props, 'opened'>) => {
             searchable={!phone}
             comboboxProps={{ withinPortal: false }}
             placeholder="Select customer"
-            data={customers.items.map((c) => ({ value: c._id, label: customerName(c) }))}
+            data={customers.items
+              .filter((c) => c.isActive || c._id === form.values.customer)
+              .map((c) => ({ value: c._id, label: customerName(c) }))}
             disabled={customers.loading}
             {...form.getInputProps('customer')}
             onChange={(v) => {

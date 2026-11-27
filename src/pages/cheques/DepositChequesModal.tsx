@@ -221,11 +221,13 @@ export const DepositChequesModal = ({ opened, onClose, onDone }: Props) => {
           </Stack>
         )}
       </Box>
-      <Group className="sheet-footer" justify="space-between" px={20} py={12} gap="xs">
-        <Text size="sm" fw={600}>
-          {chosen.length ? `${chosen.length} selected · ${formatLkr(sum)}` : ''}
-        </Text>
-        <Group gap="xs">
+      <Stack className="sheet-footer" px={20} py={12} gap="xs">
+        {chosen.length > 0 && (
+          <Text size="sm" fw={600}>
+            {chosen.length} selected · {formatLkr(sum)}
+          </Text>
+        )}
+        <Group gap="xs" justify="flex-end" wrap="nowrap" grow preventGrowOverflow={false}>
           {confirming ? (
             <Button variant="default" disabled={loading} onClick={() => setConfirming(false)}>
               Back
@@ -243,7 +245,7 @@ export const DepositChequesModal = ({ opened, onClose, onDone }: Props) => {
             {confirming ? `Confirm deposit (${chosen.length})` : 'Deposit'}
           </Button>
         </Group>
-      </Group>
+      </Stack>
     </ResponsiveModal>
   );
 };
