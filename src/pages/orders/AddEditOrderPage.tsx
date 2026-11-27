@@ -155,7 +155,7 @@ const AddEditOrderPage = () => {
 
   const touch = () => setDirty(true);
   const canPay = can('order:update');
-  // Our cheques need Issue Cheques → Create; handing on received cheques needs Receive Cheques → View.
+  // Our cheques need Issued Cheques → Create; handing on received cheques needs Received Cheques → View.
   const canOurs = can('issued-cheque:create');
   const canReceived = can('received-cheque:read');
 
@@ -1036,7 +1036,7 @@ const AddEditOrderPage = () => {
                   )}
                   {(() => {
                     // Cheques already on the order. Without the matching View only the amount shows;
-                    // with it they are read-only, except our own ones with Issue Cheques → Edit.
+                    // with it they are read-only, except our own ones with Issued Cheques → Edit.
                     const seen = { our: 0, recv: 0 };
                     return (editing?.payments ?? [])
                       .filter((p) => p.method !== 'cash' && p.status !== 'reversed')

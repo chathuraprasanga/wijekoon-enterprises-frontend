@@ -17,7 +17,7 @@ export const RecordSalePaymentModal = ({ sale, opened, onClose, onDone }: Props)
 
 const Form = ({ sale, onClose, onDone }: Omit<Props, 'opened'>) => {
   const dispatch = useAppDispatch();
-  // A cheque payment also records a received cheque, so it needs Receive Cheques → Create.
+  // A cheque payment also records a received cheque, so it needs Received Cheques → Create.
   const canCheque = useCan()('received-cheque:create');
   const room = saleOutstanding(sale);
   const [method, setMethod] = useState<'cash' | 'cheque'>('cash');

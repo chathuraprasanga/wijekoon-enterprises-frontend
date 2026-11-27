@@ -8,10 +8,10 @@ export const PERMISSION_ACTION_LABELS: Record<string, string> = {
 export const PERMISSION_ACTION_ORDER = ['read', 'create', 'update', 'delete'];
 
 const MODULE_LABELS: Record<string, string> = {
-  'received-cheque': 'Receive Cheques',
-  'issued-cheque': 'Issue Cheques',
-  'third-party-received-cheque': 'Receive 3rd Party Cheques',
-  'third-party-issued-cheque': 'Issue 3rd Party Cheques',
+  'received-cheque': 'Received Cheques',
+  'issued-cheque': 'Issued Cheques',
+  'third-party-received-cheque': '3rd Party Received Cheques',
+  'third-party-issued-cheque': '3rd Party Issued Cheques',
 };
 
 // "customer" -> "Customers", "audit-log" -> "Audit logs"
