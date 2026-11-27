@@ -929,7 +929,7 @@ const AddEditOrderPage = () => {
                     : 'Credit is whatever cash and cheques do not cover.'
                 }
                 action={
-                  payingNow && (canOurs || canReceived) ? (
+                  payingNow && (canOurs || canReceived) && remaining > 0.01 ? (
                     <Menu position="bottom-end" withinPortal>
                       <Menu.Target>
                         <Button

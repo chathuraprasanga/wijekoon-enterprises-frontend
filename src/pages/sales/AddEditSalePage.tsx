@@ -727,7 +727,7 @@ const AddEditSalePage = () => {
                 title="Payment"
                 subtitle="Credit is whatever cash and cheques do not cover."
                 action={
-                  canCheque ? (
+                  canCheque && remaining > 0.01 ? (
                     <Button
                       variant="default"
                       size="xs"
