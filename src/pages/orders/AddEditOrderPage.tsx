@@ -156,7 +156,11 @@ const AddEditOrderPage = () => {
   const touch = () => setDirty(true);
   const canPay = can('order:update');
   // Our cheques need Issued Cheques → Create; handing on received cheques needs Received Cheques → View.
-  const canOurs = can('issued-cheque:create');
+  // Our own cheque is drawn on a bank account: with none active there is nothing to issue it from.
+  const canOurs =
+    can('issued-cheque:create') &&
+    can('bank:read') &&
+    (banks.loading || banks.items.some((b) => b.isActive));
   const canReceived = can('received-cheque:read');
 
   // Once money has moved, only the header may change (the server enforces it too).
