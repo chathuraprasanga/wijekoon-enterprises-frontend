@@ -54,7 +54,7 @@ const SalesPage = () => {
         title="Sales"
         description="Record and review sales. Sales made in the sales app appear here too."
         entity={{ singular: 'sale', plural: 'sales' }}
-        searchPlaceholder="Search by sale ID"
+        searchPlaceholder="Search by sale ID or reference"
         filters={FILTERS}
         records={items}
         total={total}
@@ -170,6 +170,7 @@ const SalesPage = () => {
                     <CustomerLabel customer={customers.byId.get(view.customer)} />
                   </Field>
                   <Field label="Payment due">{view.dueDate ? formatDate(view.dueDate) : '—'}</Field>
+                  <Field label="Customer reference">{view.customerRef}</Field>
                 </Stack>
                 <Text className="eyebrow" mt="lg" mb="xs">
                   Items

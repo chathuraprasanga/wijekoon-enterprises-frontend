@@ -120,6 +120,7 @@ const AddEditSalePage = () => {
   const [customer, setCustomer] = useState<string | null>(null);
   const [date, setDate] = useState<Date | null>(new Date());
   const [notes, setNotes] = useState('');
+  const [customerRef, setCustomerRef] = useState('');
   const rules = useBusinessRules();
   // Payment due date (only when part is on credit): sale date + the configured days until edited.
   const [dueEdited, setDueEdited] = useState<string | null>(null);
@@ -162,6 +163,7 @@ const AddEditSalePage = () => {
         setDate(new Date(sale.salesDate));
         setDueEdited(sale.dueDate ? sale.dueDate.slice(0, 10) : null);
         setNotes(sale.notes ?? '');
+        setCustomerRef(sale.customerRef ?? '');
         setLines(
           sale.lineItems.map((li) => {
             const base = li.productPrice * li.quantity;
@@ -339,6 +341,7 @@ const AddEditSalePage = () => {
         otherExpenses: n(other),
         payments: parts,
         notes: notes.trim(),
+        customerRef: customerRef.trim(),
         ...(credit > 0 && { dueDate }),
       };
       created.current ??= id
@@ -514,6 +517,16 @@ const AddEditSalePage = () => {
                       maxDate={new Date()}
                       onChange={(v) => {
                         setDate(v ? new Date(v) : null);
+                        touch();
+                      }}
+                    />
+                    <TextInput
+                      placeholder="Enter customer PO / reference number"
+                      label="Customer reference"
+                      value={customerRef}
+                      maxLength={60}
+                      onChange={(e) => {
+                        setCustomerRef(e.currentTarget.value);
                         touch();
                       }}
                     />

@@ -164,6 +164,7 @@ const SaleDetailPage = () => {
                       value: <span className="num">{formatDate(sale.salesDate)}</span>,
                     },
                     { label: 'Payment due', value: sale.dueDate ? formatDate(sale.dueDate) : '—' },
+                    { label: 'Customer reference', value: sale.customerRef },
                     { label: 'Notes', value: sale.notes },
                     { label: 'Created', value: formatDate(sale.createdAt) },
                     { label: 'Last updated', value: formatDate(sale.updatedAt) },

@@ -34,6 +34,7 @@ export type Sale = {
   netTotal: number;
   status: SaleStatus;
   paymentMethod: SalePaymentMethod;
+  customerRef?: string;
   notes?: string;
   dueDate?: string;
   createdByName?: string;
@@ -60,6 +61,7 @@ export type SaleInput = {
   shipping: number;
   otherExpenses: number;
   payments: SalePayment[];
+  customerRef?: string;
   notes?: string;
   dueDate?: string;
 };
