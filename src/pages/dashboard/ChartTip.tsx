@@ -8,38 +8,6 @@ export const Swatch = ({ kind, size = 14 }: { kind: Kind; size?: number }) => (
   </svg>
 );
 
-/** Hatches and dots are defined once per page; every chart refers to them by id. */
-export const ChartPatterns = () => {
-  const light = { stroke: 'var(--ldg-surface-raised)', strokeOpacity: 0.65, strokeWidth: 1.4 };
-  const dot = { fill: 'var(--ldg-surface-raised)', fillOpacity: 0.7 };
-  return (
-    <svg width={0} height={0} style={{ position: 'absolute' }} aria-hidden focusable="false">
-      <defs>
-        <pattern id="ldg-pat-stripe" width={6} height={6} patternUnits="userSpaceOnUse">
-          <rect width={6} height={6} fill="var(--ldg-info-fill)" />
-          <path d="M-1 1L1 -1M0 6L6 0M5 7L7 5" {...light} />
-        </pattern>
-        <pattern id="ldg-pat-diag" width={7} height={7} patternUnits="userSpaceOnUse">
-          <rect width={7} height={7} fill="var(--ldg-warning-fill)" />
-          <path d="M-1 1L1 -1M0 7L7 0M6 8L8 6" {...light} strokeWidth={1.8} />
-        </pattern>
-        <pattern id="ldg-pat-dots" width={6} height={6} patternUnits="userSpaceOnUse">
-          <rect width={6} height={6} fill="var(--ldg-warning-fill)" />
-          <circle cx={3} cy={3} r={0.95} {...dot} />
-        </pattern>
-        <pattern id="ldg-pat-grey" width={5} height={5} patternUnits="userSpaceOnUse">
-          <rect width={5} height={5} fill="var(--ldg-text-subtle)" />
-          <circle cx={2.5} cy={2.5} r={0.9} {...dot} />
-        </pattern>
-        <pattern id="ldg-pat-cross" width={6} height={6} patternUnits="userSpaceOnUse">
-          <rect width={6} height={6} fill="var(--ldg-danger-fill)" />
-          <path d="M0 0L6 6M6 0L0 6" {...light} strokeWidth={1.1} />
-        </pattern>
-      </defs>
-    </svg>
-  );
-};
-
 export type TipRow = { label: string; value: string; kind?: Kind };
 
 export const TipBody = ({ title, rows }: { title: string; rows: TipRow[] }) => (

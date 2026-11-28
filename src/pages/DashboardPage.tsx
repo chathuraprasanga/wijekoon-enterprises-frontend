@@ -18,7 +18,6 @@ import { getErrorMessage } from '@/utils/getErrorMessage';
 import { formatDate, formatLkr } from '@/utils/format';
 import { useCan } from '@/utils/permissions';
 import { ChartCard } from '@/pages/dashboard/ChartCard';
-import { ChartPatterns } from '@/pages/dashboard/ChartTip';
 import { DashboardFilters } from '@/pages/dashboard/DashboardFilters';
 import { KpiTile } from '@/pages/dashboard/KpiTile';
 import {
@@ -152,7 +151,6 @@ const DashboardPage = () => {
 
   return (
     <>
-      <ChartPatterns />
       <PageHeader
         title={`Welcome${user ? `, ${user.firstName}` : ''}`}
         description={today}

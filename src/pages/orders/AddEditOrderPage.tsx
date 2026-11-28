@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from '@mantine/hooks';
 import { Link, useBlocker, useNavigate, useParams } from 'react-router-dom';
 import {
+  Anchor,
   ActionIcon,
   Box,
   Button,
@@ -156,11 +157,7 @@ const AddEditOrderPage = () => {
   const touch = () => setDirty(true);
   const canPay = can('order:update');
   // Our cheques need Issued Cheques → Create; handing on received cheques needs Received Cheques → View.
-  // Our own cheque is drawn on a bank account: with none active there is nothing to issue it from.
-  const canOurs =
-    can('issued-cheque:create') &&
-    can('bank:read') &&
-    (banks.loading || banks.items.some((b) => b.isActive));
+  const canOurs = can('issued-cheque:create');
   const canReceived = can('received-cheque:read');
 
   // Once money has moved, only the header may change (the server enforces it too).
@@ -1254,7 +1251,18 @@ const AddEditOrderPage = () => {
                                   ? 'Select an account'
                                   : 'No active bank accounts'
                             }
-                            description="Add accounts under Settings → Banks."
+                            description={
+                              can('bank:read') && !banks.loading && !bankData.length ? (
+                                <>
+                                  No bank account added.{' '}
+                                  <Anchor component={Link} to="/app/settings/banks" size="xs">
+                                    Add one
+                                  </Anchor>
+                                </>
+                              ) : (
+                                'Add accounts under Settings → Banks.'
+                              )
+                            }
                             disabled={!can('bank:read')}
                             data={bankData}
                             value={c.bank}

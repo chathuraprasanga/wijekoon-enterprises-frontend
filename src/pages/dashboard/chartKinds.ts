@@ -1,4 +1,4 @@
-/** Series are told apart by pattern as well as colour, so colour is never the only signal. */
+/** Plain colours only; every series is also named in its legend and tooltip. */
 export type Kind = 'solid' | 'blue' | 'stripe' | 'dots' | 'diag' | 'cross' | 'grey';
 
 export const KIND_BASE: Record<Kind, string> = {
@@ -11,8 +11,7 @@ export const KIND_BASE: Record<Kind, string> = {
   grey: 'var(--ldg-text-subtle)',
 };
 
-export const fillOf = (k: Kind) =>
-  k === 'solid' || k === 'blue' ? KIND_BASE[k] : `url(#ldg-pat-${k})`;
+export const fillOf = (k: Kind) => KIND_BASE[k];
 
 export const SALE_STATUS: Record<string, { label: string; kind: Kind }> = {
   paid: { label: 'Paid', kind: 'solid' },

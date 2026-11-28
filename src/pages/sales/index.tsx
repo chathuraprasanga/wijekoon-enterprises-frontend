@@ -171,6 +171,7 @@ const SalesPage = () => {
                   </Field>
                   <Field label="Payment due">{view.dueDate ? formatDate(view.dueDate) : '—'}</Field>
                   <Field label="Customer reference">{view.customerRef}</Field>
+                  <Field label="Notes">{view.notes}</Field>
                 </Stack>
                 <Text className="eyebrow" mt="lg" mb="xs">
                   Items
