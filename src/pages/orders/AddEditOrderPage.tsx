@@ -52,7 +52,7 @@ import { formatDate, formatLkr, formatSize, toYmd } from '@/utils/format';
 import { useBusinessRules, ymdPlusDays } from '@/hooks/useBusinessRules';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 import { useCan } from '@/utils/permissions';
-import { PaymentStatusBadge } from './orderBadges';
+import { PaymentRowStatusBadge, PaymentStatusBadge } from './orderBadges';
 import { Field } from '@/components/Field';
 import { bankDisplay, branchDisplay } from '@/utils/bankData';
 
@@ -1062,9 +1062,12 @@ const AddEditOrderPage = () => {
                             style={{ border: '1px solid var(--ldg-border)', borderRadius: 8 }}
                           >
                             <Group justify="space-between" mb={6}>
-                              <Text size="sm" fw={600}>
-                                {our ? 'Our cheque' : 'Received cheque'} {k}
-                              </Text>
+                              <Group gap="xs" wrap="nowrap">
+                                <Text size="sm" fw={600}>
+                                  {our ? 'Our cheque' : 'Received cheque'} {k}
+                                </Text>
+                                <PaymentRowStatusBadge status={p.status} />
+                              </Group>
                               {deletable && (
                                 <Button
                                   variant="subtle"
@@ -1091,6 +1094,12 @@ const AddEditOrderPage = () => {
                                 </Button>
                               )}
                             </Group>
+                            {p.status === 'returned' && (
+                              <Text size="sm" c="red" mb={6}>
+                                This cheque was returned, so its amount is unpaid again on this
+                                order.
+                              </Text>
+                            )}
                             {marked ? (
                               <>
                                 <SimpleGrid cols={{ base: 1, sm: 2 }} mb={6}>

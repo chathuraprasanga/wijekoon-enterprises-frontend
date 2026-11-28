@@ -1,10 +1,9 @@
 import { IconCoin } from '@tabler/icons-react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Box, Button, Group, Stack, Table, Text } from '@mantine/core';
+import { Button, Divider, Group, Stack, Table, Text } from '@mantine/core';
 import { ListPage } from '@/components/data/ListPage';
 import { DetailDialog } from '@/components/DetailDialog';
-import { DetailList } from '@/components/DetailList';
 import { SaleStatusBadge } from '@/components/StatusBadge';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { type Sale, deleteSale, fetchSales } from '@/store/saleSlice/saleSlice';
@@ -12,7 +11,7 @@ import type { Customer } from '@/store/customerSlice/customerSlice';
 import { Field } from '@/components/Field';
 import { useLookup } from '@/hooks/useLookup';
 import { formatDate, formatLkr } from '@/utils/format';
-import { customerName, PAYMENT_LABELS, saleOutstanding } from './saleLabels';
+import { chequeOfPayment, customerName, PAYMENT_LABELS, saleUnpaid } from './saleLabels';
 import { CustomerLabel } from '@/components/CustomerLabel';
 import { useCan } from '@/utils/permissions';
 
@@ -142,15 +141,15 @@ const SalesPage = () => {
             key: 'paid',
             header: 'Paid',
             align: 'right',
-            render: (s) => formatLkr(s.netTotal - saleOutstanding(s)),
+            render: (s) => formatLkr(s.netTotal - saleUnpaid(s)),
           },
           {
             key: 'outstanding',
             header: 'Outstanding',
             align: 'right',
             render: (s) => (
-              <Text span fw={saleOutstanding(s) > 0 ? 600 : 400} inherit>
-                {formatLkr(saleOutstanding(s))}
+              <Text span fw={saleUnpaid(s) > 0 ? 600 : 400} inherit>
+                {formatLkr(saleUnpaid(s))}
               </Text>
             ),
           },
@@ -241,62 +240,68 @@ const SalesPage = () => {
                     </Table.Tbody>
                   </Table>
                 </Table.ScrollContainer>
-                <Box mt="lg">
-                  <DetailList
-                    groups={[
-                      [
-                        {
-                          label: 'Shipping',
-                          value: <span className="num">{formatLkr(view.shipping)}</span>,
-                        },
-                        {
-                          label: 'Other expenses',
-                          value: <span className="num">{formatLkr(view.otherExpenses)}</span>,
-                        },
-                        {
-                          label: 'Discount',
-                          value: <span className="num">{formatLkr(view.discount)}</span>,
-                        },
-                        { label: 'Tax', value: <span className="num">{formatLkr(view.tax)}</span> },
-                        {
-                          label: 'Net total',
-                          value: <strong className="num">{formatLkr(view.netTotal)}</strong>,
-                        },
-                        {
-                          label: 'Paid',
-                          value: (
-                            <span className="num">
-                              {formatLkr(view.netTotal - saleOutstanding(view))}
-                            </span>
-                          ),
-                        },
-                        {
-                          label: 'Outstanding',
-                          value: (
-                            <strong className="num">{formatLkr(saleOutstanding(view))}</strong>
-                          ),
-                        },
-                      ],
-                    ]}
-                  />
-                </Box>
+                <Stack gap={6} mt="lg" maw={300} ml="auto">
+                  {[
+                    ['Shipping', view.shipping],
+                    ['Other expenses', view.otherExpenses],
+                    ['Discount', view.discount],
+                    ['Tax', view.tax],
+                  ].map(([label, v]) => (
+                    <Group key={label} justify="space-between" wrap="nowrap">
+                      <Text size="sm" c="dimmed">
+                        {label}
+                      </Text>
+                      <Text size="sm" className="num">
+                        {formatLkr(v as number)}
+                      </Text>
+                    </Group>
+                  ))}
+                  <Group justify="space-between" wrap="nowrap">
+                    <Text size="sm" c="dimmed">
+                      Net total
+                    </Text>
+                    <Text size="sm" fw={600} className="num">
+                      {formatLkr(view.netTotal)}
+                    </Text>
+                  </Group>
+                </Stack>
+                <Divider my="md" />
                 {paid.length > 0 && (
                   <Field label="Payments">
                     <Stack gap={2} mt={4}>
-                      {paid.map((p, i) => (
-                        <Group key={i} justify="space-between" wrap="nowrap">
-                          <Text size="sm">
-                            {PAYMENT_LABELS[p.method as 'cash'] ?? p.method}
-                            {p.reference ? ` · No. ${p.reference}` : ''}
-                          </Text>
-                          <Text size="sm" className="num">
-                            {formatLkr(p.amount)}
-                          </Text>
-                        </Group>
-                      ))}
+                      {paid.map((p, i) => {
+                        const c = chequeOfPayment(view, p);
+                        const returned = c?.status === 'RETURNED';
+                        const no = c?.chequeNumber ?? p.reference;
+                        return (
+                          <Group key={i} justify="space-between" wrap="nowrap">
+                            <Text size="sm" c={returned ? 'red' : undefined}>
+                              {PAYMENT_LABELS[p.method as 'cash'] ?? p.method}
+                              {no ? ` - ${no.slice(0, 3)}***` : ''}
+                              {returned ? ' · Returned' : ''}
+                            </Text>
+                            <Text
+                              size="sm"
+                              className="num"
+                              c={returned ? 'red' : undefined}
+                              td={returned ? 'line-through' : undefined}
+                            >
+                              {formatLkr(p.amount)}
+                            </Text>
+                          </Group>
+                        );
+                      })}
                     </Stack>
                   </Field>
                 )}
+                <Group justify="space-between" wrap="nowrap" mt="md">
+                  <Text size="sm" fw={600}>
+                    Outstanding
+                  </Text>
+                  <Text size="sm" fw={600} className="num">
+                    {formatLkr(saleUnpaid(view))}
+                  </Text>
+                </Group>
               </>
             )}
           </DetailDialog>

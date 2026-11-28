@@ -47,6 +47,8 @@ export type Sale = {
   }[];
   /** Empty/missing on sales saved before split payments existed. */
   payments?: SalePayment[];
+  /** The sale's customer cheques with their current lifecycle status. */
+  cheques?: { chequeNumber: string; amount: number; status?: string }[];
   createdAt: string;
   updatedAt: string;
 };

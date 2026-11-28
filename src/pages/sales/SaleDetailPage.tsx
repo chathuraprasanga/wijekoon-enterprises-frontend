@@ -18,7 +18,7 @@ import { CUSTOMER_TYPE_LABELS, type Customer } from '@/store/customerSlice/custo
 import type { Cheque } from '@/store/chequeSlice/chequeSlice';
 import { formatDate, formatLkr, formatPhone } from '@/utils/format';
 import { useCan } from '@/utils/permissions';
-import { PAYMENT_LABELS, saleOutstanding } from './saleLabels';
+import { chequeOfPayment, PAYMENT_LABELS, saleUnpaid } from './saleLabels';
 import { RecordSalePaymentModal } from './RecordSalePaymentModal';
 
 const SaleDetailPage = () => {
@@ -69,7 +69,7 @@ const SaleDetailPage = () => {
   };
 
   const title = sale?.salesId ?? 'Sale';
-  const outstanding = sale ? saleOutstanding(sale) : 0;
+  const outstanding = sale ? saleUnpaid(sale) : 0;
   const customer = sale ? customers.byId.get(sale.customer) : undefined;
   const related = sale ? cheques.items.filter((c) => c.sale === sale._id) : [];
   // Sales saved before payments were logged: show their cash / cheque parts on the sale date.
@@ -320,9 +320,10 @@ const SaleDetailPage = () => {
                   </Table.Thead>
                   <Table.Tbody>
                     {history.map((h, i) => {
-                      const cheque = h.reference
-                        ? related.find((c) => c.chequeNumber === h.reference)
-                        : undefined;
+                      const cheque =
+                        (h.reference
+                          ? related.find((c) => c.chequeNumber === h.reference)
+                          : undefined) ?? chequeOfPayment(sale, h);
                       return (
                         <Table.Tr key={i}>
                           <Table.Td className="num">{formatDate(h.at)}</Table.Td>

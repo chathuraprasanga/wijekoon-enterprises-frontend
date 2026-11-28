@@ -23,6 +23,7 @@ import { useBusinessRules, ymdPlusDays } from '@/hooks/useBusinessRules';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { EmptyState } from '@/components/EmptyState';
 import { InlineAlert } from '@/components/InlineAlert';
+import { ChequeLifecycleBadge } from '@/components/StatusBadge';
 import { Loader } from '@/components/Loader';
 import { PageHeader } from '@/components/PageHeader';
 import { SectionCard } from '@/components/SectionCard';
@@ -65,6 +66,7 @@ type ChequeRow = {
   deposit: Date | null;
   override?: boolean;
   saved?: boolean;
+  status?: string; // lifecycle of an existing cheque
 };
 
 const n = (v: Num) => (v === '' ? 0 : v);
@@ -197,6 +199,7 @@ const AddEditSalePage = () => {
             branch: c.branchCode,
             number: c.chequeNumber,
             deposit: new Date(c.depositDate),
+            status: c.status,
             saved: !canEditCheque || !canViewCheque, // read-only: never sent back on save
           })),
         );
@@ -220,8 +223,13 @@ const AddEditSalePage = () => {
   // Credit is whatever cash and cheques do not cover: never typed.
   const credit = round2(Math.max(0, net - cashValue - chequeValue));
   const remaining = round2(net - (cashValue + chequeValue));
-  // For now a cheque counts as paid like cash: no credit = paid, all credit = not paid.
-  const status = credit <= 0 ? 'paid' : credit >= net - 0.01 ? 'not_paid' : 'partially_paid';
+  // A returned cheque is still on the sale but is unpaid again (the summary shows it that way).
+  const returnedTotal = round2(
+    cheques.filter((c) => c.id && c.status === 'RETURNED').reduce((s, c) => s + n(c.amount), 0),
+  );
+  const shownUnpaid = Math.min(net, round2(credit + returnedTotal));
+  const shownStatus =
+    shownUnpaid <= 0 ? 'paid' : shownUnpaid >= net - 0.01 ? 'not_paid' : 'partially_paid';
   const parts: SalePayment[] = [
     ...(cashValue > 0 ? [{ method: 'cash' as const, amount: cashValue }] : []),
     ...(credit > 0 ? [{ method: 'credit' as const, amount: credit }] : []),
@@ -792,9 +800,12 @@ const AddEditSalePage = () => {
                       style={{ border: '1px solid var(--ldg-border)', borderRadius: 8 }}
                     >
                       <Group justify="space-between" mb={6} wrap="nowrap">
-                        <Text size="sm" fw={600}>
-                          Cheque {i + 1}
-                        </Text>
+                        <Group gap="xs" wrap="nowrap">
+                          <Text size="sm" fw={600}>
+                            Cheque {i + 1}
+                          </Text>
+                          {c.id && <ChequeLifecycleBadge status={c.status} />}
+                        </Group>
                         {(!c.id || canDeleteCheque) && (
                           <ActionIcon
                             variant="subtle"
@@ -810,6 +821,12 @@ const AddEditSalePage = () => {
                           </ActionIcon>
                         )}
                       </Group>
+                      {c.id && c.status === 'RETURNED' && (
+                        <Text size="sm" c="red" mb={6}>
+                          This cheque was returned, so its amount is unpaid again. Deposit it again
+                          from the Cheques page to restore the payment.
+                        </Text>
+                      )}
                       {c.id && !canViewCheque ? (
                         <SimpleGrid cols={{ base: 1, sm: 2 }}>
                           <Field label="Amount">{formatLkr(n(c.amount))}</Field>
@@ -907,20 +924,29 @@ const AddEditSalePage = () => {
                     <Text className="eyebrow" mt="sm">
                       Paid by
                     </Text>
-                    {parts.map((p) => (
-                      <Row
-                        key={p.method}
-                        label={
-                          p.method === 'cash' ? 'Cash' : p.method === 'credit' ? 'Credit' : 'Cheque'
-                        }
-                        value={p.amount}
-                      />
-                    ))}
+                    {parts
+                      .filter((p) => p.method !== 'cheque' || p.amount - returnedTotal > 0)
+                      .map((p) => (
+                        <Row
+                          key={p.method}
+                          label={
+                            p.method === 'cash'
+                              ? 'Cash'
+                              : p.method === 'credit'
+                                ? 'Credit'
+                                : 'Cheque'
+                          }
+                          value={p.method === 'cheque' ? p.amount - returnedTotal : p.amount}
+                        />
+                      ))}
+                    {returnedTotal > 0 && (
+                      <Row label="Returned cheque (unpaid)" value={returnedTotal} />
+                    )}
                     <Group justify="space-between" mt="xs">
                       <Text size="sm" c="dimmed">
                         Status
                       </Text>
-                      <SaleStatusBadge status={status} />
+                      <SaleStatusBadge status={shownStatus} />
                     </Group>
                   </>
                 )}

@@ -1,10 +1,9 @@
 import { IconShoppingCart } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Box, Button, Group, Stack, Table, Text } from '@mantine/core';
+import { Button, Divider, Group, Stack, Table, Text } from '@mantine/core';
 import { ListPage } from '@/components/data/ListPage';
 import { DetailDialog } from '@/components/DetailDialog';
-import { DetailList } from '@/components/DetailList';
 import { Field } from '@/components/Field';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
@@ -279,55 +278,67 @@ const OrdersPage = () => {
                 </Table.Tbody>
               </Table>
             </Table.ScrollContainer>
-            <Box mt="lg">
-              <DetailList
-                groups={[
-                  [
-                    {
-                      label: 'Shipping',
-                      value: <span className="num">{formatLkr(view.shipping)}</span>,
-                    },
-                    {
-                      label: 'Other expenses',
-                      value: <span className="num">{formatLkr(view.otherExpenses)}</span>,
-                    },
-                    {
-                      label: 'Discount',
-                      value: <span className="num">{formatLkr(view.discount)}</span>,
-                    },
-                    { label: 'Tax', value: <span className="num">{formatLkr(view.tax)}</span> },
-                    {
-                      label: 'Net total',
-                      value: <strong className="num">{formatLkr(view.netTotal)}</strong>,
-                    },
-                    {
-                      label: 'Paid',
-                      value: <span className="num">{formatLkr(view.paidAmount)}</span>,
-                    },
-                    {
-                      label: 'Outstanding',
-                      value: <strong className="num">{formatLkr(view.outstandingAmount)}</strong>,
-                    },
-                  ],
-                ]}
-              />
-            </Box>
-            <Stack gap="md" mt="lg">
-              {full?.payments && full.payments.length > 0 && (
-                <Field label="Payments">
-                  <Stack gap={2} mt={4}>
-                    {full.payments.map((p) => (
+            <Stack gap={6} mt="lg" maw={300} ml="auto">
+              {[
+                ['Shipping', view.shipping],
+                ['Other expenses', view.otherExpenses],
+                ['Discount', view.discount],
+                ['Tax', view.tax],
+              ].map(([label, v]) => (
+                <Group key={label} justify="space-between" wrap="nowrap">
+                  <Text size="sm" c="dimmed">
+                    {label}
+                  </Text>
+                  <Text size="sm" className="num">
+                    {formatLkr(v as number)}
+                  </Text>
+                </Group>
+              ))}
+              <Group justify="space-between" wrap="nowrap">
+                <Text size="sm" c="dimmed">
+                  Net total
+                </Text>
+                <Text size="sm" fw={600} className="num">
+                  {formatLkr(view.netTotal)}
+                </Text>
+              </Group>
+            </Stack>
+            <Divider my="md" />
+            {full?.payments && full.payments.length > 0 && (
+              <Field label="Payments">
+                <Stack gap={2} mt={4}>
+                  {full.payments.map((p) => {
+                    const no = p.issuedCheque?.chequeNumber ?? p.reference;
+                    const off = p.status !== 'completed';
+                    return (
                       <Group key={p._id} justify="space-between" wrap="nowrap">
-                        <Text size="sm">{METHOD_LABELS[p.method]}</Text>
-                        <Text size="sm" className="num">
+                        <Text size="sm" c={off ? 'red' : undefined}>
+                          {METHOD_LABELS[p.method]}
+                          {p.method !== 'cash' && no ? ` - ${no.slice(0, 3)}***` : ''}
+                          {off ? ` · ${p.status === 'returned' ? 'Returned' : 'Reversed'}` : ''}
+                        </Text>
+                        <Text
+                          size="sm"
+                          className="num"
+                          c={off ? 'red' : undefined}
+                          td={off ? 'line-through' : undefined}
+                        >
                           {formatLkr(p.amount)}
                         </Text>
                       </Group>
-                    ))}
-                  </Stack>
-                </Field>
-              )}
-            </Stack>
+                    );
+                  })}
+                </Stack>
+              </Field>
+            )}
+            <Group justify="space-between" wrap="nowrap" mt="md">
+              <Text size="sm" fw={600}>
+                Outstanding
+              </Text>
+              <Text size="sm" fw={600} className="num">
+                {formatLkr(view.outstandingAmount)}
+              </Text>
+            </Group>
           </>
         )}
       </DetailDialog>
