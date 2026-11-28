@@ -248,13 +248,21 @@ export const AppShell = () => {
             role="contentinfo"
           >
             {showLabels && (
-              <Group gap={6} px="xs" wrap="nowrap" align="center">
-                <Text fz={11} c="dimmed">
-                  Powered by
-                </Text>
-                <Image src={xcorpionLogo} alt="XCORPION" h={18} w="auto" darkHidden />
-                <Image src={xcorpionLogoWhite} alt="XCORPION" h={18} w="auto" lightHidden />
-              </Group>
+              <a
+                href="https://xcorpion.xyz"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Powered by XCORPION"
+                style={{ textDecoration: 'none' }}
+              >
+                <Group gap={6} px="xs" wrap="nowrap" align="center">
+                  <Text fz={11} c="dimmed">
+                    Powered by
+                  </Text>
+                  <Image src={xcorpionLogo} alt="XCORPION" h={18} w="auto" darkHidden />
+                  <Image src={xcorpionLogoWhite} alt="XCORPION" h={18} w="auto" lightHidden />
+                </Group>
+              </a>
             )}
           </Box>
         </MantineAppShell.Navbar>
