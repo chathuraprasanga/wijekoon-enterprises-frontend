@@ -39,7 +39,8 @@ import { NotificationsBell } from '@/components/NotificationsBell';
 import { ActivityDrawer } from '@/components/ActivityDrawer';
 import { Wordmark } from '@/components/Wordmark';
 import { fullName, initials } from '@/utils/format';
-import devLogo from '../../assets/dev-logo.png';
+import xcorpionLogo from '../../assets/xcorpion-logo.png';
+import xcorpionLogoWhite from '../../assets/xcorpion-logo-white.png';
 
 type NavItem = { label: string; path: string; icon: Icon; permission?: string };
 
@@ -246,31 +247,32 @@ export const AppShell = () => {
             aria-label="Powered by XCORPION"
             role="contentinfo"
           >
-            <Group
-              gap="xs"
-              wrap="nowrap"
-              justify={showLabels ? 'flex-start' : 'center'}
-              px={showLabels ? 'xs' : 0}
-            >
-              <Image
-                src={devLogo}
-                alt="XCORPION"
-                w={28}
-                h={28}
-                fit="contain"
-                style={{ flex: 'none' }}
-              />
-              {showLabels && (
-                <Box lh={1.3}>
-                  <Text size="xs" fw={500}>
-                    Powered by XCORPION
-                  </Text>
-                  <Text fz={11} c="dimmed">
-                    © {new Date().getFullYear()} XCORPION
-                  </Text>
-                </Box>
-              )}
-            </Group>
+            {showLabels && (
+              <Box px="xs" lh={1.3}>
+                <Text fz={11} c="dimmed">
+                  Powered by
+                </Text>
+                <Image
+                  src={xcorpionLogo}
+                  alt="XCORPION"
+                  h={16}
+                  w="auto"
+                  lightHidden={false}
+                  darkHidden
+                />
+                <Image
+                  src={xcorpionLogoWhite}
+                  alt="XCORPION"
+                  h={16}
+                  w="auto"
+                  lightHidden
+                  darkHidden={false}
+                />
+                <Text fz={11} c="dimmed" mt={2}>
+                  © {new Date().getFullYear()} XCORPION
+                </Text>
+              </Box>
+            )}
           </Box>
         </MantineAppShell.Navbar>
         <MantineAppShell.Main id="main">
