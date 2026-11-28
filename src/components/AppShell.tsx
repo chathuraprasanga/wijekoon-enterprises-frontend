@@ -248,30 +248,13 @@ export const AppShell = () => {
             role="contentinfo"
           >
             {showLabels && (
-              <Box px="xs" lh={1.3}>
+              <Group gap={6} px="xs" wrap="nowrap" align="center">
                 <Text fz={11} c="dimmed">
                   Powered by
                 </Text>
-                <Image
-                  src={xcorpionLogo}
-                  alt="XCORPION"
-                  h={16}
-                  w="auto"
-                  lightHidden={false}
-                  darkHidden
-                />
-                <Image
-                  src={xcorpionLogoWhite}
-                  alt="XCORPION"
-                  h={16}
-                  w="auto"
-                  lightHidden
-                  darkHidden={false}
-                />
-                <Text fz={11} c="dimmed" mt={2}>
-                  © {new Date().getFullYear()} XCORPION
-                </Text>
-              </Box>
+                <Image src={xcorpionLogo} alt="XCORPION" h={18} w="auto" darkHidden />
+                <Image src={xcorpionLogoWhite} alt="XCORPION" h={18} w="auto" lightHidden />
+              </Group>
             )}
           </Box>
         </MantineAppShell.Navbar>
