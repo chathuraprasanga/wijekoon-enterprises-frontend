@@ -147,6 +147,8 @@ const OrdersPage = () => {
               }
             : undefined
         }
+        columnsKey="orders"
+        defaultHiddenColumns={['supplierRef', 'items', 'paid', 'dueDate', 'by', 'createdAt']}
         columns={[
           {
             key: 'orderNo',
@@ -166,6 +168,8 @@ const OrdersPage = () => {
             render: (o) => <span className="num">{formatDate(o.orderDate)}</span>,
           },
           { key: 'supplier', header: 'Supplier', render: (o) => o.supplier?.name ?? '—' },
+          { key: 'supplierRef', header: 'Supplier ref', render: (o) => o.supplierRef || '—' },
+          { key: 'items', header: 'Items', align: 'right', render: (o) => o.lineItems.length },
           {
             key: 'total',
             header: 'Total',
@@ -178,7 +182,6 @@ const OrdersPage = () => {
             header: 'Paid',
             sortable: true,
             align: 'right',
-            hideBelow: 'md',
             render: (o) => formatLkr(o.paidAmount),
           },
           {
@@ -190,6 +193,12 @@ const OrdersPage = () => {
                 {formatLkr(o.outstandingAmount)}
               </Text>
             ),
+          },
+          {
+            key: 'dueDate',
+            header: 'Due date',
+            sortable: true,
+            render: (o) => (o.dueDate ? <span className="num">{formatDate(o.dueDate)}</span> : '—'),
           },
           {
             key: 'payment',
@@ -207,8 +216,13 @@ const OrdersPage = () => {
           {
             key: 'by',
             header: 'Created by',
-            hideBelow: 'md',
             render: (o) => o.createdByName ?? '—',
+          },
+          {
+            key: 'createdAt',
+            header: 'Created',
+            sortable: true,
+            render: (o) => <span className="num">{formatDate(o.createdAt)}</span>,
           },
         ]}
       />

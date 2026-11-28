@@ -17,7 +17,7 @@ import {
 } from '@/store/productSlice/productSlice';
 import { fetchSuppliers } from '@/store/supplierSlice/supplierSlice';
 import { useActiveToggle } from '@/hooks/useActiveToggle';
-import { formatLkr, formatSize } from '@/utils/format';
+import { formatDate, formatLkr, formatSize } from '@/utils/format';
 import { useCan } from '@/utils/permissions';
 
 const ProductsPage = () => {
@@ -118,6 +118,8 @@ const ProductsPage = () => {
             }
           : undefined
       }
+      columnsKey="products"
+      defaultHiddenColumns={['margin', 'createdAt']}
       columns={[
         {
           key: 'name',
@@ -148,9 +150,14 @@ const ProductsPage = () => {
           render: (p) => formatLkr(p.sellingPrice),
         },
         {
+          key: 'margin',
+          header: 'Margin',
+          align: 'right',
+          render: (p) => formatLkr(p.sellingPrice - p.buyingPrice),
+        },
+        {
           key: 'supplier',
           header: 'Supplier',
-          hideBelow: 'md',
           render: (p) => supplierName(p.supplier),
         },
         {
@@ -158,6 +165,12 @@ const ProductsPage = () => {
           header: 'Status',
           badge: true,
           render: (p) => <ActiveBadge active={p.isActive} />,
+        },
+        {
+          key: 'createdAt',
+          header: 'Since',
+          sortable: true,
+          render: (p) => <span className="num">{formatDate(p.createdAt)}</span>,
         },
       ]}
     >

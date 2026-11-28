@@ -22,6 +22,7 @@ import type { Supplier } from '@/store/supplierSlice/supplierSlice';
 import { useLookup } from '@/hooks/useLookup';
 import { formatDate, formatLkr } from '@/utils/format';
 import { customerName } from '@/pages/sales/saleLabels';
+import { bankDisplay, branchDisplay } from '@/utils/bankData';
 import { useCan } from '@/utils/permissions';
 
 const isReceived = (c: Cheque) => c.kind !== 'issued';
@@ -184,6 +185,8 @@ const ChequesPage = () => {
             }
           : undefined
       }
+      columnsKey={`cheques-${tab}`}
+      defaultHiddenColumns={['bank', 'branch', 'order', 'sale', 'createdAt']}
       columns={[
         {
           key: 'chequeNumber',
@@ -205,6 +208,30 @@ const ChequesPage = () => {
             ),
         },
         {
+          key: 'bank',
+          header: 'Bank',
+          render: (c) => c.bankName ?? bankDisplay(c.bankCode),
+        },
+        {
+          key: 'branch',
+          header: 'Branch',
+          render: (c) => c.branchName ?? branchDisplay(c.bankCode, c.branchCode),
+        },
+        issuedTab
+          ? {
+              key: 'order',
+              header: 'Order',
+              render: (c: Cheque) => (c.orderNo ? <span className="mono">{c.orderNo}</span> : '—'),
+            }
+          : {
+              key: 'sale',
+              header: 'Sale',
+              render: (c: Cheque) => {
+                const no = sales.byId.get(c.sale ?? '')?.salesId;
+                return no ? <span className="mono">{no}</span> : '—';
+              },
+            },
+        {
           key: 'depositDate',
           header: 'Deposit date',
           sortable: true,
@@ -216,6 +243,12 @@ const ChequesPage = () => {
           sortable: true,
           align: 'right',
           render: (c) => formatLkr(c.amount),
+        },
+        {
+          key: 'createdAt',
+          header: 'Created',
+          sortable: true,
+          render: (c) => <span className="num">{formatDate(c.createdAt)}</span>,
         },
         {
           key: 'state',

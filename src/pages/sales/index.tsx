@@ -87,6 +87,16 @@ const SalesPage = () => {
               }
             : undefined
         }
+        columnsKey="sales"
+        defaultHiddenColumns={[
+          'customerRef',
+          'items',
+          'paid',
+          'method',
+          'dueDate',
+          'by',
+          'createdAt',
+        ]}
         columns={[
           {
             key: 'salesId',
@@ -111,6 +121,17 @@ const SalesPage = () => {
             render: (s) => <CustomerLabel customer={customers.byId.get(s.customer)} />,
           },
           {
+            key: 'customerRef',
+            header: 'Customer ref',
+            render: (s) => s.customerRef || '—',
+          },
+          {
+            key: 'items',
+            header: 'Items',
+            align: 'right',
+            render: (s) => s.lineItems.length,
+          },
+          {
             key: 'netTotal',
             header: 'Total',
             sortable: true,
@@ -121,7 +142,6 @@ const SalesPage = () => {
             key: 'paid',
             header: 'Paid',
             align: 'right',
-            hideBelow: 'md',
             render: (s) => formatLkr(s.netTotal - saleOutstanding(s)),
           },
           {
@@ -135,6 +155,16 @@ const SalesPage = () => {
             ),
           },
           {
+            key: 'method',
+            header: 'Payment',
+            render: (s) => PAYMENT_LABELS[s.paymentMethod] ?? '—',
+          },
+          {
+            key: 'dueDate',
+            header: 'Due date',
+            render: (s) => (s.dueDate ? <span className="num">{formatDate(s.dueDate)}</span> : '—'),
+          },
+          {
             key: 'status',
             header: 'Status',
             sortable: true,
@@ -144,8 +174,13 @@ const SalesPage = () => {
           {
             key: 'by',
             header: 'Created by',
-            hideBelow: 'md',
             render: (s) => s.createdByName ?? '—',
+          },
+          {
+            key: 'createdAt',
+            header: 'Created',
+            sortable: true,
+            render: (s) => <span className="num">{formatDate(s.createdAt)}</span>,
           },
         ]}
       >

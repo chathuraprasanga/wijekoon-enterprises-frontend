@@ -115,6 +115,8 @@ const CustomersPage = () => {
             }
           : undefined
       }
+      columnsKey="customers"
+      defaultHiddenColumns={['type', 'email', 'createdAt']}
       columns={[
         {
           key: 'name',
@@ -131,7 +133,6 @@ const CustomersPage = () => {
           key: 'type',
           header: 'Type',
           badge: true,
-          hideBelow: 'md',
           render: (c) => <CustomerTypeBadge type={c.customerType} />,
         },
         {
@@ -143,10 +144,15 @@ const CustomersPage = () => {
           key: 'email',
           header: 'Email',
           sortable: true,
-          hideBelow: 'md',
           render: (c) => orDash(c.email),
         },
         { key: 'address', header: 'Address', sortable: true, render: (c) => orDash(c.address) },
+        {
+          key: 'createdAt',
+          header: 'Since',
+          sortable: true,
+          render: (c) => <span className="num">{formatDate(c.createdAt)}</span>,
+        },
         {
           key: 'status',
           header: 'Status',

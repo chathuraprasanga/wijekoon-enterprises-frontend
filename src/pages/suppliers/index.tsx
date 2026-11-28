@@ -94,6 +94,8 @@ const SuppliersPage = () => {
             }
           : undefined
       }
+      columnsKey="suppliers"
+      defaultHiddenColumns={['email', 'chequeIssuedName', 'createdAt']}
       columns={[
         {
           key: 'name',
@@ -111,10 +113,20 @@ const SuppliersPage = () => {
           key: 'email',
           header: 'Email',
           sortable: true,
-          hideBelow: 'md',
           render: (s) => orDash(s.email),
         },
         { key: 'address', header: 'Address', sortable: true, render: (s) => orDash(s.address) },
+        {
+          key: 'chequeIssuedName',
+          header: 'Cheque name',
+          render: (s) => orDash(s.chequeIssuedName),
+        },
+        {
+          key: 'createdAt',
+          header: 'Since',
+          sortable: true,
+          render: (s) => <span className="num">{formatDate(s.createdAt)}</span>,
+        },
         {
           key: 'status',
           header: 'Status',

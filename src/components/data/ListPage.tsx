@@ -5,8 +5,10 @@ import {
   ActionIcon,
   Box,
   Button,
+  Checkbox,
   Group,
   Pagination,
+  Popover,
   SegmentedControl,
   Select,
   Stack,
@@ -15,6 +17,7 @@ import {
 } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
 import {
+  IconColumns3,
   IconEye,
   IconPencil,
   IconPlus,
@@ -57,6 +60,10 @@ type Props<T> = {
   searchPlaceholder: string;
   filters?: FilterField[];
   columns: Column<T>[];
+  /** Lets the user show/hide columns (remembered per browser under this key). */
+  columnsKey?: string;
+  /** Column keys hidden until the user changes the choice. */
+  defaultHiddenColumns?: string[];
   records: T[];
   total: number;
   rowKey: (record: T) => string;
@@ -100,6 +107,8 @@ export const ListPage = <T,>({
   searchPlaceholder,
   filters = [],
   columns,
+  columnsKey,
+  defaultHiddenColumns = [],
   records,
   total,
   rowKey,
@@ -133,6 +142,13 @@ export const ListPage = <T,>({
     key: 'ldg-density',
     defaultValue: 'comfortable',
   });
+  const [hiddenCols, setHiddenCols] = useLocalStorage<string[]>({
+    key: `ldg-cols-v7-${columnsKey ?? 'none'}`,
+    defaultValue: defaultHiddenColumns,
+  });
+  const shownColumns = columnsKey
+    ? columns.filter((c) => c.primary || !hiddenCols.includes(c.key))
+    : columns;
   const [nonce, setNonce] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -254,17 +270,56 @@ export const ListPage = <T,>({
                   : `${total.toLocaleString('en-US')} ${total === 1 ? entity.singular : entity.plural}`}
               </Text>
             </Group>
-            <SegmentedControl
-              visibleFrom="sm"
-              size="xs"
-              aria-label="Row density"
-              value={density}
-              onChange={(v) => setDensity(v as 'comfortable' | 'dense')}
-              data={[
-                { value: 'comfortable', label: 'Comfortable' },
-                { value: 'dense', label: 'Dense' },
-              ]}
-            />
+            <Group gap="xs" visibleFrom="sm">
+              <SegmentedControl
+                size="xs"
+                styles={{
+                  root: { height: 32 },
+                  label: { display: 'flex', alignItems: 'center', height: '100%', paddingBlock: 0 },
+                }}
+                aria-label="Row density"
+                value={density}
+                onChange={(v) => setDensity(v as 'comfortable' | 'dense')}
+                data={[
+                  { value: 'comfortable', label: 'Comfortable' },
+                  { value: 'dense', label: 'Dense' },
+                ]}
+              />
+              {columnsKey && (
+                <Popover position="bottom-end" shadow="md" withArrow>
+                  <Popover.Target>
+                    <Button
+                      variant="default"
+                      size="xs"
+                      h={32}
+                      leftSection={<IconColumns3 size={14} aria-hidden />}
+                    >
+                      Columns
+                    </Button>
+                  </Popover.Target>
+                  <Popover.Dropdown>
+                    <Stack gap="xs">
+                      {columns
+                        .filter((c) => !c.primary)
+                        .map((c) => (
+                          <Checkbox
+                            key={c.key}
+                            label={c.header}
+                            checked={!hiddenCols.includes(c.key)}
+                            onChange={(e) =>
+                              setHiddenCols(
+                                e.currentTarget.checked
+                                  ? hiddenCols.filter((k) => k !== c.key)
+                                  : [...hiddenCols, c.key],
+                              )
+                            }
+                          />
+                        ))}
+                    </Stack>
+                  </Popover.Dropdown>
+                </Popover>
+              )}
+            </Group>
           </Group>
         </Stack>
         <Box style={{ borderTop: '1px solid var(--ldg-border)' }}>
@@ -323,7 +378,7 @@ export const ListPage = <T,>({
           ) : (
             <DataTable
               caption={title}
-              columns={columns}
+              columns={shownColumns}
               records={records}
               rowKey={rowKey}
               loading={loading}
